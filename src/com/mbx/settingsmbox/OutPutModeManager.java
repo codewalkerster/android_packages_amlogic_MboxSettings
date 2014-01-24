@@ -395,7 +395,7 @@ public class OutPutModeManager {
        int oldIndex = -1;
        int newIndex = -1;
        if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-            Utils.shadowScreen(swm);
+            Utils.shadowScreen(swm, curMode);
             
             if(isNeedShowConfirmDialog){
                 oldIndex = getModeIndex(curMode);
@@ -587,7 +587,7 @@ public class OutPutModeManager {
         }else{
              closeVdac(swm,newMode);
         }
-        Utils.shadowScreen(swm);
+        Utils.shadowScreen(swm, curMode);
 		swm.writeSysfs(PpscalerFile, "0");
 		swm.writeSysfs(FreescaleFb0File, "0");
 		swm.writeSysfs(FreescaleFb1File, "0");

@@ -195,27 +195,25 @@ public class Utils {
 
     
 
-	public static void shadowScreen(final SystemWriteManager sw ){
-        Log.d(TAG,"===== beging shadowScreen()");
+	public static void shadowScreen(final SystemWriteManager sw, final String mode){
+		sw.writeSysfs(blankFb0File, "1");
+		Log.d(TAG,"===== beging shadowScreen()");
 		Thread task = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-                    synchronized (this) {
-					    Log.d(TAG,"===== close osd");
-                        sw.writeSysfs(blankFb0File, "1");
-    					Thread.sleep(time);
-                        sw.writeSysfs(blankFb0File, "0");
-                        Log.d(TAG,"===== open osd");
-				    }
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
+
+		@Override
+		public void run() {
+		try {
+			synchronized (this) {
+				Log.d(TAG,"===== close osd");
+				Thread.sleep(time);
+				sw.writeSysfs(blankFb0File, "0");
+				Log.d(TAG,"===== open osd");
 			}
-		});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		}
+	});
 		task.start();
-		
 	}
 }
