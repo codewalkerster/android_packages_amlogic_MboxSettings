@@ -418,17 +418,31 @@ public class OutPutModeManager {
             //close freescale
             Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0"); 
             if(newMode.contains("4k2k")){    
-                
-                //set to 1080p as UI base
-                Utils.setDensity(newMode);
-                Utils.setDisplaySize(1920, 1080);
-                
-                
-                //open freescale ,  scale up from 1080p to 4k
-                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
-                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079"); 
-                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
-                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
+
+                if(!swm.getPropertyBoolean("ro.platform.has.native4k2k", false)){ 
+                    //set to 1080p as UI base
+                    Utils.setDensity(newMode);
+                    Utils.setDisplaySize(1920, 1080);
+                           
+                    //open freescale ,  scale up from 1080p to 4k
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079"); 
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
+                } else {
+                    //set to 4k2k as UI base
+                    Utils.setDensity("4k2knative");
+                    Utils.setDisplaySize(3840, 2160);
+                           
+                    //open freescale ,  scale up from 1080p to 4k
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 3839 2159"); 
+                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
+                    if (curPosition[0] == 0 && curPosition[1] == 0)
+                        Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0");
+                    else
+                        Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
+                }
                 
             }else if(newMode.contains("1080")){ 
                 curPosition = getPosition(swm ,newMode);
@@ -602,8 +616,15 @@ public class OutPutModeManager {
         if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){                     
             
             SettingsMboxActivity.mCurrentViewNum = 2 ;
-            Utils.setDensity(newMode);
-            if(newMode.contains("1080") || newMode.contains("4k2k")){
+            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false) && newMode.contains("4k2k")){ 
+                Utils.setDensity("4k2knative");
+            } else { 
+                Utils.setDensity(newMode);
+            }
+
+            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false) && newMode.contains("4k2k")){ 
+                Utils.setDisplaySize(3840, 2160);
+            } else if(newMode.contains("1080") || newMode.contains("4k2k")){
                 Utils.setDisplaySize(1920, 1080);
             } else {
                 Utils.setDisplaySize(1280, 720);
