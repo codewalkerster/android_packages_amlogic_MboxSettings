@@ -438,7 +438,7 @@ public class OutPutModeManager {
                     Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
                     Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 3839 2159"); 
                     Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
-                    if (curPosition[0] == 0 && curPosition[1] == 0)
+                    if (curPosition[0] == 0 && curPosition[1] == 0 && !newMode.equals("4k2ksmpte"))
                         Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0");
                     else
                         Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
