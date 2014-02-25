@@ -1623,7 +1623,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             screen_rate = MIN_Height ;
         }
         Log.d(TAG,"===== showProgressUI() ,screen_rate="+ screen_rate);
-		if (screen_rate <= MAX_Height && screen_rate >=100) {
+		if (screen_rate ==100) {
 			int hundred = Num[(int) screen_rate / 100];
 			img_num_hundred.setVisibility(View.VISIBLE);
 			img_num_hundred.setBackgroundResource(hundred);
@@ -1631,8 +1631,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			img_num_ten.setBackgroundResource(ten);
             int unit = Num[(screen_rate -100)%10];
 			img_num_unit.setBackgroundResource(unit);
-			if (screen_rate - MIN_Height>= 0 && screen_rate - MIN_Height <= 19)
-				img_progress_bg.setBackgroundResource(progressNum[screen_rate - MIN_Height]);
+			if (screen_rate - MIN_Height>= 0 && screen_rate - MIN_Height <= 20)
+				img_progress_bg.setBackgroundResource(progressNum[screen_rate - MIN_Height-1]);
 		} else if (screen_rate >= 10 && screen_rate <= 99) {
 			img_num_hundred.setVisibility(View.GONE);
 			int ten = Num[(int) (screen_rate / 10)];
