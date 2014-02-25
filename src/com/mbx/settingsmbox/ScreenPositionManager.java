@@ -247,7 +247,6 @@ public class ScreenPositionManager {
             mIsOriginWinSet = true;
         
         writeFile(freescale_mode,"1");
-        writeFile(free_scale_axis, "0 0 " + mPreWidth + " "+ mPreHeight);
         writeFile(free_scale,"0x10001");
         Log.e(TAG,"==== setOriginWinForFreeScale(), w:"+mPreWidth + ",h:" + mPreHeight);
     }

@@ -559,6 +559,11 @@ public class OutPutModeManager {
                 isNeedShowConfirmDialog = false;
             }           
         }
+        
+        Intent i = new Intent();
+        i.setAction("android.amlogic.settings.CHANGE_OUTPUT_MODE");
+        mContext.sendBroadcast(i);
+        
         return;
     
     } 
