@@ -385,7 +385,9 @@ public class OutPutModeManager {
             Log.d(TAG,"===== The same mode as current , do nothing !");
             return ;
         }
-        
+
+       Utils.shadowScreen(swm, curMode);
+       
        if(newMode.contains("cvbs")){
              openVdac(swm,newMode);
        }else{
@@ -395,8 +397,7 @@ public class OutPutModeManager {
        int oldIndex = -1;
        int newIndex = -1;
        if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-            Utils.shadowScreen(swm, curMode);
-            
+
             if(isNeedShowConfirmDialog){
                 oldIndex = getModeIndex(curMode);
                 newIndex = getModeIndex(newMode);
