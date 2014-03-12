@@ -1460,8 +1460,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		mScreenPositionManager.initPostion();
 		screen_rate = mScreenPositionManager.getRateValue();
 		showProgressUI(0);
-		ImageView around_line = (ImageView) findViewById(R.id.screen_adjust_line);
-		around_line.setVisibility(View.VISIBLE);
+		//ImageView around_line = (ImageView) findViewById(R.id.screen_adjust_line);
+		//around_line.setVisibility(View.VISIBLE);
          
 	}
 
@@ -1473,8 +1473,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		settings_content_postion.setVisibility(View.GONE);
 		settingsContentLayout_02.setVisibility(View.VISIBLE);
 		button_scrren_adjust.requestFocus();
-		ImageView around_line = (ImageView) findViewById(R.id.screen_adjust_line);
-		around_line.setVisibility(View.GONE);
+		//ImageView around_line = (ImageView) findViewById(R.id.screen_adjust_line);
+		//around_line.setVisibility(View.GONE);
         if(mScreenPositionManager.isScreenPositionChanged()){
             mScreenPositionManager.savePostion();
             ScreenPositionManager.mIsOriginWinSet = false;    //user has changed&save postion,reset this prop to default 

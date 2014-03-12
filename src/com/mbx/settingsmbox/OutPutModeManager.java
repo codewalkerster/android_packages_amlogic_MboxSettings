@@ -515,7 +515,7 @@ public class OutPutModeManager {
             String value = curPosition[0] + " " + curPosition[1]
                 + " " + (curPosition[2] + curPosition[0] )
                 + " " + (curPosition[3] + curPosition[1] )+ " " + 0;
-            setM6FreeScaleAxis(swm, newMode);
+           // setM6FreeScaleAxis(swm, newMode);
             Utils.writeSysFile(swm, DISPLAY_MODE_SYSFS,newMode);	
             Utils.writeSysFile(swm, PpscalerRectFile, value);
             //===== for new sysfs
@@ -827,12 +827,12 @@ public class OutPutModeManager {
         isNeedShowConfirmDialog = isNeed;
     }
 
-    void setM6FreeScaleAxis(SystemWriteManager swm, String mode){
+ /*   void setM6FreeScaleAxis(SystemWriteManager swm, String mode){
         if(mode.contains("720") || mode.contains("1080")){
             Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 719");
         } else {
             Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1281 719");  
         }
         Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","1");
-    }
+    }*/
 }
