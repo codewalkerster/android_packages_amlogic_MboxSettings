@@ -135,7 +135,15 @@ public class BootReceiver extends BroadcastReceiver {
             int timeout  = sharedPrefrences.getInt( "screen_timeout", Integer.MAX_VALUE);
             Log.d(TAG,"===== set timeout : " + timeout);
             Settings.System.putInt(context.getContentResolver(), "screen_off_timeout",timeout);
-    
+
+            //======== for Dolby and DTS
+            
+            if (sw.getPropertyBoolean("ro.platform.support.dolby", false)){
+                initDolby();
+            }
+            if (sw.getPropertyBoolean("ro.platform.support.dts", false)){
+                initDts();
+            }
 
 		}
         //======================================end system boot process
@@ -431,6 +439,29 @@ public class BootReceiver extends BroadcastReceiver {
             Log.d(TAG,"===== getWifiCheckBoxState() , false " );
             return false;
         }       
+    }
+
+    private void initDolby(){
+        DigitalAudioManager mDigitalAudioManager = new DigitalAudioManager(mContext, sw);
+        
+        String isDrcEnable = sharedPrefrences.getString("dolby_drc_enable", "false");
+        mDigitalAudioManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
+
+        String mode = sharedPrefrences.getString("dolby_drc_mode", "2");
+        mDigitalAudioManager.setDoblyMode(mode);
+    }
+
+    private void initDts(){
+        DigitalAudioManager mDigitalAudioManager = new DigitalAudioManager(mContext, sw);
+        
+        String mode = sharedPrefrences.getString("dts_downmix_mode", "0");
+        mDigitalAudioManager.setDTS_DownmixMode(mode);
+
+        String isDrcScaleEnable = sharedPrefrences.getString("dts_drc_scale", "false");
+        mDigitalAudioManager.enableDTS_DRC_scale_control(Boolean.parseBoolean(isDrcScaleEnable));
+
+        String isDialNormEnable = sharedPrefrences.getString("dts_dial_norm", "true");
+        mDigitalAudioManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
     }
 
 }

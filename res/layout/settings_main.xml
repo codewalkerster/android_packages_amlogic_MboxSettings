@@ -32,8 +32,9 @@
     <include
         android:id="@+id/settingsContent03"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:layout_below="@id/settings_top_layout"
+        android:layout_marginRight="220dp"
         layout="@layout/settings_context_03"
         android:visibility="gone" >
     </include>

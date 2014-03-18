@@ -49,6 +49,7 @@
     <string name="time_8"> 8分钟 </string>
     <string name="time_12">12分钟 </string>
     <string name="password">密码</string>
+    <string name="password_length_error">密码长度错误！</string>
     <string name="refresh_now">正在刷新无线列表...</string>
     <string name="system_setting">系统设置</string>
     <string name="settings_other">其他设置</string>
@@ -84,11 +85,16 @@
     <string name="display_settings">显示设置</string>
     <string name="expert_settings">高级设置</string>
     <string name="other_settings">其他设置</string>
+   <string name="voice_auto">自动切换数字音频输出</string>
     <string name="voices_settings_title">数字音频输出</string>
     <string name="voices_settings_pcm">PCM</string>
     <string name="voices_settings_spdif">SPDIF passthrough</string>
     <string name="voices_settings_hdmi">HDMI passthrough</string>
     <string name="select_wifi_tips"> 请选择你要连接的网络</string>
+    <string name="dolby_settings">杜比设置</string>
+    <string name="dts_settings">DTS 设置</string>
+    <string name="dolby_drc_mode">设置dolby DD+ DRC 模式</string>
+    <string name="dts_downmix_mode">DTS downmix 模式</string>
     <string name="connectting_wifi_tips">正在连接...</string>
     <string name="cec_control">CEC 控制</string>
     <string name="cec_switch">CEC 开关</string>
@@ -116,5 +122,4 @@
 	<string name="dialog_title">是否切换到默认分辨率？</string>
 	<string name="show_password">显示密码</string>
 	<string name="connect_error_tips">连接失败 ！</string>
-	<string name="password_length_error">密码错误 !</string>
 </resources>

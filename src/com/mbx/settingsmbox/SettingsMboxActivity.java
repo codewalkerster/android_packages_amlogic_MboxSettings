@@ -58,6 +58,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ScrollView;
 import android.os.UserHandle ;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -153,13 +154,18 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	private LinearLayout settingsContentLayout_01;
 	private LinearLayout settingsContentLayout_02;
-	private LinearLayout settingsContentLayout_03;
+	private ScrollView settingsContentLayout_03;
 	private LinearLayout settingsContentLayout_04;
 
 	private LinearLayout screen_self_set = null;
     private LinearLayout cvbs_screen_self_set = null;
     private LinearLayout secreen_auto = null;
 
+    private LinearLayout voice_auto = null;
+    private LinearLayout voice_setting = null;
+    private LinearLayout dolby_setting = null;
+    private LinearLayout dts_setting = null;
+    
 	private LinearLayout settings_content_postion = null;
 	private LinearLayout button_scrren_adjust;
 
@@ -233,7 +239,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private String string_hdmi =  null;
 
 	private WifiP2pDevice mThisDevice = null;
-	OutPutModeManager mOutPutModeManager = null;
+	DigitalAudioManager mDigitalAudioManager = null;
     private static RelativeLayout preView = null;
     private TextView miracast_name = null;
     private TextView remoteControlIp = null;
@@ -266,7 +272,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 		settingsContentLayout_01 = (LinearLayout) findViewById(R.id.settingsContent01);
 		settingsContentLayout_02 = (LinearLayout) findViewById(R.id.settingsContent02);
-		settingsContentLayout_03 = (LinearLayout) findViewById(R.id.settingsContent03);
+		settingsContentLayout_03 = (ScrollView) findViewById(R.id.settingsContent03);
 		settingsContentLayout_04 = (LinearLayout) findViewById(R.id.settingsContent04);
 
 		screen_self_set = (LinearLayout) findViewById(R.id.screen_self_set);
@@ -457,15 +463,47 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			}
 		});
 
-		LinearLayout voice_setting = (LinearLayout) findViewById(R.id.voice_setting);
-		voice_setting.setOnClickListener(new OnClickListener() {
+        voice_auto = (LinearLayout) findViewById(R.id.voice_auto);
+		voice_auto.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setAutoVoice();
+			}
+		});
 
+		voice_setting = (LinearLayout) findViewById(R.id.voice_setting);
+		voice_setting.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				openVoicePopupWindow();
 
 			}
 		});
+
+        dolby_setting = (LinearLayout) findViewById(R.id.dolby_setting);
+        if (sw.getPropertyBoolean("ro.platform.support.dolby", false))
+            dolby_setting.setVisibility(View.VISIBLE);
+		dolby_setting.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openDolbyPopupWindow();
+
+			}
+		});
+
+        dts_setting = (LinearLayout) findViewById(R.id.dts_setting);
+        if (sw.getPropertyBoolean("ro.platform.support.dts", false))
+            dts_setting.setVisibility(View.VISIBLE);
+		dts_setting.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				openDtsPopupWindow();
+
+			}
+		});
+        mDigitalAudioManager = new DigitalAudioManager(this, sw);
+        updateVoiceUi();
 
 		LinearLayout wifi_direct = (LinearLayout) findViewById(R.id.wifi_direct);
 		
@@ -1874,17 +1912,75 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	}
 
+    void updateVoiceUi() {
+
+		String isAutoVoice = sharepreference.getString("auto_voice", "false");
+        TextView tx_voice_auto = (TextView)findViewById(R.id.tx_voice_auto);
+        TextView tx_voice_setting = (TextView)findViewById(R.id.tx_voice_setting);
+        TextView tx_voice_mode = (TextView)findViewById(R.id.tx_voice_mode);
+        tx_voice_mode.setTextColor(Color.GRAY);
+        
+		if (isAutoVoice.equals("true")) {
+			voice_setting.setFocusable(false);
+			voice_setting.setClickable(false);
+			tx_voice_setting.setTextColor(Color.GRAY);
+			tx_voice_auto.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
+            int mode = mDigitalAudioManager.autoSwitchHdmiPassthough();
+            
+            switch (mode){
+                case 0:
+                    tx_voice_mode.setText("PCM");
+                    break;
+                case 1:
+                    tx_voice_mode.setText("SPDIF passthrough");
+                    break;
+                case 2:
+                    tx_voice_mode.setText("HDMI passthrough");
+                    break;
+                default:
+                    tx_voice_mode.setText("PCM");
+                    break; 
+            }
+		} else {
+			tx_voice_auto.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
+			voice_setting.setFocusable(true);
+			voice_setting.setClickable(true);
+			tx_voice_setting.setTextColor(Color.WHITE);
+
+            String value = sw.getProperty("ubootenv.var.digitaudiooutput");
+            if (value != null && value.length() != 0)
+                tx_voice_mode.setText(value);
+            else 
+                tx_voice_mode.setText("PCM");
+		}
+    }
+
+    private void setAutoVoice() {
+		String isAuto = sharepreference.getString("auto_voice", "false");
+		Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,
+				Context.MODE_PRIVATE).edit();
+		if (isAuto.equals("true")) {
+			editor.putString("auto_voice", "false");
+			editor.commit();
+		} else {
+			editor.putString("auto_voice", "true");
+			editor.commit();
+        }
+
+		updateVoiceUi();
+    }
+
 	private void openVoicePopupWindow() {
         
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		final View voicePopupView = (View) mLayoutInflater.inflate(R.layout.voice_popup_window, null, true);
 		upDateDigitaVoiceUi(voicePopupView);
-
+        
 		RelativeLayout pcm = (RelativeLayout) voicePopupView.findViewById(R.id.voice_pcm);
 		pcm.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setDigitalVoiceValue(string_pcm);
+				mDigitalAudioManager.setDigitalVoiceValue(string_pcm);
 				upDateDigitaVoiceUi(voicePopupView);
 
 			}
@@ -1894,7 +1990,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		voice_sddif.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
-				setDigitalVoiceValue(string_spdif);
+				mDigitalAudioManager.setDigitalVoiceValue(string_spdif);
 				upDateDigitaVoiceUi(voicePopupView);
 			}
 		});
@@ -1903,7 +1999,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		voice_hdmi.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setDigitalVoiceValue(string_hdmi);
+				mDigitalAudioManager.setDigitalVoiceValue(string_hdmi);
 				upDateDigitaVoiceUi(voicePopupView);
 			}
 		});
@@ -1914,8 +2010,233 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		voicePopupWindow.update();
 
 	}
+    
+    private void openDolbyPopupWindow() {
+        
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final View dolbyPopupView = (View) mLayoutInflater.inflate(R.layout.dolby_popup_window, null, true);
+		setDolbySettingsUI(dolbyPopupView);
 
-	void upDateDigitaVoiceUi(View voicePopupView) {
+		RelativeLayout drc_enable = (RelativeLayout) dolbyPopupView.findViewById(R.id.dolby_drc_enable);
+		drc_enable.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				updateDolbySettingsUi(0, dolbyPopupView);
+                Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_enable.setOnClickListener");
+			}
+		});
+        
+		RelativeLayout drc_mode = (RelativeLayout) dolbyPopupView.findViewById(R.id.dolby_drc_mode);
+		drc_mode.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				updateDolbySettingsUi(1, dolbyPopupView);
+                Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_mode.setOnClickListener");
+			}
+		});
+        
+
+		PopupWindow dolbyPopupWindow = new PopupWindow(dolbyPopupView,LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+		dolbyPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+		dolbyPopupWindow.showAtLocation(dolbyPopupView, Gravity.CENTER, 0, 0);
+		dolbyPopupWindow.update();
+
+	}
+
+    private void openDtsPopupWindow() {
+        
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final View dtsPopupView = (View) mLayoutInflater.inflate(R.layout.dts_popup_window, null, true);
+		setDtsSettingsUI(dtsPopupView);
+
+		RelativeLayout dts_downmix_mode = (RelativeLayout) dtsPopupView.findViewById(R.id.dts_downmix_mode);
+		dts_downmix_mode.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				updateDtsSettingsUi(0, dtsPopupView);
+			}
+		});
+        
+		RelativeLayout drc_scale = (RelativeLayout) dtsPopupView.findViewById(R.id.dts_drc_scale);
+		drc_scale.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				updateDtsSettingsUi(1, dtsPopupView);
+			}
+		});
+
+        RelativeLayout dial_norm = (RelativeLayout) dtsPopupView.findViewById(R.id.dts_dial_norm);
+		dial_norm.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				updateDtsSettingsUi(2, dtsPopupView);
+			}
+		});    
+
+		PopupWindow dtsPopupWindow = new PopupWindow(dtsPopupView,LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+		dtsPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+		dtsPopupWindow.showAtLocation(dtsPopupView, Gravity.CENTER, 0, 0);
+		dtsPopupWindow.update();
+	}
+
+    private void setDolbySettingsUI(View dolbyPopupView) {
+		String enable = sharepreference.getString("dolby_drc_enable", "false");
+        ImageView img_drc_enable = (ImageView)dolbyPopupView.findViewById(R.id.img_drc_enable);
+        
+		if (enable.equals("true")) {
+            img_drc_enable.setBackgroundResource(R.drawable.on);
+		} else {
+            img_drc_enable.setBackgroundResource(R.drawable.off);
+		}
+        
+        String mode = sharepreference.getString("dolby_drc_mode", "2");
+        TextView tx_drc_mode = (TextView) dolbyPopupView.findViewById(R.id.tx_drc_mode);
+        if (mode.equals("0")) {
+            tx_drc_mode.setText(mContext.getResources().getString(R.string.dolby_drc_mode0));
+        } else if (mode.equals("1")) {
+            tx_drc_mode.setText(mContext.getResources().getString(R.string.dolby_drc_mode1));
+        } else if (mode.equals("3")) {
+            tx_drc_mode.setText(mContext.getResources().getString(R.string.dolby_drc_mode3));
+        } else {
+            tx_drc_mode.setText(mContext.getResources().getString(R.string.dolby_drc_mode2));
+        }
+        
+    }
+
+    private void setDtsSettingsUI(View dolbyPopupView) { 
+        String mode = sharepreference.getString("dts_downmix_mode", "0");
+        TextView tx_downmix_mode = (TextView) dolbyPopupView.findViewById(R.id.tx_downmix_mode);
+        if (mode.equals("1")) {
+            tx_downmix_mode.setText(mContext.getResources().getString(R.string.dts_downmix_mode1));
+        } else {
+            tx_downmix_mode.setText(mContext.getResources().getString(R.string.dts_downmix_mode0));
+        }
+
+        String drc_scale_enable = sharepreference.getString("dts_drc_scale", "false");
+        ImageView img_drc_scale = (ImageView)dolbyPopupView.findViewById(R.id.img_drc_scale);
+		if (drc_scale_enable.equals("true")) {
+            img_drc_scale.setBackgroundResource(R.drawable.on);
+		} else {
+            img_drc_scale.setBackgroundResource(R.drawable.off);
+		}
+
+        String dial_norm_enable = sharepreference.getString("dts_dial_norm", "true");
+        ImageView img_dial_norm = (ImageView)dolbyPopupView.findViewById(R.id.img_dial_norm);
+		if (dial_norm_enable.equals("true")) {
+            img_dial_norm.setBackgroundResource(R.drawable.on);
+		} else {
+            img_dial_norm.setBackgroundResource(R.drawable.off);
+		}
+    }
+
+	void updateDolbySettingsUi(int option, View dolbyPopupView) {
+        Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+
+        if (option == 0) {
+            String isDrcEnable = sharepreference.getString("dolby_drc_enable", "false");
+    		mDigitalAudioManager.enableDobly_DRC(!Boolean.parseBoolean(isDrcEnable));
+             Log.d(TAG, "@@@@@@@@@@@@@@@@@ isDrcEnable="+isDrcEnable);
+            
+            ImageView img_drc_enable = (ImageView)dolbyPopupView.findViewById(R.id.img_drc_enable);
+            if (isDrcEnable.equals("true")){
+                img_drc_enable.setBackgroundResource(R.drawable.off);
+                editor.putString("dolby_drc_enable", "false");
+                editor.commit();
+            } else {
+                img_drc_enable.setBackgroundResource(R.drawable.on);
+                editor.putString("dolby_drc_enable", "true");
+    			editor.commit();
+            }
+        }else {
+            String mode = sharepreference.getString("dolby_drc_mode", "2");
+            Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
+            int mode_int = Integer.parseInt(mode);
+            mode_int++;
+
+            if(mode_int > 3)
+                mode_int = 0;
+            
+    		mDigitalAudioManager.setDoblyMode(String.valueOf(mode_int));
+            
+            TextView  tx_drc_enable = (TextView)dolbyPopupView.findViewById(R.id.tx_drc_mode);
+             if (mode_int == 0) {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dolby_drc_mode0));
+                editor.putString("dolby_drc_mode", "0");
+                editor.commit();
+            } else if (mode_int == 1) {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dolby_drc_mode1));
+                editor.putString("dolby_drc_mode", "1");
+                editor.commit();
+            } else if (mode_int == 3) {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dolby_drc_mode3));
+                editor.putString("dolby_drc_mode", "3");
+                editor.commit();
+            } else {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dolby_drc_mode2));
+                editor.putString("dolby_drc_mode", "2");
+                editor.commit();
+            }
+        }
+
+	}
+
+    void updateDtsSettingsUi(int option, View dtsPopupView) {
+        Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+
+        if (option == 0) {
+            String mode = sharepreference.getString("dts_downmix_mode", "0");
+            Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
+            int mode_int = Integer.parseInt(mode);
+            mode_int++;
+
+            if(mode_int > 1)
+                mode_int = 0;
+            
+    		mDigitalAudioManager.setDTS_DownmixMode(String.valueOf(mode_int));
+            
+            TextView  tx_drc_enable = (TextView)dtsPopupView.findViewById(R.id.tx_downmix_mode);
+             if (mode_int == 1) {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dts_downmix_mode1));
+                editor.putString("dts_downmix_mode", "1");
+                editor.commit();
+            } else {
+                tx_drc_enable.setText(mContext.getResources().getString(R.string.dts_downmix_mode0));
+                editor.putString("dts_downmix_mode", "0");
+                editor.commit();
+            }    
+        }else if (option == 1){
+            String isDrcScaleEnable = sharepreference.getString("dts_drc_scale", "false");
+    		mDigitalAudioManager.enableDTS_DRC_scale_control(!Boolean.parseBoolean(isDrcScaleEnable));
+            
+            ImageView img_drc_scale = (ImageView)dtsPopupView.findViewById(R.id.img_drc_scale);
+            if (isDrcScaleEnable.equals("true")){
+                img_drc_scale.setBackgroundResource(R.drawable.off);
+                editor.putString("dts_drc_scale", "false");
+                editor.commit();
+            } else {
+                img_drc_scale.setBackgroundResource(R.drawable.on);
+                editor.putString("dts_drc_scale", "true");
+    			editor.commit();
+            }
+        }else {
+            String isDialNormEnable = sharepreference.getString("dts_dial_norm", "true");
+    		mDigitalAudioManager.enableDTS_Dial_Norm_control(!Boolean.parseBoolean(isDialNormEnable));
+            
+            ImageView img_dial_norm = (ImageView)dtsPopupView.findViewById(R.id.img_dial_norm);
+            if (isDialNormEnable.equals("true")){
+                img_dial_norm.setBackgroundResource(R.drawable.off);
+                editor.putString("dts_dial_norm", "false");
+                editor.commit();
+            } else {
+                img_dial_norm.setBackgroundResource(R.drawable.on);
+                editor.putString("dts_dial_norm", "true");
+    			editor.commit();
+            }
+        }
+
+	}
+
+    void upDateDigitaVoiceUi(View voicePopupView) {
 		ImageView imageview_pcm = (ImageView) voicePopupView.findViewById(R.id.imageview_pcm);
 		ImageView imageview_sddif = (ImageView) voicePopupView.findViewById(R.id.imageview_sddif);
 		ImageView imageview_hdmi = (ImageView) voicePopupView.findViewById(R.id.imageview_hdmi);
@@ -1936,25 +2257,13 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			imageview_pcm.setBackgroundResource(R.drawable.current_select);
 			imageview_sddif.setBackgroundResource(R.drawable.current_unselect);
 			imageview_hdmi.setBackgroundResource(R.drawable.current_unselect);
-			setDigitalVoiceValue("PCM");
+			mDigitalAudioManager.setDigitalVoiceValue("PCM");
 		}
 
+        updateVoiceUi();
 	}
 
-	void setDigitalVoiceValue(String value) {
-		// value : "PCM" ,"RAW","SPDIF passthrough","HDMI passthrough"
-		sw.setProperty("ubootenv.var.digitaudiooutput", value);
-		if ("PCM".equals(value)) {
-			sw.writeSysfs("/sys/class/audiodsp/digital_raw", "0");
-		} else if ("RAW".equals(value)) {
-			sw.writeSysfs("/sys/class/audiodsp/digital_raw", "1");
-		} else if ("SPDIF passthrough".equals(value)) {
-			sw.writeSysfs("/sys/class/audiodsp/digital_raw", "1");
-		} else if ("HDMI passthrough".equals(value)) {
-			sw.writeSysfs("/sys/class/audiodsp/digital_raw", "2");
-		}
 
-	}
 
 	private void openCECPopupWindow() {
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
