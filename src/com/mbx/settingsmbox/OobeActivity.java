@@ -864,7 +864,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
 		showProgressUI(0);
 
-		around_line.setVisibility(View.VISIBLE);
+		//around_line.setVisibility(View.VISIBLE);
 
 	}
 
@@ -1173,7 +1173,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 				openScreenAdjustView();
 			} else if (id == R.id.button_screen_next) {
 				setCurrentViewSelected(R.id.top_network);
-				//around_line.setVisibility(View.GONE);
+				around_line.setVisibility(View.GONE);
 				closeScreenAdjustLayout();
 				openNetView();
                 wifiResume();
