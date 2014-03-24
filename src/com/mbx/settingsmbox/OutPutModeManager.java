@@ -594,7 +594,10 @@ public class OutPutModeManager {
     }
 
     public static void change2NewModeWithoutFreeScale(SystemWriteManager swm, String newMode){
-
+        int[] curPosition = { 0, 0, 0, 0 };
+        int[] oldPosition = { 0, 0, 0, 0 };
+        int axis[] = {0, 0, 0, 0};
+        
         String curMode = Utils.readSysFile(swm, DISPLAY_MODE_SYSFS);
         Log.d(TAG,"===== change mode form *" + curMode + "* to *"+ newMode+"* , WithoutFreeScale");
         if(newMode.equals(curMode)){
@@ -608,19 +611,31 @@ public class OutPutModeManager {
              closeVdac(swm,newMode);
         }
         Utils.shadowScreen(swm, curMode);
-		swm.writeSysfs(PpscalerFile, "0");
-		swm.writeSysfs(FreescaleFb0File, "0");
-		swm.writeSysfs(FreescaleFb1File, "0");
-        swm.writeSysfs(DISPLAY_MODE_SYSFS,newMode);
-        swm.setProperty(COMMON_MODE_PROP,newMode);
-        saveNewMode2Prop(swm , newMode);
-        
-    	int[] curPosition = {0, 0, 1280, 720};
-        curPosition = getPosition(swm,newMode);    
-        String value = curPosition[0] + " " + curPosition[1]+ " " + (curPosition[2] + curPosition[0] ) + " "+ (curPosition[3] + curPosition[1] ) ;
+        swm.writeSysfs(PpscalerFile, "0");
+        swm.writeSysfs(FreescaleFb0File, "0");
+        swm.writeSysfs(FreescaleFb1File, "0");
+        swm.writeSysfs(DISPLAY_MODE_SYSFS, newMode);
+        swm.setProperty(COMMON_MODE_PROP, newMode);
+        saveNewMode2Prop(swm, newMode);
 
-        if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){                     
-            
+        curPosition = getPosition(swm, newMode);
+        oldPosition = getPosition(swm, curMode);
+        String axisStr = Utils.readSysFile(swm, VideoAxisFile);
+        Log.d(TAG, "change2NewModeWithoutFreeScale, cur axis is: " + axisStr);
+        String[] axisArray = axisStr.split(" ");
+        for(int i=0; i<axisArray.length; i++) {
+            if(i == axis.length){
+                break;
+            }
+            try {
+                axis[i] =  Integer.parseInt(axisArray[i]);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
             SettingsMboxActivity.mCurrentViewNum = 2 ;
             if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false) && newMode.contains("4k2k")){ 
                 Utils.setDensity("4k2knative");
@@ -644,9 +659,9 @@ public class OutPutModeManager {
             if((newMode.equals(COMMON_MODE_VALUE_LIST[5])) || (newMode.equals(COMMON_MODE_VALUE_LIST[6]))
                         || (newMode.equals(COMMON_MODE_VALUE_LIST[8])) || (newMode.equals(COMMON_MODE_VALUE_LIST[9]))){
                 swm.writeSysfs(OutputAxisFile, ((int)(curPosition[0]/2))*2 + " " + ((int)(curPosition[1]/2))*2 
-                + " 1280 720 "+ ((int)(curPosition[0]/2))*2 + " "+ ((int)(curPosition[1]/2))*2 + " 18 18");
-                    swm.writeSysfs(scaleAxisOsd0File, "0 0 " + (960 - (int)(curPosition[0]/2) )
-                + " " + (1080 - (int)(curPosition[1]/2) ));
+                    + " 1280 720 "+ ((int)(curPosition[0]/2))*2 + " "+ ((int)(curPosition[1]/2))*2 + " 18 18");
+                swm.writeSysfs(scaleAxisOsd0File, "0 0 " + (960 - (int)(curPosition[0]/2) - 1)
+                    + " " + (1080 - (int)(curPosition[1]/2) - 1));
                 swm.writeSysfs(request2XScaleFile, "7 " + ((int)(curPosition[2]/2)) + " " + ((int)(curPosition[3]/2))*2);
                 swm.writeSysfs(scaleAxisOsd1File, "1280 720 " + ((int)(curPosition[2]/2))*2 + " " + ((int)(curPosition[3]/2))*2);
                 swm.writeSysfs(scaleOsd1File, "0x10001");
@@ -658,12 +673,36 @@ public class OutPutModeManager {
                 swm.writeSysfs(scaleOsd1File, "0x10001");
             }
 
-
-    	    swm.writeSysfs(VideoAxisFile, curPosition[0] + " " + curPosition[1]
-    					+ " " + (curPosition[2] + curPosition[0] ) + " "
-    					+ (curPosition[3] + curPosition[1] ));
+            int oldX = oldPosition[0];
+            int oldY = oldPosition[1];
+            int oldWidth = oldPosition[2];
+            int oldHeight = oldPosition[3];
+            int curX = curPosition[0];
+            int curY = curPosition[1];
+            int curWidth = curPosition[2];
+            int curHeight = curPosition[3];
+            int temp1 = curX;
+            int temp2 = curY;
+            int temp3 = curWidth;
+            int temp4 = curHeight;
+            Log.d(TAG, "change2NewModeWithoutFreeScale, old is: " 
+                + oldX + " " + oldY + " " + oldWidth + " " + oldHeight);
+            Log.d(TAG, "change2NewModeWithoutFreeScale, new is: " 
+                + curX + " " + curY + " " + curWidth + " " + curHeight);
+            Log.d(TAG, "change2NewModeWithoutFreeScale, axis is: " 
+                + axis[0] + " " + axis[1] + " " + axis[2] + " " + axis[3]);
+            if(!((axis[0] == 0) && (axis[1] == 0) && (axis[2] == -1) && (axis[3] == -1))
+                    && !((axis[0] == 0) && (axis[1] == 0) && (axis[2] == 0) && (axis[3] == 0))) {
+                temp1 = (axis[0] - oldX) * curWidth / oldWidth + curX;
+                temp2 = (axis[1] - oldY) * curHeight / oldHeight + curY;
+                temp3 = (axis[2] - axis[0] + 1) * curWidth / oldWidth;
+                temp4 = (axis[3] - axis[1] + 1) * curHeight / oldHeight;
+            }
+            Log.d(TAG, "change2NewModeWithoutFreeScale, changed axis is: " 
+                + temp1 + " " + temp2 + " " + (temp3 + temp1 - 1) + " " + (temp4 + temp2 - 1));
+            swm.writeSysfs(VideoAxisFile, temp1 + " " + temp2 + " "
+                + (temp3 + temp1 - 1) + " " + (temp4 + temp2 - 1));
         }
-        
     }
 
     private static void saveNewMode2Prop(SystemWriteManager swm, String newMode){
