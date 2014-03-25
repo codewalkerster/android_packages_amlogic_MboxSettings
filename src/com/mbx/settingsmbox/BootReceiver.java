@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.WindowManagerPolicy;
 import android.os.Handler;
 import android.os.Message;
+import android.os.UEventObserver;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -242,6 +243,7 @@ public class BootReceiver extends BroadcastReceiver {
                 } 
             }
         }
+        mHDMIObserver.startObserving("DEVPATH=/devices/virtual/switch/hdmi");
  
 	}
 
@@ -463,5 +465,24 @@ public class BootReceiver extends BroadcastReceiver {
         String isDialNormEnable = sharedPrefrences.getString("dts_dial_norm", "true");
         mDigitalAudioManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
     }
+
+    private UEventObserver mHDMIObserver = new UEventObserver() {
+        @Override
+        public void onUEvent(UEventObserver.UEvent event) {
+            HdmiManager mHdmiManager = new HdmiManager(mContext);
+            
+            boolean plugged = "1".equals(event.get("SWITCH_STATE")); 
+            if(plugged){
+                Log.d(TAG,"============= HDMIObserver plugged");                    
+                    mHdmiManager.hdmiPlugged();
+                //}
+            }else{
+                Log.d(TAG,"============== HDMIObserver unplugged");
+                if(sw.getPropertyBoolean("ro.platform.cvbs_hotplug", false)){
+                    mHdmiManager.hdmiUnPlugged();
+                } 
+            }
+        }
+    };
 
 }
