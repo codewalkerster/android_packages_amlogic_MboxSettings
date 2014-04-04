@@ -812,7 +812,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			editor.commit();
 		}
 		upDateStatusBarUi();
-
+		restartActivitySelf();
 	}
 
 	void upDateStatusBarUi() {
