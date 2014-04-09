@@ -1071,24 +1071,25 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     }
 
     private void setEthCheckBoxSwitch(boolean openEthernet){ 
-        if(openEthernet){           
-            if(getEthCheckBoxState()){            
-                enableEthernetView(false);
-                mHander.removeMessages(UPDATE_ETH_STATUS);
-                mEthConnectingFlag = false;
-
-            }else{
+        if(getEthCheckBoxState()) {
+            enableEthernetView(false);
+            mHander.removeMessages(UPDATE_ETH_STATUS);
+            mEthConnectingFlag = false;
+        } else {
+            if(openEthernet && isEthDeviceAdded()){           
                 enableEthernetView(true);
+                /*
                 Message msg = mHander.obtainMessage();
                 msg.what = UPDATE_ETH_STATUS;
                 mHander.sendMessageDelayed(msg,9000);
                 mEthConnectingFlag = true;
+                */
+            }else{
+                mEthernetManager.setEthEnabled(false); 
+                Toast.makeText(mContext, mContext.getResources().getString(R.string.ethernet_inplug_notice), 4000).show(); 
+                if(!getWifiCheckBoxState())
+                    updateNetWorkUI(0);
             } 
-        }else{
-            mEthernetManager.setEthEnabled(false); 
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.ethernet_inplug_notice), 4000).show(); 
-            if(!getWifiCheckBoxState())
-                updateNetWorkUI(0);
         }
          updateEthCheckBoxUI();   
          upDateWifiCheckBoxUI();
