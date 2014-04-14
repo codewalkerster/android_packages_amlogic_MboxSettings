@@ -1002,6 +1002,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
 
 	private void showWifiDisconnectedView() {
+        oobe_mAcessPointListView.setVisibility(View.GONE);
 		oobe_wifi_connected.setVisibility(View.GONE);
 		oobe_wifi_input_password.setVisibility(View.GONE);
 		oobe_wifi_not_connect.setVisibility(View.VISIBLE);

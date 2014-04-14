@@ -1392,6 +1392,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
 	private void showWifiDisconnectedView() {
+        mAcessPointListView.setVisibility(View.GONE);
 		wifi_connected.setVisibility(View.GONE);
 		wifi_input_password.setVisibility(View.GONE);
 		wifi_not_connect.setVisibility(View.VISIBLE);

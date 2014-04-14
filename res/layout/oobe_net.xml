@@ -165,6 +165,7 @@
                             android:background="@drawable/wifi_background"
                             android:listSelector="@drawable/listview_item"
                             android:nextFocusLeft="@id/oobe_select_wifi"
+                            android:visibility="gone"
                             >
                         </ListView>
                     </LinearLayout>
