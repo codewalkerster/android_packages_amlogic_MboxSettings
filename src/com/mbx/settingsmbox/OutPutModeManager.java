@@ -394,22 +394,6 @@ public class OutPutModeManager {
              closeVdac(swm,newMode);
        }
 
-       int oldIndex = -1;
-       int newIndex = -1;
-       if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-
-            if(isNeedShowConfirmDialog){
-                oldIndex = getModeIndex(curMode);
-                newIndex = getModeIndex(newMode);
-                if((oldIndex >= 6 && newIndex < 6)||(oldIndex < 6 && newIndex >= 6)){
-                    setSharedPrefrences("resume_show_dialog",true);
-                }else{
-                    setSharedPrefrences("resume_show_dialog",false);
-                } 
-            }else{
-                setSharedPrefrences("resume_show_dialog",false);
-            }
-        }
         Utils.writeSysFile(swm, DISPLAY_MODE_SYSFS,newMode);
         
         int[] curPosition = getPosition(swm ,newMode);
@@ -417,13 +401,24 @@ public class OutPutModeManager {
         
         if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){ 
             //close freescale
-            Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0"); 
+           // Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0"); 
+            
+            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false)){ 
+                if (newMode.contains("4k2k")){
+                    //Utils.setDensity("4k2knative"); 
+                   // Utils.setDisplaySize(3840, 2160);
+                }else {
+                    Utils.setDensity(newMode);
+                    Utils.setDisplaySize(1920, 1080);
+                }
+            }
+            
             if(newMode.contains("4k2k")){    
 
                 if(!swm.getPropertyBoolean("ro.platform.has.native4k2k", false)){ 
                     //set to 1080p as UI base
-                    Utils.setDensity(newMode);
-                    Utils.setDisplaySize(1920, 1080);
+                 //   Utils.setDensity(newMode);
+                 //   Utils.setDisplaySize(1920, 1080);
                            
                     //open freescale ,  scale up from 1080p to 4k
                     Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
@@ -448,8 +443,8 @@ public class OutPutModeManager {
             }else if(newMode.contains("1080")){ 
                 curPosition = getPosition(swm ,newMode);
                 
-                Utils.setDensity(newMode);
-                Utils.setDisplaySize(1920, 1080);
+               // Utils.setDensity(newMode);
+              //  Utils.setDisplaySize(1920, 1080);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079");
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
@@ -461,39 +456,30 @@ public class OutPutModeManager {
              }else if(newMode.contains("720")){ 
                 curPosition = getPosition(swm ,newMode);
                 
-                Utils.setDensity(newMode);
-                Utils.setDisplaySize(1280, 720);
+              //  Utils.setDensity(newMode);
+             //   Utils.setDisplaySize(1920, 1080);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
-                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 719");
+                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079");
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
-                if (curPosition[0] == 0 && curPosition[1] == 0)
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0");
-                else
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
+                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
                 
             }else if(newMode.contains("576")){  
 
                 
-                Utils.setDensity(newMode);
-                Utils.setDisplaySize(1280,720);
+             //   Utils.setDensity(newMode);
+              //  Utils.setDisplaySize(1920,1080);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
-                if (newMode.equals("576i"))
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 721");
-                else
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 719");
+                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079");
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
                 
             }else if(newMode.contains("480")){  
 
                 
-                Utils.setDensity(newMode);
-                Utils.setDisplaySize(1280,720);
+              //  Utils.setDensity(newMode);
+               // Utils.setDisplaySize(1920,1080);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/freescale_mode","1");
-                if (newMode.equals("480i"))
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 721");
-                else
-                    Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1279 719");
+                Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale_axis","0 0 1919 1079");
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/window_axis",mWinAxis);
                 Utils.writeSysFile(swm, "/sys/class/graphics/fb0/free_scale","0x10001");
                 
@@ -544,14 +530,10 @@ public class OutPutModeManager {
         if(isNeedShowConfirmDialog){
             Intent i2 = new Intent(); 
             if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-                    if((oldIndex >= 6 && newIndex < 6)||(oldIndex < 6 && newIndex >= 6)){
-                        Log.d(TAG,"===== wait for onresume");
-                    }else{
-                        i2.setAction("action.show.dialog");
-                        mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
-                        Log.d(TAG,"===== send broadcast to start confirm dialog");
-                        isNeedShowConfirmDialog = false;
-                    }
+                 i2.setAction("action.show.dialog");
+                 mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
+                 Log.d(TAG,"===== send broadcast to start confirm dialog");
+                 isNeedShowConfirmDialog = false;
             }else{
                 i2.setAction("action.show.dialog");
                 i2.putExtra("old_output_mode",curMode);
@@ -637,19 +619,17 @@ public class OutPutModeManager {
         
         if(swm.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
             SettingsMboxActivity.mCurrentViewNum = 2 ;
-            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false) && newMode.contains("4k2k")){ 
-                Utils.setDensity("4k2knative");
-            } else { 
-                Utils.setDensity(newMode);
+            
+            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false)){ 
+                if (newMode.contains("4k2k")){
+                    Utils.setDensity("4k2knative"); 
+                    Utils.setDisplaySize(3840, 2160);
+                }else {
+                    Utils.setDensity(newMode);
+                    Utils.setDisplaySize(1920, 1080);
+                }
             }
 
-            if(swm.getPropertyBoolean("ro.platform.has.native4k2k", false) && newMode.contains("4k2k")){ 
-                Utils.setDisplaySize(3840, 2160);
-            } else if(newMode.contains("1080") || newMode.contains("4k2k")){
-                Utils.setDisplaySize(1920, 1080);
-            } else {
-                Utils.setDisplaySize(1280, 720);
-            }
             String display_value = curPosition[0] + " "+ curPosition[1] + " "
                     + 1920+ " "+ 1080+ " "
                     + curPosition[0]+ " " + curPosition[1]+ " " + 18+ " " + 18;

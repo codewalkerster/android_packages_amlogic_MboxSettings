@@ -172,10 +172,10 @@ public class Utils {
 
     public static void setDensity(String mode){
         int density = 240;
-        if(mode.contains("720") || mode.contains("480") || mode.contains("576"))
-            density = 160;
+
         if(mode.equals("4k2knative"))
             density = 480;
+        
         IWindowManager wm = IWindowManager.Stub.asInterface(ServiceManager.checkService(
                 Context.WINDOW_SERVICE));
         if (wm == null) {
