@@ -68,8 +68,6 @@
                 <action android:name="android.intent.action.HDMI_HW_PLUGGED" />
                 <action android:name="android.net.wifi.SCAN_RESULTS" />
                 <action android:name="android.mboxsetting.enable.BLANK0" />
-                <!--use this action to start Mboxsetting earlier-->
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
         </receiver>
         <service android:name=".CecCheckingService" >

@@ -90,6 +90,7 @@ public class BootReceiver extends BroadcastReceiver {
         sw = (SystemWriteManager) mContext.getSystemService("system_write");
         sharedPrefrences = context.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        OutPutModeManager mOutputManager = new OutPutModeManager(mContext);
         String action = intent.getAction();
         
         //======================================start system boot process
@@ -112,19 +113,17 @@ public class BootReceiver extends BroadcastReceiver {
             //======== for hdmi and cvbs mode check
             String currentMode = sw.readSysfs(mCurrentResolution);
             Log.d(TAG,"===== currentMode : " + currentMode);
-            if(HdmiManager.isHDMIPlugged(sw)){
+            if(mOutputManager.isHDMIPlugged()){
                 Log.d(TAG,"===== hdmi plug ");
                 // we need to check wheather the tv support current resolution or not 
-                // so call HdmiManager.hdmiPlugged() to check no matter hdmi auto-detection is on or off
-                //if(currentMode.contains("cvbs")){
-                    HdmiManager mHdmiManager = new HdmiManager(mContext);
-                    mHdmiManager.hdmiPlugged(); 
+                // so call mOutputManager.hdmiPlugged() to check no matter hdmi auto-detection is on or off
+                //if(currentMode.contains("cvbs")){;
+                    mOutputManager.hdmiPlugged(); 
                 //}
             }else{
                  Log.d(TAG,"===== hdmi unplug ");
                 //if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-                    HdmiManager mHdmiManager = new HdmiManager(mContext);
-                    mHdmiManager.hdmiUnPlugged();  
+                    mOutputManager.hdmiUnPlugged();  
                 //}
             }
 
@@ -151,9 +150,8 @@ public class BootReceiver extends BroadcastReceiver {
     
 		if ("AUTO.CHANGE.OUTPUT.MODE".equals(action)) {
             isAutoSelectOutMode = sharedPrefrences.getString( "auto_output_mode", "true");
-            if("true".equals(isAutoSelectOutMode) && HdmiManager.isHDMIPlugged(sw)){
-                HdmiManager mHdmiManager = new HdmiManager(mContext);
-                mHdmiManager.hdmiPlugged();  
+            if("true".equals(isAutoSelectOutMode) && mOutputManager.isHDMIPlugged()){
+                mOutputManager.hdmiPlugged();  
             }
 		}
 
@@ -224,27 +222,7 @@ public class BootReceiver extends BroadcastReceiver {
             //WifiManager mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
             //mWifiManager.reconnect();   
              //=========for wifi connect 
-        }
-
-        if(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED.equals(action)){
-            boolean plugged = intent.getBooleanExtra(WindowManagerPolicy.EXTRA_HDMI_HW_PLUGGED_STATE, false); 
-            if(plugged){
-                Log.d(TAG,"===== hdmi plugged");
-                //String currentMode = sw.readSysfs(mCurrentResolution);
-                //if(currentMode.contains("cvbs")){
-                    HdmiManager mHdmiManager = new HdmiManager(mContext);
-                    mHdmiManager.hdmiPlugged();
-                //}
-            }else{
-                Log.d(TAG,"===== hdmi unplugged");
-                if(sw.getPropertyBoolean("ro.platform.cvbs_hotplug", false)){
-                    HdmiManager mHdmiManager = new HdmiManager(mContext);
-                    mHdmiManager.hdmiUnPlugged();
-                } 
-            }
-        }
-        mHDMIObserver.startObserving("DEVPATH=/devices/virtual/switch/hdmi");
- 
+        } 
 	}
 
     void reconnectWifi(){
@@ -295,7 +273,6 @@ public class BootReceiver extends BroadcastReceiver {
                         mWifiManager.setWifiEnabled(false);
                     }
              }
-
     }
 
 	void upDateWeather() {
@@ -311,7 +288,6 @@ public class BootReceiver extends BroadcastReceiver {
 			Log.d(TAG, "wifi connect , send weather info right now !!!");
 			new WeatherBroadcastThread(mContext).start();
 		}
-
 	}
 
 	void setSharedPrefrences() {
@@ -320,7 +296,6 @@ public class BootReceiver extends BroadcastReceiver {
 
 		editor.putInt("first_start_up", 0);
 		editor.commit();
-
 	}
 
 	private boolean isAmlogicVideoPlayerRunning() {
@@ -336,98 +311,6 @@ public class BootReceiver extends BroadcastReceiver {
 			return true;
 		}
 		return false;
-
-	}
-
-	private String getBestMatchResolution() {
-		ArrayList<String> resolutionList = new ArrayList<String>();
-
-		FileReader fileReader = null;
-		BufferedReader bufferedReader = null;
-		String readLine = null;
-
-		try {
-			fileReader = new FileReader(mOutputStatusConfig);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		bufferedReader = new BufferedReader(fileReader);
-
-		try {
-			while ((readLine = bufferedReader.readLine()) != null) {
-				resolutionList.add(readLine);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			bufferedReader.close();
-			fileReader.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if (resolutionList.isEmpty()) {
-			return "720p";
-		}
-
-		if (isForTopResolution) {
-			for (int index = 0; index < mUsualResolutions.length; index++) {
-				if (resolutionList.contains(mUsualResolutions[index])) {
-					return mUsualResolutions[index];
-				}
-			}
-		} else {
-			for (int index = 0; index < resolutionList.size(); index++) {
-				if (resolutionList.get(index).contains("*")) {
-					return resolutionList.get(index);
-				}
-			}
-		}
-
-		return "720p";
-	}
-
-	public String getBestResolution(String resolution) {
-		// Force to set to 720p
-		if (resolution == null) {
-			resolution = "720p" + FREQ_DEFAULT;
-		} else {
-			if (resolution.contains("480i")) {
-				resolution = "480i";
-			} else if (resolution.contains("480cvbs")) {
-				resolution = "480cvbs";
-			} else if (resolution.contains("480p")) {
-				resolution = "480p";
-			} else if (resolution.contains("576i")) {
-				resolution = "576i";
-			} else if (resolution.contains("576cvbs")) {
-				resolution = "576cvbs";
-			} else if (resolution.contains("576p")) {
-				resolution = "576p";
-			} else if (resolution.contains("720p")) {
-				if (resolution.contains(FREQ_SETTING)) {
-					resolution = "720p" + FREQ_SETTING;
-				} else {
-					resolution = "720p" + FREQ_DEFAULT;
-				}
-			} else if (resolution.contains("1080i")) {
-				if (resolution.contains(FREQ_SETTING)) {
-					resolution = "1080i" + FREQ_SETTING;
-				} else {
-					resolution = "1080i" + FREQ_DEFAULT;
-				}
-			} else if (resolution.contains("1080p")) {
-				if (resolution.contains(FREQ_SETTING)) {
-					resolution = "1080p" + FREQ_SETTING;
-				} else {
-					resolution = "1080p" + FREQ_DEFAULT;
-				}
-			}
-		}
-		return resolution;
 	}
 
     private boolean getWifiCheckBoxState(){
@@ -465,24 +348,4 @@ public class BootReceiver extends BroadcastReceiver {
         String isDialNormEnable = sharedPrefrences.getString("dts_dial_norm", "true");
         mDigitalAudioManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
     }
-
-    private UEventObserver mHDMIObserver = new UEventObserver() {
-        @Override
-        public void onUEvent(UEventObserver.UEvent event) {
-            HdmiManager mHdmiManager = new HdmiManager(mContext);
-            
-            boolean plugged = "1".equals(event.get("SWITCH_STATE")); 
-            if(plugged){
-                Log.d(TAG,"============= HDMIObserver plugged");                    
-                    mHdmiManager.hdmiPlugged();
-                //}
-            }else{
-                Log.d(TAG,"============== HDMIObserver unplugged");
-                if(sw.getPropertyBoolean("ro.platform.cvbs_hotplug", false)){
-                    mHdmiManager.hdmiUnPlugged();
-                } 
-            }
-        }
-    };
-
 }

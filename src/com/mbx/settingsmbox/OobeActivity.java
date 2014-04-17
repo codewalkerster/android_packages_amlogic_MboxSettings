@@ -1054,8 +1054,8 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	}
 
     private boolean isNeedShowDialog(){
-        HdmiManager mHdmiManager = new HdmiManager(this);
-        String defaultMode = mHdmiManager.getBestMatchResolution();
+        OutPutModeManager mOutPutModeManager = new OutPutModeManager(this);
+        String defaultMode = mOutPutModeManager.getBestMatchResolution();
         String currentMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
         if(defaultMode.equals(currentMode) || defaultMode.contains("cvbs") || !isFirstStartActivity){
             return false;

@@ -96,7 +96,7 @@ public class OobeDisplayConfirmDialog extends Dialog {
 	}
 
 	private void setDefaultOutputMode() {
-        HdmiManager mHdmiManager = new HdmiManager(mContext);
-        mHdmiManager.hdmiPlugged();  
+        OutPutModeManager mOutPutModeManager = new OutPutModeManager(mContext);
+        mOutPutModeManager.hdmiPlugged();  
 	}
 }

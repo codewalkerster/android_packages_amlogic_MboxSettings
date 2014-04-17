@@ -135,6 +135,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private LinearLayout root_wifi_view;
 
 	private EthernetManager mEthernetManager;
+    private OutPutModeManager mOutPutModeManager;
 
 	private WifiManager mWifiManager;
     private TextView eth_IP_value = null;
@@ -268,6 +269,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		sw = (SystemWriteManager) mContext.getSystemService("system_write");
         mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
 		mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        mOutPutModeManager = new OutPutModeManager(this);
         mHander = new MyHandle();
 
 		settingsContentLayout_01 = (LinearLayout) findViewById(R.id.settingsContent01);
@@ -281,7 +283,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		auto_set_screen = (TextView) findViewById(R.id.auto_set_screen);
 
 		current_mode_value = (TextView) findViewById(R.id.current_mode_value);
-        current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,1));
+        current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
 		cvbs_current_mode_value = (TextView) findViewById(R.id.cvbs_current_mode_value);
         miracast_name = (TextView) findViewById(R.id.miracast_name);
 		sharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING,
@@ -852,10 +854,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
        
         boolean isDualOutPutMode = sw.getPropertyBoolean("ro.platform.has.cvbsmode", false);
         if(!isDualOutPutMode){
-            if(HdmiManager.isHDMIPlugged(sw)){
+            if(mOutPutModeManager.isHDMIPlugged()){
                 cvbs_screen_self_set.setVisibility(View.GONE);
-                Log.d(TAG,"===== hdmi mode : " +  OutPutModeManager.getCurrentOutPutModeTitle(sw,0));
-                current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,1));
+                Log.d(TAG,"===== hdmi mode : " +  mOutPutModeManager.getCurrentOutPutModeTitle(0));
+                current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
             }else{
                 cvbs_screen_self_set.setVisibility(View.VISIBLE);
                 secreen_auto.setFocusable(false);
@@ -865,13 +867,13 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			    self_select_mode.setTextColor(Color.GRAY);
 			    current_mode_value.setTextColor(Color.GRAY);
                 auto_set_screen.setTextColor(Color.GRAY);
-                cvbs_current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,0));
+                cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
             }
             
         }else{
              cvbs_screen_self_set.setVisibility(View.VISIBLE);
-             cvbs_current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,0));
-             current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,1));
+             cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
+             current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
         }       
 	}
 
@@ -888,8 +890,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			editor.putString("auto_output_mode", "true");
 			editor.commit();
 
-            HdmiManager mHdmiManager = new HdmiManager(mContext);
-            mHdmiManager.hdmiPlugged();
+            mOutPutModeManager.hdmiPlugged();
 
 			//Intent i = new Intent("AUTO.CHANGE.OUTPUT.MODE");
 			//mContext.sendBroadcast(i);
@@ -1853,7 +1854,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                         current_mode_value.setTextColor(Color.GRAY);
                     }
                     cvbs_screen_self_set.setVisibility(View.GONE);
-                    current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,1)); 
+                    current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1)); 
                 }else{
                     Log.d(TAG,"===== himi unplugged");
 
@@ -1865,7 +1866,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     self_select_mode.setTextColor(Color.GRAY);
                     current_mode_value.setTextColor(Color.GRAY);
                     auto_set_screen.setTextColor(Color.GRAY);
-                    cvbs_current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,0));     
+                    cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));     
                 }
             }
             if("action.show.dialog".equals(action)){
@@ -1893,7 +1894,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		View outPutView = (View) mLayoutInflater.inflate(R.layout.out_mode_popup_window, null, true);
 
 		ListView listview = (ListView) outPutView.findViewById(R.id.output_list);
-		final OutPutModeManager output = new OutPutModeManager(mContext,listview,mode);
+		final OutPutModeManager output = new OutPutModeManager(mContext, listview, mode);
         output.setHandler(mHander);
 		listview.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -2712,10 +2713,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 case UPDATE_OUTPUT_MODE_UI :
                     String mode = sw.readSysfs(DISPLAY_MODE_SYSFS);
                     if(mode.contains("cvbs")){
-                        cvbs_current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,0));
+                        cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
                     }
                     else{
-                        current_mode_value.setText(OutPutModeManager.getCurrentOutPutModeTitle(sw,1));
+                        current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
                     }
                     break ;
 

@@ -106,8 +106,8 @@ public class DisplayConfirmDialog extends Dialog {
         if(old_mode == null){
            old_mode = "720p"; 
         }
-        OutPutModeManager output = new OutPutModeManager(mContext,"hdmi");
+        OutPutModeManager output = new OutPutModeManager(mContext);
         output.setConfirmDialogState(false);
-        output.change2NewMode(sw,old_mode);
+        output.change2NewMode(old_mode);
 	}
 }
