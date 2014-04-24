@@ -220,16 +220,7 @@ public class OutPutModeManager {
 
     public void hdmiPlugged(){
         Log.d(TAG,"===== hdmiPlugged()");
-        SharedPreferences sharedPrefrences = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
-		String isAutoMode = sharedPrefrences.getString("auto_output_mode", "true");
-        boolean isAutoHdmiMode = false ;
-        if("true".equals(isAutoMode)){
-            isAutoHdmiMode = true ;
-        }else{
-            isAutoHdmiMode = false ;
-        }
-
-        mom.setHdmiPlugged(isAutoHdmiMode);
+        mom.setHdmiPlugged();
     }
 
     public void hdmiUnPlugged(){

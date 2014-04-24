@@ -633,6 +633,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
+        filter.addAction(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
 
@@ -830,75 +831,74 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	}
 
-	void upDateOutModeUi() {
+    boolean getAutoHDMIMode() {
+        boolean isAutoHdmiMode = true;
+        try {
+            isAutoHdmiMode = ((0 == Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO))?false:true) ;
+        } catch (Settings.SettingNotFoundException se) {
+            Log.d(TAG, "Error: "+se);
+        }
+        return isAutoHdmiMode;
+    }
+    
+    void upDateOutModeUi() {
+        boolean isAutoHdmiMode = getAutoHDMIMode();
+        if (isAutoHdmiMode) {
+            screen_self_set.setFocusable(false);
+            screen_self_set.setClickable(false);
+            self_select_mode.setTextColor(Color.GRAY);
+            current_mode_value.setTextColor(Color.GRAY);
+            auto_set_screen.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
+            //Message msg = mHander.obtainMessage();
+            //msg.what = UPDATE_OUTPUT_MODE_UI ;
+            //mHander.sendMessage(msg);
 
-		String isAutoSelectOutMode = sharepreference.getString("auto_output_mode", "true");
-
-		if (isAutoSelectOutMode.equals("true")) {
-			screen_self_set.setFocusable(false);
-			screen_self_set.setClickable(false);
-			self_select_mode.setTextColor(Color.GRAY);
-			current_mode_value.setTextColor(Color.GRAY);
-			auto_set_screen.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
-            Message msg = mHander.obtainMessage();
-            msg.what = UPDATE_OUTPUT_MODE_UI ;
-            mHander.sendMessage(msg);
-            
-		} else {
-			auto_set_screen.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
-			screen_self_set.setFocusable(true);
-			screen_self_set.setClickable(true);
-			self_select_mode.setTextColor(Color.WHITE);
-			current_mode_value.setTextColor(Color.WHITE);
-		}
+        } else {
+            auto_set_screen.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
+            screen_self_set.setFocusable(true);
+            screen_self_set.setClickable(true);
+            self_select_mode.setTextColor(Color.WHITE);
+            current_mode_value.setTextColor(Color.WHITE);
+        }
        
         boolean isDualOutPutMode = sw.getPropertyBoolean("ro.platform.has.cvbsmode", false);
         if(!isDualOutPutMode){
             if(mOutPutModeManager.isHDMIPlugged()){
+                secreen_auto.setFocusable(true);
+                secreen_auto.setClickable(true);
+                auto_set_screen.setTextColor(Color.WHITE);
                 cvbs_screen_self_set.setVisibility(View.GONE);
-                Log.d(TAG,"===== hdmi mode : " +  mOutPutModeManager.getCurrentOutPutModeTitle(0));
+                Log.d(TAG,"===== hdmi mode : " +  mOutPutModeManager.getCurrentOutPutModeTitle(1));
                 current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
             }else{
                 cvbs_screen_self_set.setVisibility(View.VISIBLE);
                 secreen_auto.setFocusable(false);
                 secreen_auto.setClickable(false);
                 screen_self_set.setFocusable(false);
-			    screen_self_set.setClickable(false);
-			    self_select_mode.setTextColor(Color.GRAY);
-			    current_mode_value.setTextColor(Color.GRAY);
+                screen_self_set.setClickable(false);
+                self_select_mode.setTextColor(Color.GRAY);
+                current_mode_value.setTextColor(Color.GRAY);
                 auto_set_screen.setTextColor(Color.GRAY);
                 cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
             }
-            
+
         }else{
-             cvbs_screen_self_set.setVisibility(View.VISIBLE);
-             cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
-             current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
+            cvbs_screen_self_set.setVisibility(View.VISIBLE);
+            cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
+            current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
         }       
-	}
+    }
 
-	void setAutoOutModeSwitch() {
-		String isAuto = sharepreference.getString("auto_output_mode", "true");
-		Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,
-				Context.MODE_PRIVATE).edit();
-		if (isAuto.equals("true")) {
-
-			editor.putString("auto_output_mode", "false");
-			editor.commit();
-
-		} else {
-			editor.putString("auto_output_mode", "true");
-			editor.commit();
-
+    void setAutoOutModeSwitch() {
+        boolean isAutoHdmiMode = getAutoHDMIMode();
+        if (isAutoHdmiMode) {
+            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 0);
+        } else {
+            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 1);
             mOutPutModeManager.hdmiPlugged();
-
-			//Intent i = new Intent("AUTO.CHANGE.OUTPUT.MODE");
-			//mContext.sendBroadcast(i);
-		}
-
-		upDateOutModeUi();
-
-	}
+        }
+        upDateOutModeUi();
+    }
 
 	private void initNetView() {
 		mCurrentContentNum = VIEW_NETWORK;
@@ -1346,7 +1346,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private void upDateEthernetInfo() {
 		Log.d(TAG, "===== update ethernet info ");
         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
-		if (isEthConnected) {
+        
+		if (isEthConnected){
             if(eth_ip_layout != null && wifi_connected != null){
                 eth_ip_layout.setVisibility(View.VISIBLE);
                 wifi_connected.setVisibility(View.VISIBLE);
@@ -1366,7 +1367,6 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 					Log.d(TAG,"=====  eth_IP_value is null !!!");
 				}	
 			//}
-
 		} else {
 		    if(eth_connected_tip != null && eth_ip_layout != null){
 			    eth_connected_tip.setText(R.string.ethernet_error);
@@ -1832,7 +1832,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                  
 		    }
 
-
+            if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
+                upDateOutModeUi();
+            }
+            
             if(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED.equals(action)){
                 boolean plugged = intent.getBooleanExtra(WindowManagerPolicy.EXTRA_HDMI_HW_PLUGGED_STATE, false); 
                 if(plugged){
@@ -1840,9 +1843,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     secreen_auto.setFocusable(true);
                     secreen_auto.setClickable(true);
                     auto_set_screen.setTextColor(Color.WHITE);
-                    SharedPreferences sharepreference = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE);
-                    String isAutoSelectOutMode = sharepreference.getString("auto_output_mode", "true");
-                    if(isAutoSelectOutMode.equals("false")){
+                    boolean isAutoHdmiMode = getAutoHDMIMode();
+                    if(!isAutoHdmiMode){
                         screen_self_set.setFocusable(true);
                         screen_self_set.setClickable(true);
                         self_select_mode.setTextColor(Color.WHITE);

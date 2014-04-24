@@ -147,13 +147,6 @@ public class BootReceiver extends BroadcastReceiver {
 
 		}
         //======================================end system boot process
-    
-		if ("AUTO.CHANGE.OUTPUT.MODE".equals(action)) {
-            isAutoSelectOutMode = sharedPrefrences.getString( "auto_output_mode", "true");
-            if("true".equals(isAutoSelectOutMode) && mOutputManager.isHDMIPlugged()){
-                mOutputManager.hdmiPlugged();  
-            }
-		}
 
         //=================for weather 
 		if ("android.amlogic.launcher.REQUEST_WEATHER".equals(action)) {
