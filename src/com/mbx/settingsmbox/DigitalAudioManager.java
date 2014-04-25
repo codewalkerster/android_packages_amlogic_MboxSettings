@@ -8,6 +8,7 @@ public class DigitalAudioManager {
     private final String DigitalRawFile = "/sys/class/audiodsp/digital_raw";
     private final String mAudoCapFile = "/sys/class/amhdmitx/amhdmitx0/aud_cap";
     private final String PASSTHROUGH_PROPERTY = "ubootenv.var.digitaudiooutput";
+    private final String HDMI_AUIDO_SWITCH = "/sys/class/amhdmitx/amhdmitx0/config";
 
     private SystemWriteManager sw = null;
 
@@ -20,34 +21,41 @@ public class DigitalAudioManager {
         String mAudioCapInfo = sw.readSysfs(mAudoCapFile);
         if(mAudioCapInfo.contains("Dobly_Digital+")){
             sw.writeSysfs(DigitalRawFile,"2");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
             sw.setProperty(PASSTHROUGH_PROPERTY, "HDMI passthrough");
             return 2;
         }else if(mAudioCapInfo.contains("AC-3")){
             sw.writeSysfs(DigitalRawFile,"1");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
             sw.setProperty(PASSTHROUGH_PROPERTY, "SPDIF passthrough");
             return 1;
         }else{
             sw.writeSysfs(DigitalRawFile,"0");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
             sw.setProperty(PASSTHROUGH_PROPERTY, "PCM");
             return 0;
         }
     }
 
 
-	public void setDigitalVoiceValue(String value) {
-		// value : "PCM" ,"RAW","SPDIF passthrough","HDMI passthrough"
-		sw.setProperty(PASSTHROUGH_PROPERTY, value);
-        
-		if ("PCM".equals(value)) {
-			sw.writeSysfs(DigitalRawFile, "0");
-		} else if ("RAW".equals(value)) {
-			sw.writeSysfs(DigitalRawFile, "1");
-		} else if ("SPDIF passthrough".equals(value)) {
-			sw.writeSysfs(DigitalRawFile, "1");
-		} else if ("HDMI passthrough".equals(value)) {
-			sw.writeSysfs(DigitalRawFile, "2");
-		}
-	}
+    public void setDigitalVoiceValue(String value) {
+        // value : "PCM" ,"RAW","SPDIF passthrough","HDMI passthrough"
+        sw.setProperty(PASSTHROUGH_PROPERTY, value);
+
+        if ("PCM".equals(value)) {
+            sw.writeSysfs(DigitalRawFile, "0");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
+        } else if ("RAW".equals(value)) {
+            sw.writeSysfs(DigitalRawFile, "1");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
+        } else if ("SPDIF passthrough".equals(value)) {
+            sw.writeSysfs(DigitalRawFile, "1");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
+        } else if ("HDMI passthrough".equals(value)) {
+            sw.writeSysfs(DigitalRawFile, "2");
+            sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
+        }
+    }
 
     public void enableDobly_DRC (boolean enable){
         if (enable){       //open DRC
