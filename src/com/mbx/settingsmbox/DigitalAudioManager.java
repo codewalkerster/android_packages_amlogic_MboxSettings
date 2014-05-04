@@ -72,9 +72,9 @@ public class DigitalAudioManager {
 
         int i = Integer.parseInt(mode);
         if (i >= 0 && i <= 3){
-            sw.writeSysfs("/sys/class/audiodsp/ac3_drc_control", "drcmode" + mode);
+            sw.writeSysfs("/sys/class/audiodsp/ac3_drc_control", "drcmode" + " " + mode);
         } else {
-            sw.writeSysfs("/sys/class/audiodsp/ac3_drc_control", "drcmode" + "2");
+            sw.writeSysfs("/sys/class/audiodsp/ac3_drc_control", "drcmode" + " " + "2");
         }
     }
 
@@ -83,9 +83,9 @@ public class DigitalAudioManager {
 
         int i = Integer.parseInt(mode);
         if (i >= 0 && i <= 1){
-            sw.writeSysfs("/sys/class/audiodsp/dts_dec_control", "dtsdmxmode" + mode);
+            sw.writeSysfs("/sys/class/audiodsp/dts_dec_control", "dtsdmxmode" + " " + mode);
         } else {
-            sw.writeSysfs("/sys/class/audiodsp/dts_dec_control", "dtsdmxmode" + "0");
+            sw.writeSysfs("/sys/class/audiodsp/dts_dec_control", "dtsdmxmode" + " " + "0");
         }
     }
 
