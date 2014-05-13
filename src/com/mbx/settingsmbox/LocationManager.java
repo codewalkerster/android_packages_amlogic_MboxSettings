@@ -277,12 +277,12 @@ public class LocationManager {
         listview.setSelection(mCurrentCityIndex);
 		mCurrentProviceName = getCurrentProvinceName();
 
-		Log.d(TAG, "=====mCurrentProviceName = " + mCurrentProviceName);
+		if (Utils.DEBUG) Log.d(TAG, "=====mCurrentProviceName = " + mCurrentProviceName);
 		mCityList = getCitysByProvinces(mCurrentProviceName);
 		if (mCityList != null)
-			Log.d(TAG, "===== mCityList.szie() is :" + mCityList.size());
+			if (Utils.DEBUG) Log.d(TAG, "===== mCityList.szie() is :" + mCityList.size());
 		else
-			Log.d(TAG, "===== mCityList is null !!!");
+			if (Utils.DEBUG) Log.d(TAG, "===== mCityList is null !!!");
 		mCityAdapter.refreshUI();
 
 	}

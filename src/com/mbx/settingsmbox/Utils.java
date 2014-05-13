@@ -11,6 +11,7 @@ import android.util.AndroidException;
 import android.os.ServiceManager;
 public class Utils {
 	private static final String TAG = "Utils";
+    public static final boolean DEBUG = false;
     private static final String mDisplayAxis1080 = " 1920 1080 ";
     private static final String mDisplayAxis720 = " 1280 720 ";
     private static final String mDisplayAxis576 = " 720 576 ";

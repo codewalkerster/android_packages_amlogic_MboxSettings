@@ -78,7 +78,7 @@ public class OobeDisplayConfirmDialog extends Dialog {
 
 	@Override
 	public void show() {
-	    Log.d(TAG, "====== show");
+	    if (Utils.DEBUG) Log.d(TAG, "====== show");
 		super.show();
         mHandle = new Handler();
 		mHandle.postDelayed(run,DELAY_TIME);

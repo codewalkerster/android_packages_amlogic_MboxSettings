@@ -72,7 +72,7 @@ public class AccessPointListAdapter extends BaseAdapter {
 	public void updateAccesspointList() {
 		mScanResultList = mWifiUtils.getWifiAccessPointList();
         notifyDataSetChanged();
-		Log.d(TAG, "update Accesspoint List now ,the size is : " + mScanResultList.size());
+		if (Utils.DEBUG) Log.d(TAG, "update Accesspoint List now ,the size is : " + mScanResultList.size());
 	}
 
 	class sortByLevel implements Comparator<ScanResult> {
@@ -119,7 +119,7 @@ public class AccessPointListAdapter extends BaseAdapter {
         String name = ssid.substring(1, length -1);
         if(mScanResultList!= null && mScanResultList.size() > 0){ 
             for(int i=0 ;i< mScanResultList.size() ; i++){
-				Log.d(TAG,"==== SSID is : " + mScanResultList.get(i).SSID.trim());
+				if (Utils.DEBUG) Log.d(TAG,"==== SSID is : " + mScanResultList.get(i).SSID.trim());
 				if (mScanResultList.get(i).SSID.trim().equals(name)) {
                 	currentConnectedIndex = i ;
                     notifyDataSetChanged();
@@ -166,7 +166,7 @@ public class AccessPointListAdapter extends BaseAdapter {
             String name = currentConnectedName.substring(1, length -1);
             if(mScanResultList.get(index).SSID.trim().equals(name)){
                 holder.wifi_selected.setVisibility(View.VISIBLE);
-                Log.d(TAG,"===== connected to : " + currentConnectedName);
+                if (Utils.DEBUG) Log.d(TAG,"===== connected to : " + currentConnectedName);
             }else{
                 holder.wifi_selected.setVisibility(View.INVISIBLE);
             }

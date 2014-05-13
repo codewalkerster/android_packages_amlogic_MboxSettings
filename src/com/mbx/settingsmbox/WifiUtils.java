@@ -92,7 +92,7 @@ public class WifiUtils {
 		WifiConfiguration config = getSavedWifiConfig(scanResult.SSID, configs);
 
 		if (config == null) {
-			Log.d(TAG, "===== It's a new AccessPoint!!! ");
+			if (Utils.DEBUG) Log.d(TAG, "===== It's a new AccessPoint!!! ");
 			config = new WifiConfiguration();
 			// config.BSSID = scanResult.BSSID;
 			config.SSID = "\"" + scanResult.SSID + "\"";
@@ -103,7 +103,7 @@ public class WifiUtils {
 			mWifiManager.enableNetwork(netId, true);
             mWifiManager.saveConfiguration();
 		} else {
-			Log.d(TAG, "===== It's a saved AccessPoint!!! ");
+			if (Utils.DEBUG) Log.d(TAG, "===== It's a saved AccessPoint!!! ");
 			config.status = WifiConfiguration.Status.ENABLED;
 			config = getConfigBySecurityType(config, securityType);
 			mWifiManager.enableNetwork(config.networkId, true);

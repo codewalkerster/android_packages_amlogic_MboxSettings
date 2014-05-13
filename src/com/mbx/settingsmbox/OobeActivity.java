@@ -287,12 +287,12 @@ public class OobeActivity extends Activity implements OnItemClickListener,
         String str = Utils.readSysFile(sw,eth_device_sysfs);
         if(str == null)
             return false ;
-        Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
+        if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
         if(str.contains("unlink")){
-            Log.d(TAG,"==== isEthDeviceAdded() , false");
+            if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , false");
             return false;
         }else{
-            Log.d(TAG,"==== isEthDeviceAdded() , true");
+            if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , true");
             return true;
         }    
     }
@@ -319,7 +319,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             TextView oobe_no_network = (TextView)findViewById(R.id.oobe_no_network);
             oobe_no_network.setText(mContext.getResources().getString(R.string.no_network_wifi_only));
             oobe_select_ethernet.setVisibility(View.INVISIBLE);
-            Log.d(TAG,"===== it's g35 devices!");
+            if (Utils.DEBUG) Log.d(TAG,"===== it's g35 devices!");
         }
 		oobe_select_ethernet.setOnClickListener(new OnClickListener() {
 			@Override
@@ -396,7 +396,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                                 return ;
                             }
                         }
-                        Log.d(TAG,"====== connect now!");
+                        if (Utils.DEBUG) Log.d(TAG,"====== connect now!");
 						showConnectingView();                    
 						oobe_mAccessPointListAdapter.connect2AccessPoint(password);
                         startTime = System.currentTimeMillis();
@@ -416,9 +416,9 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	}
 
     private void wifiResume(){
-        Log.d(TAG,"===== wifiResume()");
+        if (Utils.DEBUG) Log.d(TAG,"===== wifiResume()");
         if(getEthCheckBoxState()){ 
-             Log.d(TAG,"===== wifiResume(),ethernet connect");
+             if (Utils.DEBUG) Log.d(TAG,"===== wifiResume(),ethernet connect");
             if(isEthDeviceAdded()) {
                 oobe_mWifiManager.setWifiEnabled(false);
                 oobe_mEthernetManager.setEthEnabled(true);
@@ -433,12 +433,12 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             }
         }else{
             if(getWifiCheckBoxState()){
-                Log.d(TAG,"===== wifiResume(),wifi connect");
+                if (Utils.DEBUG) Log.d(TAG,"===== wifiResume(),wifi connect");
                 oobe_mWifiManager.setWifiEnabled(true);
                 wifiScan(); 
                 updateNetWorkUI(1);
             }else{
-                Log.d(TAG,"===== wifiResume(),wifi and ethernt  disconnect");
+                if (Utils.DEBUG) Log.d(TAG,"===== wifiResume(),wifi and ethernt  disconnect");
                 updateNetWorkUI(0);
             }                
         }               
@@ -525,14 +525,14 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             }
         }
         private void updateNetWorkUI(int type){
-            Log.d(TAG,"===== updateNetWorkUI() 001");
+            if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 001");
             if(type == 0){
-                Log.d(TAG,"===== updateNetWorkUI() 002");
+                if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 002");
                 oobe_net_root_view.setVisibility(View.VISIBLE);
                 oobe_root_eth_view.setVisibility(View.GONE);
                 oobe_root_wifi_view.setVisibility(View.GONE);
             }else if(type == 1){
-                Log.d(TAG,"===== updateNetWorkUI() 003");
+                if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 003");
                 oobe_net_root_view.setVisibility(View.GONE);
                 oobe_root_eth_view.setVisibility(View.GONE);
                 oobe_root_wifi_view.setVisibility(View.VISIBLE);
@@ -544,13 +544,13 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                     showWifiDisconnectedView();
                 }            
             }else if(type == 2){
-                Log.d(TAG,"===== updateNetWorkUI() 004");
+                if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 004");
                 oobe_net_root_view.setVisibility(View.GONE);
                 oobe_root_eth_view.setVisibility(View.VISIBLE);
                 oobe_root_wifi_view.setVisibility(View.GONE);
                 upDateEthernetInfo();
             }else{
-                Log.d(TAG,"===== updateNetWorkUI() 005");
+                if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 005");
                 oobe_net_root_view.setVisibility(View.VISIBLE);
                 oobe_root_eth_view.setVisibility(View.GONE);
                 oobe_root_wifi_view.setVisibility(View.GONE);
@@ -580,7 +580,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                         Message msg = mHander.obtainMessage();
                         msg.what = UPDATE_AP_LIST ;
                         mHander.sendMessage(msg);
-                        Log.d(TAG, "send message to refresh ap list");
+                        if (Utils.DEBUG) Log.d(TAG, "send message to refresh ap list");
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -589,7 +589,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                         }
                     }
                     if (oobe_mAccessPointListAdapter.getCount() > 0) {
-                        Log.d(TAG, "get new  ap list ok ");
+                        if (Utils.DEBUG) Log.d(TAG, "get new  ap list ok ");
                         Message msg = mHander.obtainMessage();
                         msg.what = UPDATE_AP_LIST ;
                         mHander.sendMessage(msg);
@@ -657,7 +657,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
         String lan = Locale.getDefault().getLanguage();
         String coun = Locale.getDefault().getCountry();
         
-        Log.d(TAG,"===== lan : " + lan + ", Country : " + coun);
+        if (Utils.DEBUG) Log.d(TAG,"===== lan : " + lan + ", Country : " + coun);
         select_cn = (ImageView)findViewById(R.id.select_cn);
         select_cn.setNextFocusDownId(R.id.button_language_next);
         select_cn.setOnFocusChangeListener(this);
@@ -712,9 +712,9 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	}
 
     private void selectLanguageByID(int id , boolean hasFocus){
-        Log.d(TAG,"===== selectLanguageByID() , hasFocus :" + hasFocus + " , mCurrentLanguage :" +mCurrentLanguage );
+        if (Utils.DEBUG) Log.d(TAG,"===== selectLanguageByID() , hasFocus :" + hasFocus + " , mCurrentLanguage :" +mCurrentLanguage );
         if(id == R.id.select_cn){
-            Log.d(TAG,"===== select_cn,hasFocus: " + hasFocus );
+            if (Utils.DEBUG) Log.d(TAG,"===== select_cn,hasFocus: " + hasFocus );
             if(mCurrentLanguage == 0){
                 if(hasFocus){
                     select_cn.setBackgroundResource(R.drawable.language_selected);
@@ -736,7 +736,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             }
             
         }else if(id == R.id.select_english){
-            Log.d(TAG,"===== select_english: " + hasFocus );
+            if (Utils.DEBUG) Log.d(TAG,"===== select_english: " + hasFocus );
             if(mCurrentLanguage == 0){
                 if(hasFocus){
                     select_english.setBackgroundResource(R.drawable.language_seclect_focused);
@@ -758,7 +758,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             }
                       
         }else if(id == R.id.select_tw){
-            Log.d(TAG,"===== select_tw : " + hasFocus );
+            if (Utils.DEBUG) Log.d(TAG,"===== select_tw : " + hasFocus );
             if(mCurrentLanguage == 0){
                 if(hasFocus){
                     select_tw.setBackgroundResource(R.drawable.language_seclect_focused);
@@ -837,7 +837,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 
-		Log.d(TAG, "onItemClick(), position=" + position);
+		if (Utils.DEBUG) Log.d(TAG, "onItemClick(), position=" + position);
 		if (parent instanceof GridView) {
             //isGotoLanguageView = true;
 			//mlanguageAdapter.updateLanguageLocal(position);
@@ -923,7 +923,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 		oobe_mAccessPointListAdapter.setCurrentSelectItem(index);
 		int securityType = oobe_mAccessPointListAdapter
 				.getCurrentAccessPointSecurityType(index);
-		Log.d(TAG, "===== securityType :  " + securityType);
+		if (Utils.DEBUG) Log.d(TAG, "===== securityType :  " + securityType);
 
 		if (securityType == 0 || securityType == 4) {
 
@@ -970,7 +970,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
 
     private void upDateEthernetInfo() {
-		Log.d(TAG, "===== update ethernet info ");
+		if (Utils.DEBUG) Log.d(TAG, "===== update ethernet info ");
         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
 		if (isEthConnected) {
             if(oobe_eth_ip_layout != null && oobe_wifi_connected != null){
@@ -983,7 +983,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 				int ip = mDhcpInfo.ipAddress;
                 if(oobe_eth_connected_tip != null)
 				    oobe_eth_connected_tip.setText(R.string.eth_connectd);
-				Log.d(TAG, "====== ip  : " + ip + "   int2ip(ip) : "+ int2ip(ip));
+				if (Utils.DEBUG) Log.d(TAG, "====== ip  : " + ip + "   int2ip(ip) : "+ int2ip(ip));
 				if(oobe_eth_IP_value != null)
 				    oobe_eth_IP_value.setText(int2ip(ip));
 				else {
@@ -1041,7 +1041,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	@Override
 	public void onResume() {
 	    super.onResume();
-	    Log.d(TAG,"===== isGotoLanguageView : " + isGotoLanguageView);
+	    if (Utils.DEBUG) Log.d(TAG,"===== isGotoLanguageView : " + isGotoLanguageView);
         wifiResume();
 	    if(isGotoLanguageView){
             openLanguageView();
@@ -1065,10 +1065,10 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     } 
 
     private void showConfirmDialog(){
-        Log.d(TAG,"===== showConfirmDialog()");
+        if (Utils.DEBUG) Log.d(TAG,"===== showConfirmDialog()");
         String mode =  sw.readSysfs(DISPLAY_MODE_SYSFS);
         if(mode.contains("cvbs")){
-            Log.d(TAG,"===== start with cvbs mode,don't show dialog");
+            if (Utils.DEBUG) Log.d(TAG,"===== start with cvbs mode,don't show dialog");
             return ;
         }
         if(dialog == null)
@@ -1077,7 +1077,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     }
 
     private void dismissDisplayDiglog(){
-        Log.d(TAG,"===== dismissDisplayDiglog()");
+        if (Utils.DEBUG) Log.d(TAG,"===== dismissDisplayDiglog()");
         if(dialog!=null){
             dialog.dismissAndStop();
             dialog = null;
@@ -1155,7 +1155,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	@Override
 	public void onClick(View v) {
 		int id = v.getId();
-        Log.d(TAG,"===== onClick(), id = " + id);
+        if (Utils.DEBUG) Log.d(TAG,"===== onClick(), id = " + id);
 
 		if (v instanceof Button) {
 			if (id == R.id.button_welcome_skip) {
@@ -1184,7 +1184,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 				around_line.setVisibility(View.GONE);
 				openLanguageView();
 			} else if (id == R.id.button_net_finish) {
-                Log.d(TAG,"===== disable oobe setting !!!");
+                if (Utils.DEBUG) Log.d(TAG,"===== disable oobe setting !!!");
                 PackageManager pm = getPackageManager();
                 ComponentName name = new ComponentName(this, OobeActivity.class);
                 pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
@@ -1235,26 +1235,26 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                     }               
             }
 
-            Log.e(TAG, "===== onReceive() 001");
+            if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 001");
             if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
                         boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
                         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
-                        Log.e(TAG, "===== onReceive() 002");
+                        if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 002");
                     if(isEthConnected){
-                        Log.e(TAG, "===== onReceive() 003");
+                        if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 003");
                         updateNetWorkUI(2);
                         updateEthCheckBoxUI();   
                         upDateWifiCheckBoxUI();
                     }else if(oobe_mWifiManager.isWifiEnabled()){
                         updateNetWorkUI(1);
-                        Log.e(TAG, "===== onReceive() 004");
+                        if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 004");
                     }else if(!getWifiCheckBoxState() && ! getEthCheckBoxState()){
                          updateNetWorkUI(0);
                          oobe_mEthernetManager.setEthEnabled(false); 
                          updateEthCheckBoxUI();   
                          upDateWifiCheckBoxUI();;
                     }
-                Log.e(TAG, "===== onReceive() 005");
+                if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 005");
             }
 		}
 	}
@@ -1354,7 +1354,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		Log.d(TAG, "=====  onKeyDown() , keyCode = " + keyCode);
+		if (Utils.DEBUG) Log.d(TAG, "=====  onKeyDown() , keyCode = " + keyCode);
 		if (isDisplayView) {
 			if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 				btn_position_zoom_in.setBackgroundResource(R.drawable.minus_unfocus);
@@ -1426,12 +1426,12 @@ public class OobeActivity extends Activity implements OnItemClickListener,
        private boolean getWifiCheckBoxState(){
         int state = Settings.Global.getInt(getContentResolver(), Settings.Global.WIFI_ON, 0);
         //int state = mWifiManager.getWifiState();
-        Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
+        if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
         if(state == 1){
-             Log.d(TAG,"===== getWifiCheckBoxState() , true " );
+             if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , true " );
             return true ;
         }else{
-            Log.d(TAG,"===== getWifiCheckBoxState() , false " );
+            if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , false " );
             return false;
         }
         
@@ -1440,7 +1440,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     private boolean getEthCheckBoxState(){
         //int state = Settings.Secure.getInt(getContentResolver(), Settings.Secure.ETH_ON, 0);
         int state = oobe_mEthernetManager.getEthState();
-        Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
+        if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
         if(state == EthernetManager.ETH_STATE_ENABLED){
             return true;
         }

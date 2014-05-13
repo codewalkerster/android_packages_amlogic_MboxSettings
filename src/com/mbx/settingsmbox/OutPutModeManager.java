@@ -137,7 +137,7 @@ public class OutPutModeManager {
     }
 
 	public static String getCurrentOutPutModeTitle(int type) {
-        Log.d(TAG,"==== getCurrentOutPutMode() " );
+        if (Utils.DEBUG) Log.d(TAG,"==== getCurrentOutPutMode() " );
         String currentHdmiMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
         if(type==0){  // cvbs
         if(currentHdmiMode.contains("cvbs")){
@@ -152,7 +152,7 @@ public class OutPutModeManager {
             
             for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length ; i++){
                 if(currentHdmiMode.equals(ALL_HDMI_MODE_VALUE_LIST[i])){
-                    Log.d(TAG,"==== get the title is :" + ALL_HDMI_MODE_TITLE_LIST[i]);
+                    if (Utils.DEBUG) Log.d(TAG,"==== get the title is :" + ALL_HDMI_MODE_TITLE_LIST[i]);
                     return ALL_HDMI_MODE_TITLE_LIST[i] ;
                 }
             }
@@ -164,7 +164,7 @@ public class OutPutModeManager {
         final String oldMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
         String mode = mValueList.get(index) ;
         if(mode.equals(oldMode)){
-            Log.d(TAG,"===== the same mode with current !");
+            if (Utils.DEBUG) Log.d(TAG,"===== the same mode with current !");
             return ;
         }
         
@@ -200,13 +200,13 @@ public class OutPutModeManager {
             if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
                  i2.setAction("action.show.dialog");
                  mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
-                 Log.d(TAG,"===== send broadcast to start confirm dialog");
+                 if (Utils.DEBUG) Log.d(TAG,"===== send broadcast to start confirm dialog");
                  isNeedShowConfirmDialog = false;
             }else{
                 i2.setAction("action.show.dialog");
                 i2.putExtra("old_output_mode", SettingsMboxActivity.oldMode);
                 mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
-                Log.d(TAG,"===== send broadcast to start confirm dialog");
+                if (Utils.DEBUG) Log.d(TAG,"===== send broadcast to start confirm dialog");
                 isNeedShowConfirmDialog = false;
             }           
         }  

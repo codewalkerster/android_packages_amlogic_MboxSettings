@@ -47,7 +47,7 @@ public class WeatherBroadcastThread extends Thread {
         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
         boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
         if(isEthConnected ==false && isWifiConnected == false){
-            Log.d(TAG,"==== Wifi and Ethernet both are disconnect ");
+            if (Utils.DEBUG) Log.d(TAG,"==== Wifi and Ethernet both are disconnect ");
             return ;
         }
 
@@ -73,13 +73,13 @@ public class WeatherBroadcastThread extends Thread {
 		if (mWeatherInfo == null) {
 			return;
 		}
-		Log.d(TAG, "============mWeatherInfo: " + mWeatherInfo.toString());
+		if (Utils.DEBUG) Log.d(TAG, "============mWeatherInfo: " + mWeatherInfo.toString());
 
 		String temp = null;
 		String mTemperatureInfo = null;
 		try {
 			mTemperatureInfo = mWeatherInfo.getProperty(4).toString();
-			Log.d(TAG, " temperature info : " + mWeatherInfo.getProperty(4));
+			if (Utils.DEBUG) Log.d(TAG, " temperature info : " + mWeatherInfo.getProperty(4));
 		} catch (Exception e) {
 			Log.d(TAG, "Weather web services info : " + mWeatherInfo.toString());
 			return;
@@ -91,14 +91,14 @@ public class WeatherBroadcastThread extends Thread {
 			int end = t.indexOf(mContext.getString(R.string.temperature_start));
 			if (start + 3 < end)
 				temp = t.substring(start + 3, end);
-			Log.d(TAG, "===== 001 temp : " + temp);
+			if (Utils.DEBUG) Log.d(TAG, "===== 001 temp : " + temp);
 		} else {
 			Log.d(TAG, "===== get temperature error !!!");
 		}
 		if (temp == null && mTemperatureInfo != null) {
 			if (mTemperatureInfo.length() >= 14)
 				temp = mTemperatureInfo.substring(10, 13);
-			Log.d(TAG, "===== 002 temp : " + temp);
+			if (Utils.DEBUG) Log.d(TAG, "===== 002 temp : " + temp);
 		}
 		String icon_01 = null;
 		if (mWeatherInfo.getProperty(10) != null) {
@@ -115,8 +115,8 @@ public class WeatherBroadcastThread extends Thread {
 			i.setAction("android.amlogic.settings.WEATHER_INFO");
             i.putExtra("weather_today", today_info);
             
-			Log.d(TAG,"===== send broadcast with action : android.amlogic.settings.WEATHER_INFO");
-			Log.d(TAG,"===== send broadcast with info , key : weather_today" + " ,value : " + today_info);
+			if (Utils.DEBUG) Log.d(TAG,"===== send broadcast with action : android.amlogic.settings.WEATHER_INFO");
+			if (Utils.DEBUG) Log.d(TAG,"===== send broadcast with info , key : weather_today" + " ,value : " + today_info);
 			mContext.sendBroadcast(i);
             sw.setProperty("sys.weather.send", "true");
 		} else {

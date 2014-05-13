@@ -126,7 +126,7 @@ public class ScreenPositionManager {
 
 	public void initPostion() {
 		mCurrentMode = sw.readSysfs(mCurrentResolution);
-        Log.d(TAG,"==== initPostion(),mCurrentMode :"+mCurrentMode);
+        if (Utils.DEBUG) Log.d(TAG,"==== initPostion(),mCurrentMode :"+mCurrentMode);
 		initStep(mCurrentMode);
         initCurrentPostion();
         
@@ -211,7 +211,7 @@ public class ScreenPositionManager {
         mCurrentTop  = mPreTop;
         mCurrentWidth = mPreWidth; 
         mCurrentHeight= mPreHeight;
-        Log.d(TAG,"==== initCurrentPostion(),mPreLeft :"+mPreLeft + ",mPreTop:"+mPreTop+",mPreWidth:"+mPreWidth+",mPreHeight:" + mPreHeight);
+        if (Utils.DEBUG) Log.d(TAG,"==== initCurrentPostion(),mPreLeft :"+mPreLeft + ",mPreTop:"+mPreTop+",mPreWidth:"+mPreWidth+",mPreHeight:" + mPreHeight);
     }
      
 	public int getRateValue() {
@@ -222,7 +222,7 @@ public class ScreenPositionManager {
             return 100;
         }
         int rate =  100 - m/(mMaxRight+1) - 1;
-        Log.d(TAG,"====  getRateValue() , value:"+rate);
+        if (Utils.DEBUG) Log.d(TAG,"====  getRateValue() , value:"+rate);
 		return rate;
 	}
 
@@ -240,7 +240,7 @@ public class ScreenPositionManager {
 	}
 
     private void setOriginWinForFreeScale(){
-        Log.e(TAG,"==== setOriginWinForFreeScale(), mIsOriginWinSet:"+mIsOriginWinSet);
+        if (Utils.DEBUG) Log.e(TAG,"==== setOriginWinForFreeScale(), mIsOriginWinSet:"+mIsOriginWinSet);
         if(mIsOriginWinSet)
             return;
         else
@@ -248,7 +248,7 @@ public class ScreenPositionManager {
         
         writeFile(freescale_mode,"1");
         writeFile(free_scale,"0x10001");
-        Log.e(TAG,"==== setOriginWinForFreeScale(), w:"+mPreWidth + ",h:" + mPreHeight);
+        if (Utils.DEBUG) Log.e(TAG,"==== setOriginWinForFreeScale(), w:"+mPreWidth + ",h:" + mPreHeight);
     }
     
 	private final void setScalingMinFreq(int scalingMinFreq) {
@@ -384,9 +384,9 @@ public class ScreenPositionManager {
             String display_str =  x + " "+ y + Utils.getDisplayAxisByMode(mCurrentMode)+ x+ " "+ y+ " "+ 18+ " "+ 18 ;
             writeFile(DisplayAxisFile,display_str);
             writeFile(VideoAxisFile,x+" "+y+" "+(left+width-1)+" "+(top+height-1));
-            Log.d(TAG,"==== video_axis"+x + " " + y + " " + (left+width) + " " +(top+height));
+            if (Utils.DEBUG) Log.d(TAG,"==== video_axis"+x + " " + y + " " + (left+width) + " " +(top+height));
         }
-        Log.d(TAG,"=====savePosition(), left:" + left +",top:"+ top + ",width:" + width+ ",height:" + height);
+        if (Utils.DEBUG) Log.d(TAG,"=====savePosition(), left:" + left +",top:"+ top + ",width:" + width+ ",height:" + height);
 	}
 
     public void zoomByPercent(int percent){
@@ -410,12 +410,12 @@ public class ScreenPositionManager {
         mCurrentBottom = mMaxBottom - mCurrentTop;
         mCurrentWidth = mCurrentRight - mCurrentLeft;
         mCurrentHeight = mCurrentBottom - mCurrentTop ;
-        Log.d(TAG,"====== zoomByPercent(), mCurrentLeft : " +mCurrentLeft); 
-        Log.d(TAG,"====== zoomByPercent(), mCurrentTop : " +mCurrentTop); 
-        Log.d(TAG,"====== zoomByPercent(), mCurrentRight : " +mCurrentRight); 
-        Log.d(TAG,"====== zoomByPercent(), mCurrentBottom : " +mCurrentBottom);
-        Log.d(TAG,"====== zoomByPercent(), mCurrentWidth : " +mCurrentWidth); 
-        Log.d(TAG,"====== zoomByPercent(), mCurrentHeight : " +mCurrentHeight); 
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentLeft : " +mCurrentLeft); 
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentTop : " +mCurrentTop); 
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentRight : " +mCurrentRight); 
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentBottom : " +mCurrentBottom);
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentWidth : " +mCurrentWidth); 
+        if (Utils.DEBUG) Log.d(TAG,"====== zoomByPercent(), mCurrentHeight : " +mCurrentHeight); 
        
 	    setPosition(mCurrentLeft, mCurrentTop,mCurrentRight, mCurrentBottom, 0);   
 
@@ -449,7 +449,7 @@ public class ScreenPositionManager {
     		writeFile(UpdateFreescaleFb0File, "1");
         } 
 
-        Log.d(TAG,"====== setPosition : " + left+"  " + top +" "+right+"   "+ bottom);  
+        if (Utils.DEBUG) Log.d(TAG,"====== setPosition : " + left+"  " + top +" "+right+"   "+ bottom);  
 	}
 
     public boolean isScreenPositionChanged()

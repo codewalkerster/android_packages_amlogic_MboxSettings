@@ -77,7 +77,7 @@ public class DisplayConfirmDialog extends Dialog {
 
 	@Override
 	public void show() {
-	    Log.d(TAG, "====== show");
+	    if (Utils.DEBUG) Log.d(TAG, "====== show");
 		super.show();
         mHandle = new Handler();
 		mHandle.postDelayed(run,DELAY_TIME);
@@ -102,7 +102,7 @@ public class DisplayConfirmDialog extends Dialog {
 	}
 
 	private void setOldDisplay() {
-        Log.d(TAG, "====== setOldDisplay");
+        if (Utils.DEBUG) Log.d(TAG, "====== setOldDisplay");
         if(old_mode == null){
            old_mode = "720p"; 
         }

@@ -64,7 +64,7 @@ public class OutPutListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View contentview, ViewGroup parent) {
             OutPutModeHolder holder = new OutPutModeHolder();
-            Log.d(TAG,"===== getView, index : " + position);
+            if (Utils.DEBUG) Log.d(TAG,"===== getView, index : " + position);
 			LayoutInflater listContainer;
 			listContainer = LayoutInflater.from(mContext);
 			contentview = listContainer.inflate(R.layout.output_item, null);         

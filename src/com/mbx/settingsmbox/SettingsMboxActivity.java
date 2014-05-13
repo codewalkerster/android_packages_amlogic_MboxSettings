@@ -293,7 +293,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			
 			@Override
 			public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-			    Log.d(TAG,"===== onSharedPreferenceChanged() , key :" + key);
+			    if (Utils.DEBUG) Log.d(TAG,"===== onSharedPreferenceChanged() , key :" + key);
 				if(key.equals("open_remote_control")){
                      String value = pref.getString("open_remote_control","false");
                      
@@ -315,7 +315,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                         if (mThisDevice != null) {
                             String name = mContext.getResources().getString(R.string.miracast_server_name)+ " " + mThisDevice.deviceName;
                             miracast_name.setText(name);
-                            Log.d(TAG, "===== mThisDevice name is  "+ mThisDevice.deviceName);
+                            if (Utils.DEBUG) Log.d(TAG, "===== mThisDevice name is  "+ mThisDevice.deviceName);
                         } 
                     }else{
                         miracast_name.setVisibility(View.INVISIBLE);
@@ -785,7 +785,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	private void upDateRequestScreen() {
 		String isRequest_screen = sw.getPropertyString("ubootenv.var.has.accelerometer","***");
-		Log.d(TAG, "====== isRequest_screen: " + isRequest_screen);
+		if (Utils.DEBUG) Log.d(TAG, "====== isRequest_screen: " + isRequest_screen);
 		if ("true".equals(isRequest_screen)) {
 			requestScreen.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.ic_checked, 0);
 		} else if("false".equals(isRequest_screen)){
@@ -868,7 +868,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 secreen_auto.setClickable(true);
                 auto_set_screen.setTextColor(Color.WHITE);
                 cvbs_screen_self_set.setVisibility(View.GONE);
-                Log.d(TAG,"===== hdmi mode : " +  mOutPutModeManager.getCurrentOutPutModeTitle(1));
+                if (Utils.DEBUG) Log.d(TAG,"===== hdmi mode : " +  mOutPutModeManager.getCurrentOutPutModeTitle(1));
                 current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1));
             }else{
                 cvbs_screen_self_set.setVisibility(View.VISIBLE);
@@ -1005,7 +1005,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                                 return ;
                             }
                         }
-                        Log.d(TAG,"====== connect now!");
+                        if (Utils.DEBUG) Log.d(TAG,"====== connect now!");
 						showConnectingView();                    
 						mAccessPointListAdapter.connect2AccessPoint(password);
                         startTime = System.currentTimeMillis();
@@ -1061,12 +1061,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         String str = Utils.readSysFile(sw,eth_device_sysfs);
         if(str == null)
             return false ;
-        Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
+        if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
         if(str.contains("unlink")){
-            Log.d(TAG,"==== isEthDeviceAdded() , false");
+            if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , false");
             return false;
         }else{
-            Log.d(TAG,"==== isEthDeviceAdded() , true");
+            if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , true");
             return true;
         } 
     }
@@ -1174,14 +1174,14 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
          }
     }
     private void updateNetWorkUI(int type){
-        Log.d(TAG,"===== updateNetWorkUI() 001");
+        if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 001");
         if(type == 0){
-            Log.d(TAG,"===== updateNetWorkUI() 002");
+            if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 002");
             net_root_view.setVisibility(View.VISIBLE);
             root_eth_view.setVisibility(View.GONE);
             root_wifi_view.setVisibility(View.GONE);
         }else if(type == 1){
-            Log.d(TAG,"===== updateNetWorkUI() 003");
+            if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 003");
             net_root_view.setVisibility(View.GONE);
             root_eth_view.setVisibility(View.GONE);
             root_wifi_view.setVisibility(View.VISIBLE);
@@ -1193,13 +1193,13 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 showWifiDisconnectedView();
             }            
         }else if(type == 2){
-            Log.d(TAG,"===== updateNetWorkUI() 004");
+            if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 004");
             net_root_view.setVisibility(View.GONE);
             root_eth_view.setVisibility(View.VISIBLE);
             root_wifi_view.setVisibility(View.GONE);
             upDateEthernetInfo();
         }else{
-            Log.d(TAG,"===== updateNetWorkUI() 005");
+            if (Utils.DEBUG) Log.d(TAG,"===== updateNetWorkUI() 005");
             net_root_view.setVisibility(View.VISIBLE);
             root_eth_view.setVisibility(View.GONE);
             root_wifi_view.setVisibility(View.GONE);
@@ -1232,7 +1232,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 					Message msg = mHander.obtainMessage();
                     msg.what = UPDATE_AP_LIST ;
 					mHander.sendMessage(msg);
-					Log.d(TAG, "send message to refresh ap list");
+					if (Utils.DEBUG) Log.d(TAG, "send message to refresh ap list");
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
@@ -1241,7 +1241,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 					}
 				}
 				if (mAccessPointListAdapter.getCount() > 0) {
-					Log.d(TAG, "get new  ap list ok ");
+					if (Utils.DEBUG) Log.d(TAG, "get new  ap list ok ");
 					Message msg = mHander.obtainMessage();
                     msg.what = UPDATE_AP_LIST ;
 					mHander.sendMessage(msg);
@@ -1315,7 +1315,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	protected void onResume() {
 		super.onResume();
         wifiResume();
-        Log.d(TAG,"===== goToIndex : " + goToIndex);
+        if (Utils.DEBUG) Log.d(TAG,"===== goToIndex : " + goToIndex);
         if(goToIndex == 0){
             settingsTopView_01.requestFocus();
         }else if(goToIndex == 1){
@@ -1344,7 +1344,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
 	private void upDateEthernetInfo() {
-		Log.d(TAG, "===== update ethernet info ");
+		if (Utils.DEBUG) Log.d(TAG, "===== update ethernet info ");
         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
         
 		if (isEthConnected){
@@ -1433,7 +1433,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	@Override
 	public void onClick(View v) {
-        Log.d(TAG,"===== onClick()");
+        if (Utils.DEBUG) Log.d(TAG,"===== onClick()");
 		int id = v.getId();
 
 		if (v instanceof TextView) {
@@ -1527,14 +1527,14 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-		Log.d(TAG, "onKeyDown(),keyCode : " + keyCode);
-        Log.d(TAG, "isOpenAdjustScreenView : " + isOpenAdjustScreenView);
+		if (Utils.DEBUG) Log.d(TAG, "onKeyDown(),keyCode : " + keyCode);
+        if (Utils.DEBUG) Log.d(TAG, "isOpenAdjustScreenView : " + isOpenAdjustScreenView);
 		if (isOpenAdjustScreenView) {
 			if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 				btn_position_zoom_in.setBackgroundResource(R.drawable.minus_unfocus);
 				btn_position_zoom_out.setBackgroundResource(R.drawable.plus_focus);
                 if(screen_rate < MAX_Height){
-                    Log.d(TAG,"==== zoomIn ,screen_rate="+screen_rate);
+                    if (Utils.DEBUG) Log.d(TAG,"==== zoomIn ,screen_rate="+screen_rate);
 				    showProgressUI(1);
 			        //mScreenPositionManager.zoomIn();
                     mScreenPositionManager.zoomByPercent(screen_rate);
@@ -1542,7 +1542,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 			} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 				if (screen_rate > MIN_Height) {
-				    Log.d(TAG,"==== zoomOut,screen_rate="+screen_rate);
+				    if (Utils.DEBUG) Log.d(TAG,"==== zoomOut,screen_rate="+screen_rate);
                     showProgressUI(-1);
 					//mScreenPositionManager.zoomOut();
 					mScreenPositionManager.zoomByPercent(screen_rate);
@@ -1597,7 +1597,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		} else if (index == 3) {
 			value = TIME_12_MIN;
 		}
-		Log.d(TAG, "===== set time out is : " + value);
+		if (Utils.DEBUG) Log.d(TAG, "===== set time out is : " + value);
 		Settings.System.putInt(getContentResolver(), "screen_off_timeout",value);
         Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
         editor.putInt("screen_timeout", value);
@@ -1663,7 +1663,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         if(screen_rate <MIN_Height){
             screen_rate = MIN_Height ;
         }
-        Log.d(TAG,"===== showProgressUI() ,screen_rate="+ screen_rate);
+        if (Utils.DEBUG) Log.d(TAG,"===== showProgressUI() ,screen_rate="+ screen_rate);
 		if (screen_rate ==100) {
 			int hundred = Num[(int) screen_rate / 100];
 			img_num_hundred.setVisibility(View.VISIBLE);
@@ -1691,7 +1691,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Log.d(TAG,"===== onKeyUp(), keyCode : " + keyCode);
+        if (Utils.DEBUG) Log.d(TAG,"===== onKeyUp(), keyCode : " + keyCode);
 		if (mCurrentContentNum == VIEW_SCREEN_ADJUST) {
 			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 				btn_position_zoom_in.setBackgroundResource(R.drawable.minus_unfocus);
@@ -1719,7 +1719,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 		mAccessPointListAdapter.setCurrentSelectItem(index);
 		int securityType = mAccessPointListAdapter.getCurrentAccessPointSecurityType(index);
-		Log.d(TAG, "===== securityType :  " + securityType);
+		if (Utils.DEBUG) Log.d(TAG, "===== securityType :  " + securityType);
 
 		if (securityType == 0 || securityType == 4) {
 			showConnectingView();
@@ -1727,7 +1727,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		} else {
 		    String currentApName =WifiUtils.removeDoubleQuotes( mAccessPointListAdapter.getCurrentAP().SSID);
             String mWifiConnectedInfo = sharepreference.getString("wifi_connected_info", "***");
-            Log.d(TAG, "===== mWifiConnectedInfo :  " + mWifiConnectedInfo);
+            if (Utils.DEBUG) Log.d(TAG, "===== mWifiConnectedInfo :  " + mWifiConnectedInfo);
             password_editview.setText("");
             if(mWifiConnectedInfo.contains(currentApName)){
                 String[] values = mWifiConnectedInfo.split(",");
@@ -1758,17 +1758,17 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE).edit();
 			Log.e(TAG, "action : " + action);
             if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
-                    Log.e(TAG, "CONFIGURED_NETWORKS_CHANGED_ACTION");
+                    if (Utils.DEBUG) Log.e(TAG, "CONFIGURED_NETWORKS_CHANGED_ACTION");
                     Bundle b =	intent.getExtras();
                     WifiConfiguration reason = (WifiConfiguration) b.get("wifiConfiguration");
                     if(reason!=null){
                          int result =  reason.disableReason ;
                          if(result == 3){
-                            Log.e(TAG, "connect error");
+                            if (Utils.DEBUG) Log.e(TAG, "connect error");
                             endTime = System.currentTimeMillis();
                             if(endTime - startTime > 10000){
                                 wifi_slect_tip.setText(R.string.connect_error_tips);
-                                Log.e(TAG, "show connect error notices");
+                                if (Utils.DEBUG) Log.e(TAG, "show connect error notices");
                             }      
                          }
                     }               
@@ -1776,40 +1776,40 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             
 			if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
 				mThisDevice = (WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-				Log.d(TAG, "miracast device name: " + mThisDevice.deviceName);
+				if (Utils.DEBUG) Log.d(TAG, "miracast device name: " + mThisDevice.deviceName);
                 editor.putString("miracast_device_name", mThisDevice.deviceName);
 			    editor.commit();   
 			}
             
-            Log.e(TAG, "===== onReceive() 001");
+            if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 001");
 			if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
 
                 ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                Log.d(TAG,"===== wifi.getState()  : " +  wifi.getState());
+                if (Utils.DEBUG) Log.d(TAG,"===== wifi.getState()  : " +  wifi.getState());
                 int type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_NONE);
                 NetworkInfo info = (NetworkInfo)intent.getExtra(ConnectivityManager.EXTRA_NETWORK_INFO, null);
-                Log.d(TAG, "***receive CONNECTIVITY_CHANGE extra:  type="+type+",  networkinfo="+info);
+                if (Utils.DEBUG) Log.d(TAG, "***receive CONNECTIVITY_CHANGE extra:  type="+type+",  networkinfo="+info);
                 
                 //if(mCurrentContentNum == VIEW_NETWORK){
                     boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
                     boolean isEthConnected = WifiUtils.isEthConnected(mContext);
-                    Log.e(TAG, "===== connectivity changed ");
+                    if (Utils.DEBUG) Log.e(TAG, "===== connectivity changed ");
                     if(isEthConnected && getEthCheckBoxState()){
-                        Log.e(TAG, "===== ethernet connectd ");
+                        if (Utils.DEBUG) Log.e(TAG, "===== ethernet connectd ");
                         mEthConnectingFlag = false;
                         updateNetWorkUI(2);
                         updateEthCheckBoxUI();   
                         upDateWifiCheckBoxUI();
                     }else if(isWifiConnected && getWifiCheckBoxState()){
                          updateNetWorkUI(1);
-                         Log.e(TAG, "===== wifi connectd ");
+                         if (Utils.DEBUG) Log.e(TAG, "===== wifi connectd ");
                     }else if(!getWifiCheckBoxState() && ! getEthCheckBoxState()){
                          updateNetWorkUI(0);
                          mEthernetManager.setEthEnabled(false); 
                          updateEthCheckBoxUI();   
                          upDateWifiCheckBoxUI();
-                         Log.e(TAG, "===== ethernet and wifi are disconnected ");
+                         if (Utils.DEBUG) Log.e(TAG, "===== ethernet and wifi are disconnected ");
                     } else if(getEthCheckBoxState() && (type == ConnectivityManager.TYPE_ETHERNET)){
                          if((info.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) || (info.getDetailedState() == NetworkInfo.DetailedState.FAILED)) {
                             if(!mEthConnectingFlag)
@@ -1818,7 +1818,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     //     setEthCheckBoxSwitch();
                     }
                 //}
-                 Log.e(TAG, "===== onReceive() 006");
+                 if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 006");
                 
                 //if(mCurrentContentNum == VIEW_DISPLAY){
                     String isOpenRemoteContrl = sharepreference.getString("open_remote_control", "false");
@@ -1839,7 +1839,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             if(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED.equals(action)){
                 boolean plugged = intent.getBooleanExtra(WindowManagerPolicy.EXTRA_HDMI_HW_PLUGGED_STATE, false); 
                 if(plugged){
-                    Log.d(TAG,"===== himi plugged");
+                    if (Utils.DEBUG) Log.d(TAG,"===== himi plugged");
                     secreen_auto.setFocusable(true);
                     secreen_auto.setClickable(true);
                     auto_set_screen.setTextColor(Color.WHITE);
@@ -1858,7 +1858,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     cvbs_screen_self_set.setVisibility(View.GONE);
                     current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1)); 
                 }else{
-                    Log.d(TAG,"===== himi unplugged");
+                    if (Utils.DEBUG) Log.d(TAG,"===== himi unplugged");
 
                     cvbs_screen_self_set.setVisibility(View.VISIBLE);
                     secreen_auto.setFocusable(false);
@@ -1872,7 +1872,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 }
             }
             if("action.show.dialog".equals(action)){
-                Log.d(TAG,"===== action.show.dialog");
+                if (Utils.DEBUG) Log.d(TAG,"===== action.show.dialog");
                 MyHandle mHander = new MyHandle();
                 Message msg = mHander.obtainMessage();
                 msg.what = SHOW_CONFIRM_DIALOG ;
@@ -2027,7 +2027,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			@Override
 			public void onClick(View v) {
 				updateDolbySettingsUi(0, dolbyPopupView);
-                Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_enable.setOnClickListener");
+                if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_enable.setOnClickListener");
 			}
 		});
         
@@ -2036,7 +2036,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			@Override
 			public void onClick(View v) { 
 				updateDolbySettingsUi(1, dolbyPopupView);
-                Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_mode.setOnClickListener");
+                if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ drc_mode.setOnClickListener");
 			}
 		});
         
@@ -2140,7 +2140,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         if (option == 0) {
             String isDrcEnable = sharepreference.getString("dolby_drc_enable", "false");
     		mDigitalAudioManager.enableDobly_DRC(!Boolean.parseBoolean(isDrcEnable));
-             Log.d(TAG, "@@@@@@@@@@@@@@@@@ isDrcEnable="+isDrcEnable);
+             if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ isDrcEnable="+isDrcEnable);
             
             ImageView img_drc_enable = (ImageView)dolbyPopupView.findViewById(R.id.img_drc_enable);
             if (isDrcEnable.equals("true")){
@@ -2154,7 +2154,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             }
         }else {
             String mode = sharepreference.getString("dolby_drc_mode", "2");
-            Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
+            if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
             int mode_int = Integer.parseInt(mode);
             mode_int++;
 
@@ -2190,7 +2190,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
         if (option == 0) {
             String mode = sharepreference.getString("dts_downmix_mode", "0");
-            Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
+            if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ mode="+mode);
             int mode_int = Integer.parseInt(mode);
             mode_int++;
 
@@ -2432,7 +2432,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 				@Override
 				public void run() {
-					Log.d(TAG, "===== write file : " + file + "  value : "+ value);
+					if (Utils.DEBUG) Log.d(TAG, "===== write file : " + file + "  value : "+ value);
 					sw.writeSysfs(file, value);
 				}
 			}).start();
@@ -2535,7 +2535,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			}
 			String writeConfig = Utils.arrayToString(tmpArray);
 			sw.setProperty(CEC_CONFIG, writeConfig);
-			Log.d(TAG, "==== cec set config : " + writeConfig);
+			if (Utils.DEBUG) Log.d(TAG, "==== cec set config : " + writeConfig);
 			String s = writeConfig.substring(writeConfig.length() - 1,
 					writeConfig.length());
 
@@ -2551,7 +2551,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			}
 			String writeConfig = Utils.arrayToString(tmpArray);
 			sw.setProperty(CEC_CONFIG, writeConfig);
-			Log.d(TAG, "==== cec set config : " + writeConfig);
+			if (Utils.DEBUG) Log.d(TAG, "==== cec set config : " + writeConfig);
 			String s = writeConfig.substring(writeConfig.length() - 1,writeConfig.length());
 			writeSysFile(writeCecConfig, s);
 		}
@@ -2631,7 +2631,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
     public void setViewVisable(RelativeLayout v) {
-        Log.d(TAG,"===== setViewVisable()");
+        if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable()");
        /*
         java.util.Map<Thread, StackTraceElement[]> ts = Thread.getAllStackTraces();   
         StackTraceElement[] ste = ts.get(Thread.currentThread());   
@@ -2641,9 +2641,9 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         
         int id = v.getId();
         ScaleAnimation scaleAnimation = null;
-        Log.d(TAG,"===== setViewVisable(), id=" + id);
+        if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), id=" + id);
         if(preView != null){
-            Log.d(TAG,"===== preView != null");
+            if (Utils.DEBUG) Log.d(TAG,"===== preView != null");
             preView.getChildAt(0).setScaleX(1f);
             preView.getChildAt(0).setScaleY(1f);
             preView.getChildAt(1).setScaleX(1f);
@@ -2666,7 +2666,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         preView = v ;
         
 		if (id == R.id.settingsTopView_01) {
-            Log.d(TAG,"===== setViewVisable(), settingsTopView_01");
+            if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), settingsTopView_01");
 			mCurrentContentNum = VIEW_NETWORK;
 			settingsContentLayout_02.setVisibility(View.GONE);
 			settingsContentLayout_03.setVisibility(View.GONE);
@@ -2674,21 +2674,21 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			settingsContentLayout_01.setVisibility(View.VISIBLE);
             wifiResume();
 		} else if (id == R.id.settingsTopView_02) {
-		    Log.d(TAG,"===== setViewVisable(), settingsTopView_02");
+		    if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), settingsTopView_02");
 			mCurrentContentNum = VIEW_DISPLAY;
 			settingsContentLayout_01.setVisibility(View.GONE);
 			settingsContentLayout_03.setVisibility(View.GONE);
 			settingsContentLayout_04.setVisibility(View.GONE);
 			settingsContentLayout_02.setVisibility(View.VISIBLE);
 		} else if (id == R.id.settingsTopView_03) {
-		    Log.d(TAG,"===== setViewVisable(), settingsTopView_03");
+		    if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), settingsTopView_03");
 			mCurrentContentNum = VIEW_MORE;
 			settingsContentLayout_01.setVisibility(View.GONE);
 			settingsContentLayout_02.setVisibility(View.GONE);
 			settingsContentLayout_04.setVisibility(View.GONE);
 			settingsContentLayout_03.setVisibility(View.VISIBLE);
 		} else if (id == R.id.settingsTopView_04) {
-		    Log.d(TAG,"===== setViewVisable(), settingsTopView_04");
+		    if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), settingsTopView_04");
 			mCurrentContentNum = VIEW_OTHER;
 			settingsContentLayout_01.setVisibility(View.GONE);
 			settingsContentLayout_03.setVisibility(View.GONE);
@@ -2726,7 +2726,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                         showDisplayDialog();
                     break;
                 case UPDATE_ETH_STATUS:
-                    Log.d(TAG, "**UPDATE_ETH_STATUS:  ");
+                    if (Utils.DEBUG) Log.d(TAG, "**UPDATE_ETH_STATUS:  ");
                     mEthConnectingFlag = false;
                     if(getEthCheckBoxState()) {
                         if (!isEthDeviceAdded()){
@@ -2743,12 +2743,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private boolean getWifiCheckBoxState(){
         int state = Settings.Global.getInt(getContentResolver(), Settings.Global.WIFI_ON, 0);
         //int state = mWifiManager.getWifiState();
-        Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
+        if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
         if(state == 1){
-             Log.d(TAG,"===== getWifiCheckBoxState() , true " );
+             if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , true " );
             return true ;
         }else{
-            Log.d(TAG,"===== getWifiCheckBoxState() , false " );
+            if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , false " );
             return false;
         }       
     }
@@ -2756,7 +2756,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private boolean getEthCheckBoxState(){
         //int state = Settings.Secure.getInt(getContentResolver(), Settings.Secure.ETH_ON, 0);
         int state = mEthernetManager.getEthState();
-        Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
+        if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
         if(state == EthernetManager.ETH_STATE_ENABLED){
             return true;
         }
@@ -2770,11 +2770,11 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         dialog = new DisplayConfirmDialog(mContext, false , null);
         dialog.recordOldMode(oldMode);
         dialog.show();
-        Log.d(TAG,"===== showDisplayDialog() , oldMode=" + oldMode);
+        if (Utils.DEBUG) Log.d(TAG,"===== showDisplayDialog() , oldMode=" + oldMode);
     }
 
     private void dismissDisplayDiglog(){
-        Log.d(TAG,"===== dismissDisplayDiglog()");
+        if (Utils.DEBUG) Log.d(TAG,"===== dismissDisplayDiglog()");
         if(dialog!=null){
             dialog.dismissAndStop();
             dialog = null;
@@ -2805,7 +2805,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                         if (ip.length() > 13) {
                             continue;
                         }
-                        Log.d(TAG,"==== get ip Address : " + ip);
+                        if (Utils.DEBUG) Log.d(TAG,"==== get ip Address : " + ip);
                         return ip;
                     }
                 }

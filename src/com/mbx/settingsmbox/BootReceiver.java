@@ -98,7 +98,7 @@ public class BootReceiver extends BroadcastReceiver {
             //========= for CEC
 			String isCecLanguageOpen = sharedPrefrences.getString("cec_language_open", "false");
 			if (isCecLanguageOpen.equals("true")) {
-				Log.d(TAG, "===== start cec language checking service");
+				if (Utils.DEBUG) Log.d(TAG, "===== start cec language checking service");
 				Intent serviceIntent = new Intent(mContext,CecCheckingService.class);
 				serviceIntent.setAction("CEC_LANGUAGE_AUTO_SWITCH");
 				mContext.startService(serviceIntent);
@@ -112,16 +112,16 @@ public class BootReceiver extends BroadcastReceiver {
 		
             //======== for hdmi and cvbs mode check
             String currentMode = sw.readSysfs(mCurrentResolution);
-            Log.d(TAG,"===== currentMode : " + currentMode);
+            if (Utils.DEBUG) Log.d(TAG,"===== currentMode : " + currentMode);
             if(mOutputManager.isHDMIPlugged()){
-                Log.d(TAG,"===== hdmi plug ");
+                if (Utils.DEBUG) Log.d(TAG,"===== hdmi plug ");
                 // we need to check wheather the tv support current resolution or not 
                 // so call mOutputManager.hdmiPlugged() to check no matter hdmi auto-detection is on or off
                 //if(currentMode.contains("cvbs")){;
                     mOutputManager.hdmiPlugged(); 
                 //}
             }else{
-                 Log.d(TAG,"===== hdmi unplug ");
+                 if (Utils.DEBUG) Log.d(TAG,"===== hdmi unplug ");
                 //if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
                     mOutputManager.hdmiUnPlugged();  
                 //}
@@ -133,7 +133,7 @@ public class BootReceiver extends BroadcastReceiver {
             //======== for scrreen timeout 
         	//int timeout = sharedPrefrences.getInt("screen_timeout", -1);
             int timeout  = sharedPrefrences.getInt( "screen_timeout", Integer.MAX_VALUE);
-            Log.d(TAG,"===== set timeout : " + timeout);
+            if (Utils.DEBUG) Log.d(TAG,"===== set timeout : " + timeout);
             Settings.System.putInt(context.getContentResolver(), "screen_off_timeout",timeout);
 
             //======== for Dolby and DTS
@@ -203,7 +203,7 @@ public class BootReceiver extends BroadcastReceiver {
                         value = mBuilder.toString();
                     }
                 }
-                Log.d(TAG,"===== wifi_connected_info : " + value);
+                if (Utils.DEBUG) Log.d(TAG,"===== wifi_connected_info : " + value);
                 editor.putString("wifi_connected_info", value);
                 editor.commit();
                 //======
@@ -236,7 +236,7 @@ public class BootReceiver extends BroadcastReceiver {
                     }
                 
                 String name = apName;
-                Log.d(TAG,"===== get ap name : " + name);
+                if (Utils.DEBUG) Log.d(TAG,"===== get ap name : " + name);
                 String password = apPassword;
                 if(!"***".equals(name)){
                         List<ScanResult> mScanResultList = new ArrayList<ScanResult>();
@@ -250,10 +250,10 @@ public class BootReceiver extends BroadcastReceiver {
                         }
                     if(result != null){
                         if(!"***".equals(password) ){
-                            Log.d(TAG,"===== connect to : " + name);
+                            if (Utils.DEBUG) Log.d(TAG,"===== connect to : " + name);
                             mWifiUtils.connect2AccessPoint(result,password);
                         }else{
-                            Log.d(TAG,"===== connect without password" );
+                            if (Utils.DEBUG) Log.d(TAG,"===== connect without password" );
                             mWifiUtils.connect2AccessPoint(result,null);
                         }
                     }
@@ -278,7 +278,7 @@ public class BootReceiver extends BroadcastReceiver {
 		mobileState = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
         ethState = cm.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET).getState();
 		if ((wifiState != null && State.CONNECTED == wifiState) || (ethState != null && State.CONNECTED == ethState)) {
-			Log.d(TAG, "wifi connect , send weather info right now !!!");
+			if (Utils.DEBUG) Log.d(TAG, "wifi connect , send weather info right now !!!");
 			new WeatherBroadcastThread(mContext).start();
 		}
 	}
@@ -309,12 +309,12 @@ public class BootReceiver extends BroadcastReceiver {
     private boolean getWifiCheckBoxState(){
         int state = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.WIFI_ON, 0);
         //int state = mWifiManager.getWifiState();
-        Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
+        if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , state : " + state);
         if(state == 1){
-             Log.d(TAG,"===== getWifiCheckBoxState() , true " );
+             if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , true " );
             return true ;
         }else{
-            Log.d(TAG,"===== getWifiCheckBoxState() , false " );
+            if (Utils.DEBUG) Log.d(TAG,"===== getWifiCheckBoxState() , false " );
             return false;
         }       
     }

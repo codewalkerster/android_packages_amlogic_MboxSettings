@@ -52,7 +52,7 @@ public class CecCheckingService extends Service {
 	private UEventObserver mCedObserver = new UEventObserver() {
 		@Override
 		public void onUEvent(UEventObserver.UEvent event) {
-			Log.d(TAG, "onUEvent()");
+			if (Utils.DEBUG) Log.d(TAG, "onUEvent()");
 
 			SharedPreferences sharedpreference = getSharedPreferences(
 					PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
@@ -60,12 +60,12 @@ public class CecCheckingService extends Service {
 			String isCecLanguageOpen = sharedpreference.getString(
 					"cec_language_open", "false");
 			if (isCecLanguageOpen.equals("false")) {
-				Log.d(TAG, "cec language not open");
+				if (Utils.DEBUG) Log.d(TAG, "cec language not open");
 				return;
 			}
 
 			String mNewLanguage = event.get("SWITCH_STATE");
-			Log.d(TAG, "get the language code is : " + mNewLanguage);
+			if (Utils.DEBUG) Log.d(TAG, "get the language code is : " + mNewLanguage);
 			int i = -1;
 			String[] cec_language_list = getResources().getStringArray(
 					R.array.cec_language);
@@ -84,11 +84,11 @@ public class CecCheckingService extends Service {
 				String[] country_list = getResources().getStringArray(
 						R.array.country);
 				if (able.equals(country_list[i])) {
-					Log.d(TAG, "no need to change language");
+					if (Utils.DEBUG) Log.d(TAG, "no need to change language");
 					return;
 				} else {
 					Locale l = new Locale(language_list[i], country_list[i]);
-					Log.d(TAG, "change the language right now !!!");
+					if (Utils.DEBUG) Log.d(TAG, "change the language right now !!!");
 					updateLanguage(l);
 				}
 			} else {
