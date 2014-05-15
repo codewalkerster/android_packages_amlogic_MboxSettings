@@ -1858,6 +1858,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     }
                     cvbs_screen_self_set.setVisibility(View.GONE);
                     current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(1)); 
+
+                    updateVoiceUi();
                 }else{
                     if (Utils.DEBUG) Log.d(TAG,"===== himi unplugged");
 
