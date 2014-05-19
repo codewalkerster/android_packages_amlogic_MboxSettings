@@ -19,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
+import android.net.LinkProperties;
 import android.net.ethernet.EthernetDevInfo;
 import android.net.ethernet.EthernetManager;
 import android.net.wifi.WifiConfiguration;
@@ -61,9 +62,8 @@ import android.widget.Toast;
 import android.widget.ScrollView;
 import android.os.UserHandle ;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
+import java.util.Iterator;
+
 
 
 
@@ -2792,28 +2792,24 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     }
 
     private String getLocalIpAddress() {
-        String ip;
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface
-                    .getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf
-                        .getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        ip = inetAddress.getHostAddress();
-                        if (ip.length() > 13) {
-                            continue;
-                        }
-                        if (Utils.DEBUG) Log.d(TAG,"==== get ip Address : " + ip);
-                        return ip;
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            Log.e("WifiPreference IpAddress", ex.toString());
+        ConnectivityManager cm = (ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        LinkProperties prop = cm.getActiveLinkProperties();
+        return formatIpAddresses(prop);
+    }
+
+    private static String formatIpAddresses(LinkProperties prop) {
+        if (prop == null) return null;
+        Iterator<InetAddress> iter = prop.getAllAddresses().iterator();
+        // If there are no entries, return null
+        if (!iter.hasNext()) return null;
+        // Concatenate all available addresses, comma separated
+        String addresses = "";
+        while (iter.hasNext()) {
+            addresses += iter.next().getHostAddress();
+            if (iter.hasNext()) addresses += "\n";
         }
-        return null;
+        return addresses;
     }
 
 }
