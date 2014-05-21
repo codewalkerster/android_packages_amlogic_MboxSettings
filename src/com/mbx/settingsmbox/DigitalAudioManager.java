@@ -9,6 +9,8 @@ public class DigitalAudioManager {
     private final String mAudoCapFile = "/sys/class/amhdmitx/amhdmitx0/aud_cap";
     private final String PASSTHROUGH_PROPERTY = "ubootenv.var.digitaudiooutput";
     private final String HDMI_AUIDO_SWITCH = "/sys/class/amhdmitx/amhdmitx0/config";
+    private final String SPDIF_AUIDO_SWITCH ="/sys/devices/platform/spdif-dit.0/spdif_mute";
+
 
     private SystemWriteManager sw = null;
 
@@ -21,16 +23,19 @@ public class DigitalAudioManager {
         String mAudioCapInfo = sw.readSysfs(mAudoCapFile);
         if(mAudioCapInfo.contains("Dobly_Digital+")){
             sw.writeSysfs(DigitalRawFile,"2");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_mute");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
             sw.setProperty(PASSTHROUGH_PROPERTY, "HDMI passthrough");
             return 2;
         }else if(mAudioCapInfo.contains("AC-3")){
             sw.writeSysfs(DigitalRawFile,"1");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_unmute");
             sw.setProperty(PASSTHROUGH_PROPERTY, "SPDIF passthrough");
             return 1;
         }else{
             sw.writeSysfs(DigitalRawFile,"0");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_mute");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
             sw.setProperty(PASSTHROUGH_PROPERTY, "PCM");
             return 0;
@@ -44,15 +49,19 @@ public class DigitalAudioManager {
 
         if ("PCM".equals(value)) {
             sw.writeSysfs(DigitalRawFile, "0");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_mute");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
         } else if ("RAW".equals(value)) {
             sw.writeSysfs(DigitalRawFile, "1");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_unmute");
         } else if ("SPDIF passthrough".equals(value)) {
             sw.writeSysfs(DigitalRawFile, "1");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_off");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_unmute");
         } else if ("HDMI passthrough".equals(value)) {
             sw.writeSysfs(DigitalRawFile, "2");
+            sw.writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_mute");
             sw.writeSysfs(HDMI_AUIDO_SWITCH, "audio_on");
         }
     }
