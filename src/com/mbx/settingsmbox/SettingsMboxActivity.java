@@ -1833,6 +1833,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		    }
 
             if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
+                if (popupWindow != null)
+                    popupWindow.dismiss();
                 upDateOutModeUi();
             }
             
