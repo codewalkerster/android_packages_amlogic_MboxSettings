@@ -63,7 +63,7 @@ import android.widget.ScrollView;
 import android.os.UserHandle ;
 import java.net.InetAddress;
 import java.util.Iterator;
-
+import java.net.Inet4Address;
 
 
 
@@ -2793,23 +2793,41 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
     private String getLocalIpAddress() {
         ConnectivityManager cm = (ConnectivityManager)
-                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+this.getSystemService(Context.CONNECTIVITY_SERVICE);
         LinkProperties prop = cm.getActiveLinkProperties();
         return formatIpAddresses(prop);
     }
 
+
     private static String formatIpAddresses(LinkProperties prop) {
+
         if (prop == null) return null;
+
         Iterator<InetAddress> iter = prop.getAllAddresses().iterator();
+
         // If there are no entries, return null
+ 
         if (!iter.hasNext()) return null;
-        // Concatenate all available addresses, comma separated
+
+            // Concatenate all available addresses, comma separated
+
         String addresses = "";
+        InetAddress addr;
         while (iter.hasNext()) {
-            addresses += iter.next().getHostAddress();
-            if (iter.hasNext()) addresses += "\n";
-        }
+            addr = iter.next();
+            if(addr instanceof Inet4Address){
+                addresses = addr.getHostAddress();
+                break;
+
+            }
+            /*addresses += iter.next().getHostAddress();
+        
+    if (iter.hasNext()) addresses += "\n";*/
+
+            }
+
         return addresses;
+
     }
 
 }
