@@ -132,7 +132,7 @@ public class ScreenPositionManager {
         
         if(!sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
             writeFile(FreeScaleOsd0File, "1");
-            writeFile(FreeScaleOsd1File, "1");
+            //writeFile(FreeScaleOsd1File, "1");
         } else if(mCurrentMode.contains("720")||mCurrentMode.contains("1080")){
             if (mPreLeft == 0 && mPreTop == 0)
                 setOriginWinForFreeScale();
