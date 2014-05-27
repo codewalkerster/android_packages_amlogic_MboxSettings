@@ -113,11 +113,17 @@ public class OutPutModeManager {
         hasRealOutput = sw.getPropertyBoolean("ro.platform.has.realoutputmode", false);
         if(mode.equalsIgnoreCase("hdmi")){
             if(hasRealOutput){
-                for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length ; i++){
-                    mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-                    mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
-                } 
-
+                if (sw.getPropertyBoolean("ro.platform.has.native720", false)){
+                    for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length-hdmi4KmodeNum; i++){
+                        mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+                        mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+                    } 
+                } else {
+                    for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length ; i++){
+                        mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+                        mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+                    } 
+                }
             }else{
                 for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length-hdmi4KmodeNum; i++){
                     mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);

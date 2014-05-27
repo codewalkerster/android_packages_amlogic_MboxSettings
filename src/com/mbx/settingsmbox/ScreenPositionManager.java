@@ -376,11 +376,6 @@ public class ScreenPositionManager {
           
 		}
         if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
-            //Utils.shadowScreen(sw, null);
-            if((mCurrentMode.contains("1080")) && x.equals("0") && y.equals("0")){
-                writeFile(free_scale,"0x0");
-               // Utils.setDisplaySize(w,h);
-            } 
             String display_str =  x + " "+ y + Utils.getDisplayAxisByMode(mCurrentMode)+ x+ " "+ y+ " "+ 18+ " "+ 18 ;
             writeFile(DisplayAxisFile,display_str);
             writeFile(VideoAxisFile,x+" "+y+" "+(left+width-1)+" "+(top+height-1));
