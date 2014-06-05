@@ -953,18 +953,6 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		wifi_listview_tip = (TextView) findViewById(R.id.wifi_listview_tip);
 		// password_editview.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
 
-		password_editview.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				// imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-				imm.showSoftInput(v, InputMethodManager.HIDE_NOT_ALWAYS);
-
-			}
-		});
-
         show_password = (TextView)findViewById(R.id.show_password);
         updateShowPasswordBoxUI();
         show_password.setOnClickListener(new OnClickListener() {

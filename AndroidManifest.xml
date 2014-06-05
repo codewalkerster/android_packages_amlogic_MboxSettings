@@ -33,6 +33,7 @@
             android:name=".OobeActivity"
             android:label="@string/app_name"
             android:configChanges="screenLayout|screenSize|smallestScreenSize"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter android:priority="2">
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +44,7 @@
         <activity
             android:name=".PositionSetting"
             android:configChanges="screenLayout|screenSize|smallestScreenSize"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/app_name" >
             <intent-filter>
             </intent-filter>

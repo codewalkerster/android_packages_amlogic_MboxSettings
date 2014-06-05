@@ -347,15 +347,6 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                 InputType.TYPE_TEXT_VARIATION_PASSWORD));
 		oobe_wifi_listview_tip = (TextView) findViewById(R.id.oobe_wifi_listview_tip);
 
-		oobe_password_editview.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				// imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-				imm.showSoftInput(v, InputMethodManager.HIDE_NOT_ALWAYS);
-			}
-		});
-
         oobe_show_password = (TextView)findViewById(R.id.oobe_show_password);
         updateShowPasswordBoxUI();
         oobe_show_password.setOnClickListener(new OnClickListener() {
