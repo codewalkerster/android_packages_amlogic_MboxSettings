@@ -58,7 +58,6 @@ public class DisplayConfirmDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				dismiss();
-                mHandle.removeCallbacks(run);
                 run = null;
 			}
 
@@ -91,6 +90,7 @@ public class DisplayConfirmDialog extends Dialog {
 
 	@Override
 	public void dismiss() {
+	    mHandle.removeCallbacks(run);
 		super.dismiss();
 	}
 
@@ -103,8 +103,15 @@ public class DisplayConfirmDialog extends Dialog {
 
 	private void setOldDisplay() {
         if (Utils.DEBUG) Log.d(TAG, "====== setOldDisplay");
+       
         if(old_mode == null){
            old_mode = "720p"; 
+        }
+
+        //judge if the HDMI has been plugged when dialog is showing.
+        String currentMode = sw.readSysfs("/sys/class/display/mode");
+        if ((currentMode.contains("cvbs") && !old_mode.contains("cvbs")) || (!currentMode.contains("cvbs") && old_mode.contains("cvbs"))){
+            return;
         }
         OutPutModeManager output = new OutPutModeManager(mContext);
         output.setConfirmDialogState(false);

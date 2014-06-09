@@ -1744,7 +1744,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE).edit();
-			Log.e(TAG, "action : " + action);
+            if (Utils.DEBUG) Log.e(TAG, "action : " + action);
             if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
                     if (Utils.DEBUG) Log.e(TAG, "CONFIGURED_NETWORKS_CHANGED_ACTION");
                     Bundle b =	intent.getExtras();
