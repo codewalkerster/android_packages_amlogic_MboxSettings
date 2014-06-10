@@ -187,7 +187,8 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 			R.drawable.ic_per_92, R.drawable.ic_per_93, R.drawable.ic_per_94,
 			R.drawable.ic_per_95, R.drawable.ic_per_96, R.drawable.ic_per_97,
 			R.drawable.ic_per_98, R.drawable.ic_per_99, R.drawable.ic_per_100 };
-
+    
+    private static boolean isSupportEthernet = true ;
     private static boolean isGotoLanguageView = false ;
     private SharedPreferences sharepreference = null;
     private static boolean isFirstStartActivity = true;
@@ -313,13 +314,14 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 				setWifiCheckBoxSwitch();
 			}
 		});
+
+   
 		oobe_select_ethernet = (TextView) findViewById(R.id.oobe_select_ethernet);
-        String productModel =  SystemInfoManager.getModelNumber();
-        if(productModel.contains("g35")){
+        String hasEthernet = sw.getPropertyString("hw.hasethernet" , "false");
+        if(hasEthernet.equals("false")){
             TextView oobe_no_network = (TextView)findViewById(R.id.oobe_no_network);
             oobe_no_network.setText(mContext.getResources().getString(R.string.no_network_wifi_only));
             oobe_select_ethernet.setVisibility(View.INVISIBLE);
-            if (Utils.DEBUG) Log.d(TAG,"===== it's g35 devices!");
         }
 		oobe_select_ethernet.setOnClickListener(new OnClickListener() {
 			@Override

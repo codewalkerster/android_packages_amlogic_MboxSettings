@@ -605,10 +605,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         TextView model_number_value = (TextView) findViewById(R.id.model_number_value);
         String productModel = SystemInfoManager.getModelNumber();
         model_number_value.setText(productModel);
-        String str = sw.getPropertyString("hw.hasethernet" , "false");
-        if (str.equals("false")){
+        String hasEthernet = sw.getPropertyString("hw.hasethernet" , "false");
+        if (hasEthernet.equals("false")){
             isSupportEthernet = false;
-            Log.d(TAG,"===== it's g35 devices!");
+            Log.d(TAG,"===== not support Ethernet!");
         }
         
         TextView firmware_version_value = (TextView) findViewById(R.id.firmware_version_value);
