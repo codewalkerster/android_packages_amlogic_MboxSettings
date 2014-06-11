@@ -111,6 +111,7 @@ public class DisplayConfirmDialog extends Dialog {
         //judge if the HDMI has been plugged when dialog is showing.
         String currentMode = sw.readSysfs("/sys/class/display/mode");
         if ((currentMode.contains("cvbs") && !old_mode.contains("cvbs")) || (!currentMode.contains("cvbs") && old_mode.contains("cvbs"))){
+            sw.setProperty("ubootenv.var.hdmimode", old_mode);
             return;
         }
         OutPutModeManager output = new OutPutModeManager(mContext);
