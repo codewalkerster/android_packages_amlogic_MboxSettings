@@ -85,7 +85,7 @@ public class BootReceiver extends BroadcastReceiver {
     String isAutoSelectOutMode = "true" ;
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d(TAG, "==== BootReceiver , action : " + intent.getAction());
+		//Log.d(TAG, "==== BootReceiver , action : " + intent.getAction());
 		mContext = context;
         sw = (SystemWriteManager) mContext.getSystemService("system_write");
         sharedPrefrences = context.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
