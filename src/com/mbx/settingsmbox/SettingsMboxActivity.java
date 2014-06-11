@@ -1507,7 +1507,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         if(mScreenPositionManager.isScreenPositionChanged()){
             mScreenPositionManager.savePostion();
             ScreenPositionManager.mIsOriginWinSet = false;    //user has changed&save postion,reset this prop to default 
-            restartActivitySelf();
+            //restartActivitySelf();
         }
        
 	}
