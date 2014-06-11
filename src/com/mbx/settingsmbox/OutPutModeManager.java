@@ -230,6 +230,10 @@ public class OutPutModeManager {
 	public boolean isHdmiCvbsDual() {
 		return Utils.getPropertyBoolean(sw, "ro.platform.has.cvbsmode", false);
 	}
+    
+    public boolean ifModeIsSetting() {
+        return mom.ifModeIsSetting();
+    }
 
     public void  filterOutputMode() {
         String str_filter_mode = sw.getPropertyString("ro.platform.filter.modes", "");

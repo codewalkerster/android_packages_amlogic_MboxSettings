@@ -1422,6 +1422,11 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	@Override
 	public void onClick(View v) {
         if (Utils.DEBUG) Log.d(TAG,"===== onClick()");
+        
+        if (mOutPutModeManager.ifModeIsSetting()){
+            return;
+        }
+        
 		int id = v.getId();
 
 		if (v instanceof TextView) {
@@ -1517,6 +1522,11 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 		if (Utils.DEBUG) Log.d(TAG, "onKeyDown(),keyCode : " + keyCode);
         if (Utils.DEBUG) Log.d(TAG, "isOpenAdjustScreenView : " + isOpenAdjustScreenView);
+
+        if (mOutPutModeManager.ifModeIsSetting()){
+            return true;
+        }
+        
 		if (isOpenAdjustScreenView) {
 			if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 				btn_position_zoom_in.setBackgroundResource(R.drawable.minus_unfocus);
@@ -1680,6 +1690,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (Utils.DEBUG) Log.d(TAG,"===== onKeyUp(), keyCode : " + keyCode);
+
+        if (mOutPutModeManager.ifModeIsSetting()){
+            return true;
+        }
 		if (mCurrentContentNum == VIEW_SCREEN_ADJUST) {
 			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 				btn_position_zoom_in.setBackgroundResource(R.drawable.minus_unfocus);
