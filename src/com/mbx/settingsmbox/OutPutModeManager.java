@@ -27,6 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.UserHandle ;
@@ -36,8 +38,8 @@ public class OutPutModeManager {
 
 	private static Context mContext = null;
 
-    private static final String[] ALL_HDMI_MODE_VALUE_LIST = {"480i","480p","576i","576p","720p50hz","720p","1080i","1080p","1080i50hz","1080p50hz","4k2k24hz","4k2k25hz", "4k2k30hz", "4k2ksmpte"};
-    private static final String[] ALL_HDMI_MODE_TITLE_LIST = {"HDMI 480I","HDMI 480P","HDMI 576I","HDMI 576P","HDMI 720P 50HZ","HDMI 720P 60HZ","HDMI 1080I 60HZ","HDMI 1080P 60HZ","HDMI 1080I 50HZ","HDMI 1080P 50HZ" ,"HDMI 4K 24HZ","HDMI 4K 25HZ","HDMI 4K 30HZ","HDMI 4K SMPTE"};
+    private static  String[] ALL_HDMI_MODE_VALUE_LIST = {"480i","480p","576i","576p","720p50hz","720p","1080i","1080p","1080i50hz","1080p50hz","4k2k24hz","4k2k25hz", "4k2k30hz", "4k2ksmpte"};
+    private static  String[] ALL_HDMI_MODE_TITLE_LIST = {"HDMI 480I","HDMI 480P","HDMI 576I","HDMI 576P","HDMI 720P 50HZ","HDMI 720P 60HZ","HDMI 1080I 60HZ","HDMI 1080P 60HZ","HDMI 1080I 50HZ","HDMI 1080P 50HZ" ,"HDMI 4K 24HZ","HDMI 4K 25HZ","HDMI 4K 30HZ","HDMI 4K SMPTE"};
     private static final String[] HDMI_MODE_VALUE_LIST = {"480i","480p","576i","576p","720p","1080i","1080p","720p50hz","1080i50hz","1080p50hz"};
     private static final String[] HDMI_MODE_TITLE_LIST = {"HDMI 480I","HDMI 480P","HDMI 576I","HDMI 576P","HDMI 720P 60HZ","HDMI 1080I 60HZ","HDMI 1080P 60HZ","HDMI 720P 50HZ","HDMI 1080I 50HZ","HDMI 1080P 50HZ"};
     private static final String[] CVBS_MODE_VALUE_LIST = {"480cvbs","576cvbs"}; 
@@ -110,27 +112,15 @@ public class OutPutModeManager {
         mTitleList = new ArrayList<String>();
         mValueList = new ArrayList<String>();
         mSupportList = new ArrayList<String>();
+
+        filterOutputMode();
+        
         hasRealOutput = sw.getPropertyBoolean("ro.platform.has.realoutputmode", false);
         if(mode.equalsIgnoreCase("hdmi")){
-            if(hasRealOutput){
-                if (sw.getPropertyBoolean("ro.platform.has.native720", false)){
-                    for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length-hdmi4KmodeNum; i++){
-                        mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-                        mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
-                    } 
-                } else {
-                    for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length ; i++){
-                        mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-                        mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
-                    } 
-                }
-            }else{
-                for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length-hdmi4KmodeNum; i++){
-                    mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-                    mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
-                } 
-            }
-            
+            for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length-hdmi4KmodeNum; i++){
+                mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+                mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+            }      
         }else if(mode.equalsIgnoreCase("cvbs")){          
             for(int i = 0 ; i< CVBS_MODE_VALUE_LIST.length; i++){
                 mTitleList.add(CVBS_MODE_VALUE_LIST[i]);
@@ -242,8 +232,33 @@ public class OutPutModeManager {
 		return Utils.getPropertyBoolean(sw, "ro.platform.has.cvbsmode", false);
 	}
 
-    public  String getFilterModes() {
-		return Utils.getPropertyString(sw, "ro.platform.filter.modes", NO_FILTER_SET);
+    public void  filterOutputMode() {
+        String str_filter_mode = sw.getPropertyString("ro.platform.filter.modes", "");
+        
+        if(str_filter_mode == null || str_filter_mode.length() == 0){
+            return;
+        }
+        
+        String[] array_filter_mode = str_filter_mode.split(",");
+        List<String> list_value = new ArrayList<String>();
+        List<String> list_title = new ArrayList<String>();
+
+        for (int i = 0; i < ALL_HDMI_MODE_VALUE_LIST.length; i++){
+            list_value.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+            list_title.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+        }
+
+        for (int i = 0; i < array_filter_mode.length; i++){
+            for (int j = 0; j < list_value.size(); j++){
+                if((list_value.get(j).toString()).equals(array_filter_mode[i])){
+                    list_value.remove(j);
+                    list_title.remove(j);
+                }
+            }
+        }
+
+        ALL_HDMI_MODE_VALUE_LIST = list_value.toArray(new String[list_value.size()]);
+        ALL_HDMI_MODE_TITLE_LIST = list_title.toArray(new String[list_title.size()]);
 	}
 
     void setConfirmDialogState(boolean isNeed){
