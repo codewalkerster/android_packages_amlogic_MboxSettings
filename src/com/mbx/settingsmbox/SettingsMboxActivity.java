@@ -1067,12 +1067,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         } else {
             if(openEthernet && isEthDeviceAdded()){           
                 enableEthernetView(true);
-                /*
-                Message msg = mHander.obtainMessage();
-                msg.what = UPDATE_ETH_STATUS;
-                mHander.sendMessageDelayed(msg,9000);
                 mEthConnectingFlag = true;
-                */
             }else{
                 mEthernetManager.setEthEnabled(false); 
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.ethernet_inplug_notice), 4000).show(); 
@@ -1799,10 +1794,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     if (Utils.DEBUG) Log.e(TAG, "===== connectivity changed ");
                     if(isEthConnected && getEthCheckBoxState()){
                         if (Utils.DEBUG) Log.e(TAG, "===== ethernet connectd ");
-                        mEthConnectingFlag = false;
                         updateNetWorkUI(2);
                         updateEthCheckBoxUI();   
                         upDateWifiCheckBoxUI();
+                        mEthConnectingFlag = false;
                     }else if(isWifiConnected && getWifiCheckBoxState()){
                          updateNetWorkUI(1);
                          if (Utils.DEBUG) Log.e(TAG, "===== wifi connectd ");
@@ -1811,11 +1806,13 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                          mEthernetManager.setEthEnabled(false); 
                          updateEthCheckBoxUI();   
                          upDateWifiCheckBoxUI();
+                         mEthConnectingFlag = false;
                          if (Utils.DEBUG) Log.e(TAG, "===== ethernet and wifi are disconnected ");
                     } else if(getEthCheckBoxState() && (type == ConnectivityManager.TYPE_ETHERNET)){
                          if((info.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) || (info.getDetailedState() == NetworkInfo.DetailedState.FAILED)) {
                             if(!mEthConnectingFlag)
                                 updateNetWorkUI(2);
+                            mEthConnectingFlag = false;
                          }
                     //     setEthCheckBoxSwitch();
                     }
