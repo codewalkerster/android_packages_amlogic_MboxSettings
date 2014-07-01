@@ -30,6 +30,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.text.InputType;
 import android.text.format.Formatter;
@@ -1995,6 +1996,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
         
 		RelativeLayout voice_sddif = (RelativeLayout) voicePopupView.findViewById(R.id.voice_sddif);
+        boolean displaySpdif = SystemProperties.getBoolean("ro.hdmi.spdif", false);
+        voice_sddif.setVisibility(displaySpdif?View.VISIBLE:View.GONE);
 		voice_sddif.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
