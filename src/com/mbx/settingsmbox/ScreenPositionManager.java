@@ -92,7 +92,7 @@ public class ScreenPositionManager {
     private static final String free_scale = "/sys/class/graphics/fb0/free_scale";
     public static boolean mIsOriginWinSet = false;
     
-	private static final String[] outputmode_array = {"480i","480p","576i","576p","720p","1080i","1080p","720p50hz","1080i50hz","1080p50hz" , "480cvbs","576cvbs","4k2k24hz","4k2k25hz", "4k2k30hz", "4k2ksmpte"};
+	private static final String[] outputmode_array = {"480i","480p","576i","576p","720p","1080i","1080p","720p50hz","1080i50hz","1080p50hz" , "480cvbs","576cvbs","4k2k24hz","4k2k25hz", "4k2k30hz", "4k2ksmpte","1080p24hz"};
 
     private String mCurrentLeftString = null;
     private String mCurrentTopString = null;
@@ -166,12 +166,12 @@ public class ScreenPositionManager {
             mPreTop = sw.getPropertyInt(sel_720poutput_y,0);
             mPreWidth = sw.getPropertyInt(sel_720poutput_width,OUTPUT720_FULL_WIDTH);
             mPreHeight = sw.getPropertyInt(sel_720poutput_height,OUTPUT720_FULL_HEIGHT);
-        } else if (mCurrentMode.equals("1080i")||mCurrentMode.equals("1080i50hz")) {
+        } else if (mCurrentMode.contains("1080i")) {
             mPreLeft = sw.getPropertyInt(sel_1080ioutput_x,0);
             mPreTop = sw.getPropertyInt(sel_1080ioutput_y,0);
             mPreWidth = sw.getPropertyInt(sel_1080ioutput_width,OUTPUT1080_FULL_WIDTH);
             mPreHeight = sw.getPropertyInt(sel_1080ioutput_height,OUTPUT1080_FULL_HEIGHT);
-        } else if (mCurrentMode.equals("1080p")||mCurrentMode.equals("1080p50hz")){
+        } else if (mCurrentMode.contains("1080p")){
             mPreLeft = sw.getPropertyInt(sel_1080poutput_x,0);
             mPreTop = sw.getPropertyInt(sel_1080poutput_y,0);
             mPreWidth = sw.getPropertyInt(sel_1080poutput_width,OUTPUT1080_FULL_WIDTH);
@@ -344,6 +344,7 @@ public class ScreenPositionManager {
     			break;
     		case 6: // 1080p
     		case 9: // 1080p50hz
+    		case 16: //1080p24hz
     			sw.setProperty(sel_1080poutput_x, x);
     			sw.setProperty(sel_1080poutput_y, y);
     			sw.setProperty(sel_1080poutput_width, w);

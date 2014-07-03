@@ -38,8 +38,8 @@ public class OutPutModeManager {
 
 	private static Context mContext = null;
 
-    private static String[] ALL_HDMI_MODE_VALUE_LIST = {"1080p","1080p50hz","720p","720p50hz","4k2k24hz","4k2k25hz","4k2k30hz","4k2ksmpte","576p","480p","1080i","1080i50hz","576i","480i"};
-    private static String[] ALL_HDMI_MODE_TITLE_LIST = {"1080p-60hz","1080p-50hz","720p-60hz","720p-50hz","4k2k-24hz","4k2k-25hz","4k2k-30hz","4k2k-smpte","576p-50hz","480p-60hz","1080i-60hz","1080i-50hz","576i-50hz","480i-60hz" };
+    private static String[] ALL_HDMI_MODE_VALUE_LIST = {"1080p","1080p50hz","1080p24hz","720p","720p50hz","4k2k24hz","4k2k25hz","4k2k30hz","4k2ksmpte","576p","480p","1080i","1080i50hz","576i","480i"};
+    private static String[] ALL_HDMI_MODE_TITLE_LIST = {"1080p-60hz","1080p-50hz","1080p-24hz","720p-60hz","720p-50hz","4k2k-24hz","4k2k-25hz","4k2k-30hz","4k2k-smpte","576p-50hz","480p-60hz","1080i-60hz","1080i-50hz","576i-50hz","480i-60hz" };
     private static final String[] CVBS_MODE_VALUE_LIST = {"480cvbs","576cvbs"}; 
     private static final String[] CVBS_MODE_TITLE_LIST = {"480 CVBS","576 CVBS"}; 
     private static final String HDMI_MODE_PROP = "ubootenv.var.hdmimode";

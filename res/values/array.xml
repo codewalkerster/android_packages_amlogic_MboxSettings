@@ -32,6 +32,7 @@
         <item> 720p50hz</item>
         <item> 1080i50hz</item>
         <item> 1080p50hz</item>
+        <item> 1080p24hz</item>
         <item> 480cvbs</item>
         <item> 576cvbs</item>
     </string-array>
@@ -47,6 +48,7 @@
         <item> 720p50hz</item>
         <item> 1080i50hz</item>
         <item> 1080p50hz</item>
+        <item> 1080p24hz</item>
     </string-array>
     
     <string-array name="output_mode_titles">
@@ -60,6 +62,7 @@
         <item> HDMI 720P 50HZ</item>
         <item> HDMI 1080I 50HZ</item>
         <item> HDMI 1080P 50HZ</item>
+        <item> HDMI 1080P 24HZ</item>
     </string-array>
     
     <string-array name="output_mode_titles_with_cvbs">
@@ -73,6 +76,7 @@
         <item> HDMI 720P 50HZ</item>
         <item> HDMI 1080I 50HZ</item>
         <item> HDMI 1080P 50HZ</item>
+        <item> HDMI 1080P 24HZ</item>
         <item> CVBS 480</item>
         <item> CVBS 576</item>
     </string-array>
@@ -139,6 +143,7 @@
         <item>720p50hz</item>
         <item>1080i50hz</item>
         <item>1080p50hz</item>
+        <item>1080p24hz</item>
     </string-array>
     
     <string-array name="citys_01">
