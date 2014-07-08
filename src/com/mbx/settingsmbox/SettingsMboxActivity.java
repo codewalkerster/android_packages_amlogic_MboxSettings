@@ -2678,7 +2678,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			settingsContentLayout_03.setVisibility(View.GONE);
 			settingsContentLayout_04.setVisibility(View.GONE);
 			settingsContentLayout_01.setVisibility(View.VISIBLE);
-            wifiResume();
+            if (!mEthConnectingFlag)
+                wifiResume();
 		} else if (id == R.id.settingsTopView_02) {
 		    if (Utils.DEBUG) Log.d(TAG,"===== setViewVisable(), settingsTopView_02");
 			mCurrentContentNum = VIEW_DISPLAY;
