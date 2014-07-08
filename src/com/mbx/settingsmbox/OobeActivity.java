@@ -777,7 +777,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
     private void updateLanguage(Locale locale) {
 		try {
-			Utils.shadowScreen(sw, null);
+			//Utils.shadowScreen(sw, null);
 			Object objIActMag;
 			Class clzIActMag = Class.forName("android.app.IActivityManager");
 			Class clzActMagNative = Class.forName("android.app.ActivityManagerNative");

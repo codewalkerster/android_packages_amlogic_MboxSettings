@@ -16,7 +16,6 @@ public class Utils {
     private static final String mDisplayAxis720 = " 1280 720 ";
     private static final String mDisplayAxis576 = " 720 576 ";
     private static final String mDisplayAxis480 = " 720 480 ";
-    private static final int time = 4000;//close osd to do ui switch ,add delay to avoid user seeing it
 	public static final String blankFb0File = "/sys/class/graphics/fb0/blank";
 
 	public static String readSysFile(SystemWriteManager sw, String path) {
@@ -197,7 +196,7 @@ public class Utils {
 
     
 
-	public static void shadowScreen(final SystemWriteManager sw, final String mode){
+	public static void shadowScreen(final SystemWriteManager sw, final int time){
 		sw.writeSysfs(blankFb0File, "1");
 		Log.d(TAG,"===== beging shadowScreen()");
 		Thread task = new Thread(new Runnable() {
