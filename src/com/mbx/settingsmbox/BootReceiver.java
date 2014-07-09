@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.app.SystemWriteManager;
+import android.app.MboxOutputModeManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -320,25 +321,25 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
     private void initDolby(){
-        DigitalAudioManager mDigitalAudioManager = new DigitalAudioManager(mContext, sw);
+        MboxOutputModeManager mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
         
         String isDrcEnable = sharedPrefrences.getString("dolby_drc_enable", "false");
-        mDigitalAudioManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
+        mMboxOutputModeManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
 
         String mode = sharedPrefrences.getString("dolby_drc_mode", "2");
-        mDigitalAudioManager.setDoblyMode(mode);
+        mMboxOutputModeManager.setDoblyMode(mode);
     }
 
     private void initDts(){
-        DigitalAudioManager mDigitalAudioManager = new DigitalAudioManager(mContext, sw);
+        MboxOutputModeManager mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
         
         String mode = sharedPrefrences.getString("dts_downmix_mode", "0");
-        mDigitalAudioManager.setDTS_DownmixMode(mode);
+        mMboxOutputModeManager.setDTS_DownmixMode(mode);
 
         String isDrcScaleEnable = sharedPrefrences.getString("dts_drc_scale", "false");
-        mDigitalAudioManager.enableDTS_DRC_scale_control(Boolean.parseBoolean(isDrcScaleEnable));
+        mMboxOutputModeManager.enableDTS_DRC_scale_control(Boolean.parseBoolean(isDrcScaleEnable));
 
         String isDialNormEnable = sharedPrefrences.getString("dts_dial_norm", "true");
-        mDigitalAudioManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
+        mMboxOutputModeManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
     }
 }
