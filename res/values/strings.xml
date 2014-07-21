@@ -63,6 +63,7 @@
     <string name="expert_wifi_direct">Miracast</string>
     <string name="expert_dlna">DLNA</string>
     <string name="expert_remote_control">Remote Control</string>
+    <string name="expert_ipremote">Google TV Remote</string>
     <string name="city_select">Location</string>
     <string name="province">Shanghai</string>
     <string name="city">Shanghai</string>

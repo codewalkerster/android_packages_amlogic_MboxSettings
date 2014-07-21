@@ -73,7 +73,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		OnItemClickListener {
 
 	private String TAG = "SettingsMboxActivity";
-
+	private ActivityManager mAm;
     private final int TIME_4_MIN = 4 * 60 * 1000;
     private final int TIME_8_MIN = 8 * 60 * 1000;
     private final int TIME_12_MIN = 12 * 60 * 1000;
@@ -221,7 +221,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 	private TextView miracast;
 	private TextView remoteControl;
-
+	private TextView ipremoteTV;
 	private RelativeLayout cec_main;
 	private RelativeLayout cec_play;
 	private RelativeLayout cec_power;
@@ -267,7 +267,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		super.onCreate(savedInstanceState);
         Log.d(TAG, "===== onCreate()");
 		setContentView(R.layout.settings_main);
-     
+        mAm = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		sw = (SystemWriteManager) mContext.getSystemService("system_write");
         mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
 		mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
@@ -278,7 +278,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		settingsContentLayout_02 = (LinearLayout) findViewById(R.id.settingsContent02);
 		settingsContentLayout_03 = (ScrollView) findViewById(R.id.settingsContent03);
 		settingsContentLayout_04 = (LinearLayout) findViewById(R.id.settingsContent04);
-
+		
 		screen_self_set = (LinearLayout) findViewById(R.id.screen_self_set);
 		screen_self_set.setOnClickListener(this);
 		self_select_mode = (TextView) findViewById(R.id.self_select_mode);
@@ -539,6 +539,19 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			}
 		});
 
+		
+		LinearLayout ipremote = (LinearLayout) findViewById(R.id.ipremote_control);
+		ipremoteTV = (TextView) findViewById(R.id.ipremote);
+
+		upDateIpremoteUi();
+		ipremote.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				setIPremoteSwitch();
+			}
+		});
+
 		LinearLayout cec_control = (LinearLayout) findViewById(R.id.cec_control);
 		cec_control.setOnClickListener(new OnClickListener() {
 
@@ -608,7 +621,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         String productModel = SystemInfoManager.getModelNumber();
         model_number_value.setText(productModel);
         String hasEthernet = sw.getPropertyString("hw.hasethernet" , "false");
-        if (hasEthernet.equals("false")){
+        if ("false".equals(hasEthernet)){
             isSupportEthernet = false;
             Log.d(TAG,"===== not support Ethernet!");
         }
@@ -652,6 +665,40 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         string_hdmi = mContext.getResources().getString(R.string.voices_settings_hdmi);
         
 	}
+
+
+	private void upDateIpremoteUi() {
+
+		String isIpremoteBootStart = sharepreference.getString("ipremote_start_bootcomplete", "false");
+		if (isIpremoteBootStart.equals("true")) {
+			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
+       	} else {
+			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
+		}
+
+	}
+
+	private void setIPremoteSwitch() {
+		String isIpremoteBootStart = sharepreference.getString("ipremote_start_bootcomplete", "false");
+
+		Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,
+				Context.MODE_PRIVATE).edit();
+
+		if (!isIpremoteBootStart.equals("true")) {
+			editor.putString("ipremote_start_bootcomplete", "true");
+			editor.commit();
+			Intent intent = new Intent("android.custom.action.BOOT_COMPLETED");
+            mContext.sendBroadcast(intent);
+			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
+		} else {
+			mAm.forceStopPackage("com.google.tv.discovery");
+			mAm.forceStopPackage("com.google.tv.ipremote");
+			editor.putString("ipremote_start_bootcomplete", "false");
+			editor.commit();
+			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
+		}
+	}
+
 
 	private void upDateRemoteControlUi() {
 

@@ -95,7 +95,7 @@ public class BootReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         
         //======================================start system boot process
-		if ("android.intent.action.BOOT_COMPLETED".equals(action)) {			
+		if ("android.intent.action.BOOT_COMPLETED".equals(action)) {
             //========= for CEC
 			String isCecLanguageOpen = sharedPrefrences.getString("cec_language_open", "false");
 			if (isCecLanguageOpen.equals("true")) {
@@ -145,7 +145,11 @@ public class BootReceiver extends BroadcastReceiver {
             if (sw.getPropertyBoolean("ro.platform.support.dts", false)){
                 initDts();
             }
-
+            String ipremoteBootStart = sharedPrefrences.getString("ipremote_start_bootcomplete", "false");
+            if("true".equals(ipremoteBootStart)){
+                Intent intent1 = new Intent("android.custom.action.BOOT_COMPLETED");
+                mContext.sendBroadcast(intent1);
+            }
 		}
         //======================================end system boot process
 

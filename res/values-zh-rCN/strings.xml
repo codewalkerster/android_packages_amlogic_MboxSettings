@@ -122,4 +122,5 @@
 	<string name="dialog_title">是否切换到默认分辨率？</string>
 	<string name="show_password">显示密码</string>
 	<string name="connect_error_tips">连接失败 ！</string>
+	<string name="expert_ipremote">Google TV 遥控</string>
 </resources>
