@@ -168,6 +168,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private LinearLayout voice_setting = null;
     private LinearLayout dolby_setting = null;
     private LinearLayout dts_setting = null;
+    private LinearLayout dts_mul_asset = null;
+    private LinearLayout dts_trans_setting = null;
     
 	private LinearLayout settings_content_postion = null;
 	private LinearLayout button_scrren_adjust;
@@ -506,6 +508,29 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 			}
 		});
+
+        dts_mul_asset = (LinearLayout) findViewById(R.id.dts_mul_asset);
+        if (sw.getPropertyBoolean("ro.platform.support.dtsmulasset", false))
+            dts_mul_asset.setVisibility(View.VISIBLE);
+        dts_mul_asset.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setDtsMulAsset();
+			}
+		});
+        updateDtsMulAssetUi();
+
+        dts_trans_setting = (LinearLayout) findViewById(R.id.dts_trans_setting);
+        if (sw.getPropertyBoolean("ro.platform.support.dtstrans", false))
+            dts_trans_setting.setVisibility(View.VISIBLE);
+		dts_trans_setting.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openDtsTransPopupWindow();
+			}
+		});
+        getDtsTransInit();
+        
         mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
         updateVoiceUi();
 
@@ -2029,7 +2054,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 		updateVoiceUi();
     }
-
+    
 	private void openVoicePopupWindow() {
         
 		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -2140,6 +2165,73 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		dtsPopupWindow.showAtLocation(dtsPopupView, Gravity.CENTER, 0, 0);
 		dtsPopupWindow.update();
 	}
+
+    private void openDtsTransPopupWindow() {
+		LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		final View dtsTransPopupView = (View) mLayoutInflater.inflate(R.layout.dts_trans_popup_window, null, true);
+		upDateDtsTransUi(dtsTransPopupView);
+        
+		RelativeLayout dts_trans_0 = (RelativeLayout) dtsTransPopupView.findViewById(R.id.dts_trans_0);
+		dts_trans_0.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sw.setProperty("media.libplayer.dtsdecopt", "0");
+				upDateDtsTransUi(dtsTransPopupView);
+
+			}
+		});
+        
+		RelativeLayout dts_trans_1 = (RelativeLayout) dtsTransPopupView.findViewById(R.id.dts_trans_1);
+		dts_trans_1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				sw.setProperty("media.libplayer.dtsdecopt", "1");
+				upDateDtsTransUi(dtsTransPopupView);
+			}
+		});
+        
+		RelativeLayout dts_trans_2 = (RelativeLayout) dtsTransPopupView.findViewById(R.id.dts_trans_2);
+		dts_trans_2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sw.setProperty("media.libplayer.dtsdecopt", "2");
+				upDateDtsTransUi(dtsTransPopupView);
+			}
+		});
+
+		PopupWindow dtsTransPopupWindow = new PopupWindow(dtsTransPopupView,LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+		dtsTransPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+		dtsTransPopupWindow.showAtLocation(dtsTransPopupView, Gravity.CENTER, 0, 0);
+		dtsTransPopupWindow.update();
+	}
+
+    private void setDtsMulAsset() {
+        String isDtsMulAsset = sharepreference.getString("dts_mul_asset", "false");
+        Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,
+        Context.MODE_PRIVATE).edit();
+        if (isDtsMulAsset.equals("true")) {
+            editor.putString("dts_mul_asset", "false");
+            editor.commit();
+        } else {
+            editor.putString("dts_mul_asset", "true");
+            editor.commit();
+        }
+
+        updateDtsMulAssetUi();
+    }
+
+    void updateDtsMulAssetUi() {
+        String isDtsMulAsset = sharepreference.getString("dts_mul_asset", "false");
+        TextView tx_dts_mul_asset = (TextView)findViewById(R.id.tx_dts_mul_asset);
+
+        if (isDtsMulAsset.equals("true")) {
+            tx_dts_mul_asset.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
+            sw.setProperty("media.libplayer.dtsMulAsset", "true");
+        } else {
+            tx_dts_mul_asset.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
+            sw.setProperty("media.libplayer.dtsMulAsset", "false");
+        }
+    }
 
     private void setDolbySettingsUI(View dolbyPopupView) {
 		String enable = sharepreference.getString("dolby_drc_enable", "false");
@@ -2297,6 +2389,53 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         }
 
 	}
+
+    void upDateDtsTransUi(View dtsTransPopupView) {
+        Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+
+        ImageView imageview_trans_0 = (ImageView) dtsTransPopupView.findViewById(R.id.imageview_trans_0);
+        ImageView imageview_trans_1 = (ImageView) dtsTransPopupView.findViewById(R.id.imageview_trans_1);
+        ImageView imageview_trans_2 = (ImageView) dtsTransPopupView.findViewById(R.id.imageview_trans_2);
+        TextView tx_dts_trans_mode = (TextView)findViewById(R.id.tx_dts_trans_mode);
+        tx_dts_trans_mode.setTextColor(Color.GRAY);
+        String value = sw.getProperty("media.libplayer.dtsdecopt");
+        if ("0".equals(value)) {
+            imageview_trans_0.setBackgroundResource(R.drawable.current_select);
+            imageview_trans_1.setBackgroundResource(R.drawable.current_unselect);
+            imageview_trans_2.setBackgroundResource(R.drawable.current_unselect);
+            tx_dts_trans_mode.setText("0");
+            editor.putString("dts_trans", "0");
+        } else if ("1".equals(value)) {
+            imageview_trans_0.setBackgroundResource(R.drawable.current_unselect);
+            imageview_trans_1.setBackgroundResource(R.drawable.current_select);
+            imageview_trans_2.setBackgroundResource(R.drawable.current_unselect);
+            tx_dts_trans_mode.setText("1");
+            editor.putString("dts_trans", "1");
+        } else if ("2".equals(value)) {
+            imageview_trans_0.setBackgroundResource(R.drawable.current_unselect);
+            imageview_trans_1.setBackgroundResource(R.drawable.current_unselect);
+            imageview_trans_2.setBackgroundResource(R.drawable.current_select);
+            tx_dts_trans_mode.setText("2");
+            editor.putString("dts_trans", "2");
+        } else {
+            sw.setProperty("media.libplayer.dtsdecopt", "0");
+            tx_dts_trans_mode.setText("0");
+            editor.putString("dts_trans", "0");
+            imageview_trans_0.setBackgroundResource(R.drawable.current_select);
+            imageview_trans_1.setBackgroundResource(R.drawable.current_unselect);
+            imageview_trans_2.setBackgroundResource(R.drawable.current_unselect);
+        }
+
+        editor.commit();
+    }
+
+    void getDtsTransInit() {
+        String dts_trans_mode = sharepreference.getString("dts_trans", "0");
+        sw.setProperty("media.libplayer.dtsdecopt", dts_trans_mode);
+        TextView tx_dts_trans_mode = (TextView)findViewById(R.id.tx_dts_trans_mode);
+        tx_dts_trans_mode.setTextColor(Color.GRAY);
+        tx_dts_trans_mode.setText(dts_trans_mode);
+    }
 
     void upDateDigitaVoiceUi(View voicePopupView) {
 		ImageView imageview_pcm = (ImageView) voicePopupView.findViewById(R.id.imageview_pcm);

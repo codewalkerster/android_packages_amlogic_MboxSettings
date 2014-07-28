@@ -93,6 +93,7 @@
     <string name="select_wifi_tips"> 请选择你要连接的网络</string>
     <string name="dolby_settings">杜比设置</string>
     <string name="dts_settings">DTS 设置</string>
+    <string name="dts_mul_asset">DTSHDMulAssetDecode</string>
     <string name="dolby_drc_mode">设置dolby DD+ DRC 模式</string>
     <string name="dts_downmix_mode">DTS downmix 模式</string>
     <string name="connectting_wifi_tips">正在连接...</string>
