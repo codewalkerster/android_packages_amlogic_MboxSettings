@@ -125,7 +125,6 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
     //============network 
 	private AccessPointListAdapter oobe_mAccessPointListAdapter = null;
-	private AccessPointRefreshHander oobe_mAccessPointRefreshHander = null;
 	private Timer timer = null;
 	private TimerTask task = null;
     private LinearLayout oobe_wifi_connected;
@@ -482,7 +481,8 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                     oobe_mEthernetManager.setEthEnabled(false);
                 //}  
                 mHander.removeMessages(UPDATE_ETH_STATUS);
-                
+                oobe_mAcessPointListView.setVisibility(View.GONE);
+                oobe_wifi_listview_tip.setVisibility(View.VISIBLE);
                 oobe_mWifiManager.setWifiEnabled(true);
                 wifiScan(); 
                 updateNetWorkUI(1);
@@ -529,9 +529,8 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                 oobe_net_root_view.setVisibility(View.GONE);
                 oobe_root_eth_view.setVisibility(View.GONE);
                 oobe_root_wifi_view.setVisibility(View.VISIBLE);
-                
-                boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
-                if(isWifiConnected){
+
+                if(oobe_mWifiManager.isWifiEnabled()){
                     showWifiConnectedView();
                 }else{
                     showWifiDisconnectedView();
@@ -550,71 +549,32 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             }
     
         }
-        private void wifiScan(){
-            oobe_mAccessPointListAdapter.startScanApcessPoint();
-    
-            Message msg0 = mHander.obtainMessage();
-            msg0.what = UPDATE_AP_LIST ;
-            mHander.sendMessage(msg0);
-    
-            Thread updateTask = new Thread(new Runnable() {
-    
-                @Override
-                public void run() {
-    
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                    while (oobe_mAccessPointListAdapter.getCount() <= 0
-                            && mCuttentView == OOBE_NETWORK) {
-                        Message msg = mHander.obtainMessage();
-                        msg.what = UPDATE_AP_LIST ;
-                        mHander.sendMessage(msg);
-                        if (Utils.DEBUG) Log.d(TAG, "send message to refresh ap list");
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                    if (oobe_mAccessPointListAdapter.getCount() > 0) {
-                        if (Utils.DEBUG) Log.d(TAG, "get new  ap list ok ");
-                        Message msg = mHander.obtainMessage();
-                        msg.what = UPDATE_AP_LIST ;
-                        mHander.sendMessage(msg);
-                    }
-    
-                }
-            });
-            updateTask.start();
-        
+        private void wifiScan(){  
+            oobe_mAccessPointListAdapter.startScanApcessPoint(); 
         }
-        private void showWifiConnectedView() {
-    
+        private void showWifiConnectedView() {   
             oobe_wifi_listview_tip.setVisibility(View.GONE);
             oobe_mAcessPointListView.setVisibility(View.VISIBLE);
-    
-            oobe_wifi_input_password.setVisibility(View.GONE);
-            oobe_wifi_not_connect.setVisibility(View.GONE);
-            oobe_wifi_connected.setVisibility(View.VISIBLE);
             oobe_mAccessPointListAdapter.updateAccesspointList();
-    
-            DhcpInfo mDhcpInfo = oobe_mWifiManager.getDhcpInfo();
-            WifiInfo mWifiinfo = oobe_mWifiManager.getConnectionInfo();
-    
-            if (mWifiinfo != null) {
-                oobe_wifi_ssid_value.setVisibility(View.VISIBLE);
-                String wifi_name = mWifiinfo.getSSID().substring(1,mWifiinfo.getSSID().length() - 1);
-                oobe_wifi_ssid_value.setText(wifi_name);
-                oobe_ip_address_value.setText(int2ip(mWifiinfo.getIpAddress()));
-                //oobe_mAccessPointListAdapter.setCurrentConnectedItemBySsid(mWifiinfo.getSSID());
-                oobe_mAccessPointListAdapter.setCurrentConnectItemSSID(mWifiinfo.getSSID());
+
+            boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
+            if(isWifiConnected){
+                oobe_wifi_input_password.setVisibility(View.GONE);
+                oobe_wifi_not_connect.setVisibility(View.GONE);
+                oobe_wifi_connected.setVisibility(View.VISIBLE);
+        
+                DhcpInfo mDhcpInfo = oobe_mWifiManager.getDhcpInfo();
+                WifiInfo mWifiinfo = oobe_mWifiManager.getConnectionInfo();
+        
+                if (mWifiinfo != null) {
+                    oobe_wifi_ssid_value.setVisibility(View.VISIBLE);
+                    String wifi_name = mWifiinfo.getSSID().substring(1,mWifiinfo.getSSID().length() - 1);
+                    oobe_wifi_ssid_value.setText(wifi_name);
+                    oobe_ip_address_value.setText(int2ip(mWifiinfo.getIpAddress()));
+                    //oobe_mAccessPointListAdapter.setCurrentConnectedItemBySsid(mWifiinfo.getSSID());
+                    oobe_mAccessPointListAdapter.setCurrentConnectItemSSID(mWifiinfo.getSSID());
+                }
             }
-    
         }
         
 
@@ -1093,58 +1053,6 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 		}
 	}
 
-	class AccessPointRefreshHander extends Handler {
-
-		@Override
-		public void handleMessage(Message msg) {
-
-			if (oobe_mAccessPointListAdapter.getCount() <= 0) {
-				oobe_mAcessPointListView.setVisibility(View.GONE);
-				oobe_wifi_listview_tip.setVisibility(View.VISIBLE);
-			} else {
-				oobe_wifi_listview_tip.setVisibility(View.GONE);
-				oobe_mAcessPointListView.setVisibility(View.VISIBLE);
-			}
-
-			oobe_mAccessPointListAdapter.updateAccesspointList();
-
-		}
-	}
-
-	private void startTimer() {
-		if (task == null) {
-			task = new TimerTask() {
-
-				@Override
-				public void run() {
-					Message msg = oobe_mAccessPointRefreshHander.obtainMessage();
-					oobe_mAccessPointRefreshHander.sendMessage(msg);
-				}
-			};
-
-		}
-		if (timer == null) {
-			timer = new Timer();
-			timer.schedule(task, 0, DALAY_TIME);
-
-		}
-
-	}
-
-	private void stopTimer() {
-
-		if (timer != null) {
-			timer.cancel();
-			timer = null;
-		}
-
-		if (task != null) {
-			task.cancel();
-			task = null;
-		}
-
-	}
-
 	@Override
 	public void onClick(View v) {
 		int id = v.getId();
@@ -1226,10 +1134,19 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                             }      
                          }
                     }               
-            }
+            }else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) ||
+                WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action) ||
+                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)) {
+                oobe_mAccessPointListAdapter.updateAccesspointList();
+                if (oobe_mAccessPointListAdapter.getCount() <= 0) {
+                    oobe_mAcessPointListView.setVisibility(View.GONE);
+                    oobe_wifi_listview_tip.setVisibility(View.VISIBLE);
+                } else {
+                    oobe_wifi_listview_tip.setVisibility(View.GONE);
+                    oobe_mAcessPointListView.setVisibility(View.VISIBLE);
+                }
 
-            if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 001");
-            if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
+            }else if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
                         boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
                         boolean isEthConnected = WifiUtils.isEthConnected(mContext);
                         if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 002");

@@ -1177,7 +1177,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED)) {
                 mWifiManager.setWifiApEnabled(null, false);
             }
-
+            mAcessPointListView.setVisibility(View.GONE);
+            wifi_listview_tip.setVisibility(View.VISIBLE);
             mWifiManager.setWifiEnabled(true);
             wifiScan(); 
             updateNetWorkUI(1);
@@ -1242,9 +1243,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             net_root_view.setVisibility(View.GONE);
             root_eth_view.setVisibility(View.GONE);
             root_wifi_view.setVisibility(View.VISIBLE);
-            
-            boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
-            if(isWifiConnected){
+              
+            if(mWifiManager.isWifiEnabled()){
                 showWifiConnectedView();
             }else{
                 showWifiDisconnectedView();
@@ -1263,83 +1263,46 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         }
 
     }
-    private void wifiScan(){
-        mAccessPointListAdapter.startScanApcessPoint();
-
-		Message msg0 = mHander.obtainMessage();
-        msg0.what = UPDATE_AP_LIST ;
-		mHander.sendMessage(msg0);
-
-		Thread updateTask = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				while (mAccessPointListAdapter.getCount() <= 0
-						&& mCurrentContentNum == VIEW_NETWORK
-						) {
-					if(!getWifiCheckBoxState())
-						break;
-					Message msg = mHander.obtainMessage();
-                    msg.what = UPDATE_AP_LIST ;
-					mHander.sendMessage(msg);
-					if (Utils.DEBUG) Log.d(TAG, "send message to refresh ap list");
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				if (mAccessPointListAdapter.getCount() > 0) {
-					if (Utils.DEBUG) Log.d(TAG, "get new  ap list ok ");
-					Message msg = mHander.obtainMessage();
-                    msg.what = UPDATE_AP_LIST ;
-					mHander.sendMessage(msg);
-				}
-
-			}
-		});
-		updateTask.start();
     
+    private void wifiScan(){
+        mWifiManager.startScan();
+    }
+    
+    private void updateWifiState(int state) {
+        Log.d(TAG, "######################### state="+ state);
+        switch (state) {
+            case WifiManager.WIFI_STATE_ENABLED:
+                wifiScan();
+                break;
+            case WifiManager.WIFI_STATE_ENABLING:
+                break;
+            case WifiManager.WIFI_STATE_DISABLED:
+                break;
+        }
     }
 	private void showWifiConnectedView() {
-
 		wifi_listview_tip.setVisibility(View.GONE);
 		mAcessPointListView.setVisibility(View.VISIBLE);
+        mAccessPointListAdapter.updateAccesspointList();
 
-		wifi_input_password.setVisibility(View.GONE);
-		wifi_not_connect.setVisibility(View.GONE);
-		wifi_connected.setVisibility(View.VISIBLE);
-		mAccessPointListAdapter.updateAccesspointList();
+        boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
+        if(isWifiConnected){
+    		wifi_input_password.setVisibility(View.GONE);
+    		wifi_not_connect.setVisibility(View.GONE);
+    		wifi_connected.setVisibility(View.VISIBLE);
 
-		DhcpInfo mDhcpInfo = mWifiManager.getDhcpInfo();
-		WifiInfo mWifiinfo = mWifiManager.getConnectionInfo();
+    		DhcpInfo mDhcpInfo = mWifiManager.getDhcpInfo();
+    		WifiInfo mWifiinfo = mWifiManager.getConnectionInfo();
 
-		if (mWifiinfo != null) {
-			wifi_ssid_value.setVisibility(View.VISIBLE);
-			String wifi_name = mWifiinfo.getSSID().substring(1,mWifiinfo.getSSID().length() - 1);
-			wifi_ssid_value.setText(wifi_name);
-			ip_address_value.setText(int2ip(mWifiinfo.getIpAddress()));
-			//mAccessPointListAdapter.setCurrentConnectedItemBySsid(mWifiinfo.getSSID());
-            mAccessPointListAdapter.setCurrentConnectItemSSID(mWifiinfo.getSSID());
-		}
-
-		//if (mDhcpInfo != null) {
-		//	gateway_value.setText(Formatter.formatIpAddress(mDhcpInfo.gateway));
-		//	subnet_mask_value.setText(Formatter.formatIpAddress(mDhcpInfo.netmask));
-		//}
-
-		//int wifiLevelDrawableId = mAccessPointListAdapter.getWifiLevelDrawableId(mWifiinfo.getRssi());
-
-		//wifi_level.setBackgroundResource(wifiLevelDrawableId);
-
+    		if (mWifiinfo != null) {
+    			wifi_ssid_value.setVisibility(View.VISIBLE);
+    			String wifi_name = mWifiinfo.getSSID().substring(1,mWifiinfo.getSSID().length() - 1);
+    			wifi_ssid_value.setText(wifi_name);
+    			ip_address_value.setText(int2ip(mWifiinfo.getIpAddress()));
+    			//mAccessPointListAdapter.setCurrentConnectedItemBySsid(mWifiinfo.getSSID());
+                mAccessPointListAdapter.setCurrentConnectItemSSID(mWifiinfo.getSSID());
+    		}
+        }
 	}
 
     private String getDeviceIpAddress(){
@@ -1842,18 +1805,30 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                                 if (Utils.DEBUG) Log.e(TAG, "show connect error notices");
                             }      
                          }
-                    }               
-            }
-            
-			if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+                    }   
+                    
+            }if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) { 
+                 updateWifiState(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
+                    WifiManager.WIFI_STATE_UNKNOWN));
+
+            }else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) ||
+                WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action) ||
+                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)) {
+                mAccessPointListAdapter.updateAccesspointList();
+                if (mAccessPointListAdapter.getCount() <= 0) {
+                    mAcessPointListView.setVisibility(View.GONE);
+                    wifi_listview_tip.setVisibility(View.VISIBLE);
+                } else {
+                    wifi_listview_tip.setVisibility(View.GONE);
+                    mAcessPointListView.setVisibility(View.VISIBLE);
+                }
+            }else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
 				mThisDevice = (WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
 				if (Utils.DEBUG) Log.d(TAG, "miracast device name: " + mThisDevice.deviceName);
                 editor.putString("miracast_device_name", mThisDevice.deviceName);
-			    editor.commit();   
-			}
-            
-            if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 001");
-			if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
+			    editor.commit(); 
+                
+			}else if ("android.net.conn.CONNECTIVITY_CHANGE".equals(action)) {  
 
                 ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -1903,15 +1878,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     }
                // }             
                  
-		    }
-
-            if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
+		    }else if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
                 if (popupWindow != null)
                     popupWindow.dismiss();
                 upDateOutModeUi();
-            }
-            
-            if(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED.equals(action)){
+                
+            }else if(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED.equals(action)){
                 boolean plugged = intent.getBooleanExtra(WindowManagerPolicy.EXTRA_HDMI_HW_PLUGGED_STATE, false); 
                 if(plugged){
                     if (Utils.DEBUG) Log.d(TAG,"===== himi plugged");
@@ -1947,8 +1919,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     auto_set_screen.setTextColor(Color.GRAY);
                     cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));     
                 }
-            }
-            if("action.show.dialog".equals(action)){
+                
+            }else if("action.show.dialog".equals(action)){
                 if (Utils.DEBUG) Log.d(TAG,"===== action.show.dialog");
                 MyHandle mHander = new MyHandle();
                 Message msg = mHander.obtainMessage();
