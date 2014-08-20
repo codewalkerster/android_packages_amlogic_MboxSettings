@@ -27,7 +27,7 @@ public class AccessPointListAdapter extends BaseAdapter {
 	Context mContext;
 	private LayoutInflater mInflater;
 
-	public final static int[] wifi_level_drawable = { R.drawable.wifi_level_01,
+	public final static int[] wifi_level_drawable = {
 			R.drawable.wifi_level_02, R.drawable.wifi_level_03,
 			R.drawable.wifi_level_04, R.drawable.wifi_level_05 };
 
@@ -179,7 +179,7 @@ public class AccessPointListAdapter extends BaseAdapter {
 		}
 
 		int level = mWifiUtils.getWifiLevel(mScanResultList.get(index));
-		holder.wifi_level.setBackgroundResource(wifi_level_drawable[calculate(level)]);
+		holder.wifi_level.setBackgroundResource(wifi_level_drawable[WifiManager.calculateSignalLevel(level, 4)]);
 
 		if (getCurrentAccessPointSecurityType(index) == 0|| getCurrentAccessPointSecurityType(index) == 4) {
 			holder.wifi_arrow.setVisibility(View.INVISIBLE);
@@ -196,20 +196,7 @@ public class AccessPointListAdapter extends BaseAdapter {
 	}
 
 	public int getWifiLevelDrawableId(int level) {
-		return wifi_level_drawable[calculate(level)];
+		return wifi_level_drawable[WifiManager.calculateSignalLevel(level, 4)];
 	}
-
-	private int calculate(int level) {
-		if (level > -50) {
-			return 4;
-		} else if (level > -60) {
-			return 3;
-		} else if (level > -70) {
-			return 2;
-		} else if (level > -80) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
+    
 }
