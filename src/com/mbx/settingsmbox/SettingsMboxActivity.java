@@ -63,6 +63,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ScrollView;
 import android.os.UserHandle ;
+import android.os.SystemProperties;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.net.Inet4Address;
@@ -1092,7 +1093,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private void wifiResume(){
         if(getEthCheckBoxState()){ 
             if(isEthDeviceAdded()) {
-                mWifiManager.setWifiEnabled(false);
+                boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+                if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
                 mEthernetManager.setEthEnabled(true);
                 updateNetWorkUI(2);
             }else{
@@ -1158,7 +1160,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             updateNetWorkUI(2);
             eth_connected_tip.setText(R.string.ethernet_connectting);
             mEthernetManager.setEthEnabled(true);   
-            mWifiManager.setWifiEnabled(false);
+            boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+            if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
         }else{
             updateNetWorkUI(0);
             mEthernetManager.setEthEnabled(false);
@@ -1167,9 +1170,9 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     
     private void enableWifiView(boolean able){
         if(able){ 
-            //if(isEthDeviceAdded()){
-                mEthernetManager.setEthEnabled(false);
-            //} 
+            boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+            if(!eth_wifi_coexist_enabled) mEthernetManager.setEthEnabled(false);
+
             mHander.removeMessages(UPDATE_ETH_STATUS);
             
             int wifiApState = mWifiManager.getWifiApState();
