@@ -29,9 +29,8 @@ public class OobeDisplayConfirmDialog extends Dialog {
     private static final String PREFERENCE_BOX_SETTING = "preference_box_settings";
     private boolean isNeedStop = false;
     
-	public OobeDisplayConfirmDialog(Context context, boolean cancelable,
-			OnCancelListener cancelListener) {
-		super(context, cancelable, cancelListener);
+	public OobeDisplayConfirmDialog(Context context) {
+		super(context, R.style.style_dialog);
         mContext = context;
         sw = (SystemWriteManager) mContext.getSystemService("system_write");
         

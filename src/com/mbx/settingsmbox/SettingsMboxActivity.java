@@ -2939,7 +2939,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
     private void showDisplayDialog(){
         dismissDisplayDiglog();
-        dialog = new DisplayConfirmDialog(mContext, false , null);
+        dialog = new DisplayConfirmDialog(mContext);
         dialog.recordOldMode(oldMode);
         dialog.show();
         if (Utils.DEBUG) Log.d(TAG,"===== showDisplayDialog() , oldMode=" + oldMode);

@@ -28,9 +28,8 @@ public class DisplayConfirmDialog extends Dialog {
     private static final String PREFERENCE_BOX_SETTING = "preference_box_settings";
     private boolean isNeedStop = false;
     
-	public DisplayConfirmDialog(Context context, boolean cancelable,
-			OnCancelListener cancelListener) {
-		super(context, cancelable, cancelListener);
+	public DisplayConfirmDialog(Context context) {
+		super(context, R.style.style_dialog);
         mContext = context;
         sw = (SystemWriteManager) mContext.getSystemService("system_write");
         

@@ -1000,8 +1000,8 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             openLanguageView();
             isGotoLanguageView = false;
         }
-        if(isNeedShowDialog())
-		    showConfirmDialog();
+        //if(isNeedShowDialog())
+		//    showConfirmDialog();
 
         isFirstStartActivity = false;
 	}
@@ -1025,7 +1025,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             return ;
         }
         if(dialog == null)
-            dialog = new OobeDisplayConfirmDialog(this,false,null);
+            dialog = new OobeDisplayConfirmDialog(this);
         dialog.show();
     }
 
