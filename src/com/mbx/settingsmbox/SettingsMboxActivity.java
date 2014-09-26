@@ -1091,15 +1091,16 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
     private void wifiResume(){
+        boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
         if(getEthCheckBoxState()){ 
             if(isEthDeviceAdded()) {
-                boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
                 if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
                 mEthernetManager.setEthEnabled(true);
                 updateNetWorkUI(2);
             }else{
-                //mEthernetManager.setEthEnabled(false); 
                 if(getWifiCheckBoxState()){
+                    if(!eth_wifi_coexist_enabled)
+                        mEthernetManager.setEthEnabled(false); 
                     mWifiManager.setWifiEnabled(true);
                     wifiScan(); 
                     updateNetWorkUI(1);
@@ -1247,7 +1248,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             root_eth_view.setVisibility(View.GONE);
             root_wifi_view.setVisibility(View.VISIBLE);
               
-            if(mWifiManager.isWifiEnabled()){
+            if(WifiUtils.isWifiConnected(mContext)){
                 showWifiConnectedView();
             }else{
                 showWifiDisconnectedView();
@@ -1839,7 +1840,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 int type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_NONE);
                 NetworkInfo info = (NetworkInfo)intent.getExtra(ConnectivityManager.EXTRA_NETWORK_INFO, null);
                 if (Utils.DEBUG) Log.d(TAG, "***receive CONNECTIVITY_CHANGE extra:  type="+type+",  networkinfo="+info);
-                
+
                 //if(mCurrentContentNum == VIEW_NETWORK){
                     boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
                     boolean isEthConnected = WifiUtils.isEthConnected(mContext);
