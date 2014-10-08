@@ -438,7 +438,7 @@ public class ScreenPositionManager {
 		
         if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
             writeFile(window_axis,left+" "+top+" "+(right-1)+" "+(bottom-1));
-            writeFile(free_scale,"0x10001");
+            //writeFile(free_scale,"0x10001");
         } else {
             str = left + " " + top + " " + right + " " + bottom + " " + mode;
     		writeFile(PpscalerRectFile, str);
