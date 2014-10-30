@@ -38,8 +38,10 @@ public class OutPutModeManager {
 
 	private static Context mContext = null;
 
-    private static String[] ALL_HDMI_MODE_VALUE_LIST = {"1080p","1080p50hz","1080p24hz","720p","720p50hz","4k2k24hz","4k2k25hz","4k2k30hz","4k2ksmpte","576p","480p","1080i","1080i50hz","576i","480i"};
-    private static String[] ALL_HDMI_MODE_TITLE_LIST = {"1080p-60hz","1080p-50hz","1080p-24hz","720p-60hz","720p-50hz","4k2k-24hz","4k2k-25hz","4k2k-30hz","4k2k-smpte","576p-50hz","480p-60hz","1080i-60hz","1080i-50hz","576i-50hz","480i-60hz" };
+    private static final String[] HDMI_LIST = {"1080p","1080p50hz","1080p24hz","720p","720p50hz","4k2k24hz","4k2k25hz","4k2k30hz","4k2ksmpte","576p","480p","1080i","1080i50hz","576i","480i"};
+    private static final String[] HDMI_TITLE = {"1080p-60hz","1080p-50hz","1080p-24hz","720p-60hz","720p-50hz","4k2k-24hz","4k2k-25hz","4k2k-30hz","4k2k-smpte","576p-50hz","480p-60hz","1080i-60hz","1080i-50hz","576i-50hz","480i-60hz" };
+    private static String[] ALL_HDMI_MODE_VALUE_LIST;
+    private static String[] ALL_HDMI_MODE_TITLE_LIST;
     private static final String[] CVBS_MODE_VALUE_LIST = {"480cvbs","576cvbs"}; 
     private static final String[] CVBS_MODE_TITLE_LIST = {"480 CVBS","576 CVBS"}; 
     private static final String HDMI_MODE_PROP = "ubootenv.var.hdmimode";
@@ -116,8 +118,11 @@ public class OutPutModeManager {
         hasRealOutput = sw.getPropertyBoolean("ro.platform.has.realoutputmode", false);
         if(mode.equalsIgnoreCase("hdmi")){
             for(int i=0 ; i< ALL_HDMI_MODE_VALUE_LIST.length; i++){
-                mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-                mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);}      
+                if (ALL_HDMI_MODE_TITLE_LIST[i] != null && ALL_HDMI_MODE_TITLE_LIST[i].length() != 0){
+                    mTitleList.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+                    mValueList.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+                } 
+            }
         }else if(mode.equalsIgnoreCase("cvbs")){          
             for(int i = 0 ; i< CVBS_MODE_VALUE_LIST.length; i++){
                 mTitleList.add(CVBS_MODE_VALUE_LIST[i]);
@@ -233,34 +238,85 @@ public class OutPutModeManager {
         return mom.ifModeIsSetting();
     }
 
-    public void  filterOutputMode() {
-        String str_filter_mode = sw.getPropertyString("ro.platform.filter.modes", "");
-        
-        if(str_filter_mode == null || str_filter_mode.length() == 0){
-            return;
-        }
-        
-        String[] array_filter_mode = str_filter_mode.split(",");
+    public void  filterOutputMode() { 
         List<String> list_value = new ArrayList<String>();
         List<String> list_title = new ArrayList<String>();
 
-        for (int i = 0; i < ALL_HDMI_MODE_VALUE_LIST.length; i++){
-            list_value.add(ALL_HDMI_MODE_VALUE_LIST[i]);
-            list_title.add(ALL_HDMI_MODE_TITLE_LIST[i]);
-        }
+        ALL_HDMI_MODE_VALUE_LIST = HDMI_LIST;
+        ALL_HDMI_MODE_TITLE_LIST = HDMI_TITLE;
 
-        for (int i = 0; i < array_filter_mode.length; i++){
-            for (int j = 0; j < list_value.size(); j++){
-                if((list_value.get(j).toString()).equals(array_filter_mode[i])){
-                    list_value.remove(j);
-                    list_title.remove(j);
+        for (int i = 0; i < ALL_HDMI_MODE_VALUE_LIST.length; i++){
+            if(ALL_HDMI_MODE_VALUE_LIST[i] != null){
+                list_value.add(ALL_HDMI_MODE_VALUE_LIST[i]);
+                list_title.add(ALL_HDMI_MODE_TITLE_LIST[i]);
+            }
+        }
+        
+        String str_filter_mode = sw.getPropertyString("ro.platform.filter.modes", "");
+        if(str_filter_mode != null && str_filter_mode.length() != 0){
+            String[] array_filter_mode = str_filter_mode.split(",");
+            for (int i = 0; i < array_filter_mode.length; i++){
+                for (int j = 0; j < list_value.size(); j++){
+                    if((list_value.get(j).toString()).equals(array_filter_mode[i])){
+                        list_value.remove(j);
+                        list_title.remove(j);
+                    }
                 }
             }
         }
 
-        ALL_HDMI_MODE_VALUE_LIST = list_value.toArray(new String[list_value.size()]);
-        ALL_HDMI_MODE_TITLE_LIST = list_title.toArray(new String[list_title.size()]);
+        String str_edid = getHdmiSupportList();
+        if (str_edid != null && str_edid.length() != 0 && !str_edid.contains("null")){
+            List<String> list_hdmi_mode = new ArrayList<String>();
+            List<String> list_hdmi_title = new ArrayList<String>();
+            for (int i = 0; i < list_value.size(); i++){
+                if (str_edid.contains(list_value.get(i))){
+                    list_hdmi_mode.add(list_value.get(i));
+                    list_hdmi_title.add(list_title.get(i));
+                }
+
+            }
+            ALL_HDMI_MODE_VALUE_LIST = list_hdmi_mode.toArray(new String[list_value.size()]);
+            ALL_HDMI_MODE_TITLE_LIST = list_hdmi_title.toArray(new String[list_title.size()]);    
+        } else {
+            ALL_HDMI_MODE_VALUE_LIST = list_value.toArray(new String[list_value.size()]);
+            ALL_HDMI_MODE_TITLE_LIST = list_title.toArray(new String[list_title.size()]);
+        }
 	}
+
+    public String getHdmiSupportList(){
+        String str = null;
+        StringBuilder value = new StringBuilder();    
+        try {
+            FileReader fr = new FileReader("/sys/class/amhdmitx/amhdmitx0/disp_cap");
+            BufferedReader br = new BufferedReader(fr);
+            try {
+                while ((str = br.readLine()) != null) {
+                    if(str != null){ 
+                        if(str.contains("*")){
+                            value.append(str.substring(0,str.length()-1));
+                        }else{
+                            value.append(str);
+                        }
+                        value.append(",");
+                    }
+                };
+                fr.close();
+                br.close();
+                if(value != null){
+                    return value.toString();
+                }
+                else 
+                    return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     void setConfirmDialogState(boolean isNeed){
         isNeedShowConfirmDialog = isNeed;
