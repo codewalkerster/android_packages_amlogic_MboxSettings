@@ -672,11 +672,11 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
         filter.addAction(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
+       // filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
 
         filter.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
         filter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.LINK_CONFIGURATION_CHANGED_ACTION);
+       // filter.addAction(WifiManager.LINK_CONFIGURATION_CHANGED_ACTION);
         filter.addAction("action.show.dialog");
 		
 	    myReceiver = new MyReceiver();
@@ -1048,14 +1048,14 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			@Override
 			public void onClick(View v) {
 				String password = password_editview.getText().toString();
-				String currentAP = mAccessPointListAdapter.getCurrentAP().wifiSsid.toString();
+				//String currentAP = mAccessPointListAdapter.getCurrentAP().wifiSsid.toString();
                 WifiUtils.setPassWord(password);                    
-                WifiUtils.setApName(currentAP);
-				String connectSsid = mWifiManager.getConnectionInfo().getWifiSsid().toString();
+                //WifiUtils.setApName(currentAP);
+				//String connectSsid = mWifiManager.getConnectionInfo().getWifiSsid().toString();
 				ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				if (password != null) {
-					if (currentAP.equals(connectSsid) && wifi.isConnected()){
+					if (/*currentAP.equals(connectSsid) && */wifi.isConnected()){
                         showWifiConnectedView();
                     }else {
                         if(mAccessPointListAdapter.getCurrentAPSecurityType()== SECURITY_WPA){
@@ -1172,11 +1172,11 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
             mHander.removeMessages(UPDATE_ETH_STATUS);
             
-            int wifiApState = mWifiManager.getWifiApState();
-            if ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING) ||
-                    (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED)) {
-                mWifiManager.setWifiApEnabled(null, false);
-            }
+            //int wifiApState = mWifiManager.getWifiApState();
+           // if ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING) ||
+             //       (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED)) {
+               // mWifiManager.setWifiApEnabled(null, false);
+         //   }
             mAcessPointListView.setVisibility(View.GONE);
             wifi_listview_tip.setVisibility(View.VISIBLE);
             mWifiManager.setWifiEnabled(true);
@@ -1791,7 +1791,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             String action = intent.getAction();
             Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE).edit();
             if (Utils.DEBUG) Log.e(TAG, "action : " + action);
-            if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
+            /*if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
                     if (Utils.DEBUG) Log.e(TAG, "CONFIGURED_NETWORKS_CHANGED_ACTION");
                     Bundle b =	intent.getExtras();
                     WifiConfiguration reason = (WifiConfiguration) b.get("wifiConfiguration");
@@ -1807,13 +1807,13 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                          }
                     }   
                     
-            }if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) { 
+            }*/if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) { 
                  updateWifiState(intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
                     WifiManager.WIFI_STATE_UNKNOWN));
 
-            }else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) ||
+            }else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) /*||
                 WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action) ||
-                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)) {
+                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)*/) {
                 mAccessPointListAdapter.updateAccesspointList();
                 if (mAccessPointListAdapter.getCount() <= 0) {
                     mAcessPointListView.setVisibility(View.GONE);
@@ -1833,9 +1833,9 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                 if (Utils.DEBUG) Log.d(TAG,"===== wifi.getState()  : " +  wifi.getState());
-                int type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_NONE);
-                NetworkInfo info = (NetworkInfo)intent.getExtra(ConnectivityManager.EXTRA_NETWORK_INFO, null);
-                if (Utils.DEBUG) Log.d(TAG, "***receive CONNECTIVITY_CHANGE extra:  type="+type+",  networkinfo="+info);
+                //int type = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_NONE);
+               // NetworkInfo info = (NetworkInfo)intent.getExtra(ConnectivityManager.EXTRA_NETWORK_INFO, null);
+               // if (Utils.DEBUG) Log.d(TAG, "***receive CONNECTIVITY_CHANGE extra:  type="+type+",  networkinfo="+info);
 
                 //if(mCurrentContentNum == VIEW_NETWORK){
                     boolean isWifiConnected = WifiUtils.isWifiConnected(mContext);
@@ -1857,12 +1857,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                          upDateWifiCheckBoxUI();
                          mEthConnectingFlag = false;
                          if (Utils.DEBUG) Log.e(TAG, "===== ethernet and wifi are disconnected ");
-                    } else if(getEthCheckBoxState() && (type == ConnectivityManager.TYPE_ETHERNET)){
-                         if((info.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) || (info.getDetailedState() == NetworkInfo.DetailedState.FAILED)) {
-                            if(!mEthConnectingFlag)
-                                updateNetWorkUI(2);
-                            mEthConnectingFlag = false;
-                         }
+                    } else if(getEthCheckBoxState() /*&& (type == ConnectivityManager.TYPE_ETHERNET)*/){
+                         //if((info.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) || (info.getDetailedState() == NetworkInfo.DetailedState.FAILED)) {
+                          //  if(!mEthConnectingFlag)
+                          //      updateNetWorkUI(2);
+                       //     mEthConnectingFlag = false;
+                      //   }
                     //     setEthCheckBoxSwitch();
                     }
                 //}
@@ -2963,14 +2963,14 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private String getLocalIpAddress() {
         ConnectivityManager cm = (ConnectivityManager)
 this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        LinkProperties prop = cm.getActiveLinkProperties();
-        return formatIpAddresses(prop);
+       // LinkProperties prop = cm.getActiveLinkProperties();
+        return "null ip";//formatIpAddresses(prop);
     }
 
 
     private static String formatIpAddresses(LinkProperties prop) {
 
-        if (prop == null) return null;
+      /*  if (prop == null) return null;
 
         Iterator<InetAddress> iter = prop.getAllAddresses().iterator();
 
@@ -2989,13 +2989,10 @@ this.getSystemService(Context.CONNECTIVITY_SERVICE);
                 break;
 
             }
-            /*addresses += iter.next().getHostAddress();
-        
-    if (iter.hasNext()) addresses += "\n";*/
 
-            }
+            }*/
 
-        return addresses;
+        return "null ip";
 
     }
 

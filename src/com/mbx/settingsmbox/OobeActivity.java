@@ -268,11 +268,11 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 		filter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
+      //  filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
 
         filter.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
         filter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.LINK_CONFIGURATION_CHANGED_ACTION);
+      //  filter.addAction(WifiManager.LINK_CONFIGURATION_CHANGED_ACTION);
 
 		if (mNetworkStateReceiver == null)
 			mNetworkStateReceiver = new NetworkStateReceiver();
@@ -371,14 +371,14 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 			@Override
 			public void onClick(View v) {
 				String password = oobe_password_editview.getText().toString();
-				String currentAP = oobe_mAccessPointListAdapter.getCurrentAP().wifiSsid.toString();
+				//String currentAP = oobe_mAccessPointListAdapter.getCurrentAP().wifiSsid.toString();
                 WifiUtils.setPassWord(password);                    
-                WifiUtils.setApName(currentAP);
-				String connectSsid = oobe_mWifiManager.getConnectionInfo().getWifiSsid().toString();
+               // WifiUtils.setApName(currentAP);
+				//String connectSsid = oobe_mWifiManager.getConnectionInfo().getWifiSsid().toString();
 				ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				if (password != null) {
-					if (currentAP.equals(connectSsid) && wifi.isConnected()){
+					if (/*currentAP.equals(connectSsid)&& */wifi.isConnected()){
                         showWifiConnectedView();
                     }else {
                         if(oobe_mAccessPointListAdapter.getCurrentAPSecurityType()== SECURITY_WPA){
@@ -1118,7 +1118,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 			String action = intent.getAction();
             Editor editor = mContext.getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE).edit();
 			Log.e(TAG, "action : " + action);
-            if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
+            /*if(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action)){
                     Log.e(TAG, "CONFIGURED_NETWORKS_CHANGED_ACTION");
                     Bundle b =	intent.getExtras();
                     WifiConfiguration reason = (WifiConfiguration) b.get("wifiConfiguration");
@@ -1133,9 +1133,9 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                             }      
                          }
                     }               
-            }else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) ||
+            }else*/ if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) /*||
                 WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION.equals(action) ||
-                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)) {
+                WifiManager.LINK_CONFIGURATION_CHANGED_ACTION.equals(action)*/) {
                 oobe_mAccessPointListAdapter.updateAccesspointList();
                 if (oobe_mAccessPointListAdapter.getCount() <= 0) {
                     oobe_mAcessPointListView.setVisibility(View.GONE);
