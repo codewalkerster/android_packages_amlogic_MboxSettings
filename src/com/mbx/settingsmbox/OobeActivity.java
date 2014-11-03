@@ -26,9 +26,9 @@ import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
-import android.net.ethernet.EthernetDevInfo;
-import android.net.ethernet.EthernetManager;
-import android.net.ethernet.EthernetStateTracker;
+//import android.net.ethernet.EthernetDevInfo;
+//import android.net.ethernet.EthernetManager;
+//import android.net.ethernet.EthernetStateTracker;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -152,7 +152,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     private LinearLayout oobe_net_root_view;
 	private LinearLayout oobe_root_wifi_view;
 
-	private EthernetManager oobe_mEthernetManager;
+	//private EthernetManager oobe_mEthernetManager;
 	private WifiManager oobe_mWifiManager;
     private TextView oobe_eth_IP_value = null;
 	private TextView oobe_eth_connected_tip = null;
@@ -207,7 +207,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
         sharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE);
         sw = new SystemControlManager(this);
         
-        oobe_mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
+        //oobe_mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
         oobe_mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         mHander = new MyHandle();
 		initNetView();
@@ -412,10 +412,10 @@ public class OobeActivity extends Activity implements OnItemClickListener,
              if (Utils.DEBUG) Log.d(TAG,"===== wifiResume(),ethernet connect");
             if(isEthDeviceAdded()) {
                 oobe_mWifiManager.setWifiEnabled(false);
-                oobe_mEthernetManager.setEthEnabled(true);
+              //  oobe_mEthernetManager.setEthEnabled(true);
                 updateNetWorkUI(2);
             }else{
-                oobe_mEthernetManager.setEthEnabled(false); 
+              //  oobe_mEthernetManager.setEthEnabled(false); 
                 if(getWifiCheckBoxState()){
                     oobe_mWifiManager.setWifiEnabled(true);
                     wifiScan(); 
@@ -452,7 +452,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                 mHander.sendMessageDelayed(msg,9000);
             } 
         }else{
-            oobe_mEthernetManager.setEthEnabled(false); 
+           // oobe_mEthernetManager.setEthEnabled(false); 
             Toast.makeText(mContext, mContext.getResources().getString(R.string.ethernet_inplug_notice), 4000).show(); 
             if(!getWifiCheckBoxState())
                 updateNetWorkUI(0);
@@ -467,17 +467,17 @@ public class OobeActivity extends Activity implements OnItemClickListener,
             updateNetWorkUI(2);
             oobe_mWifiManager.setWifiEnabled(false);
             oobe_eth_connected_tip.setText(R.string.ethernet_connectting);
-            oobe_mEthernetManager.setEthEnabled(true);   
+           // oobe_mEthernetManager.setEthEnabled(true);   
         }else{
             updateNetWorkUI(0);
-            oobe_mEthernetManager.setEthEnabled(false);
+           // oobe_mEthernetManager.setEthEnabled(false);
         }       
     }
         
         private void enableWifiView(boolean able){
             if(able){ 
                 //if(isEthDeviceAdded()){
-                    oobe_mEthernetManager.setEthEnabled(false);
+                 //   oobe_mEthernetManager.setEthEnabled(false);
                 //}  
                 mHander.removeMessages(UPDATE_ETH_STATUS);
                 oobe_mAcessPointListView.setVisibility(View.GONE);
@@ -930,7 +930,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                 oobe_wifi_connected.setVisibility(View.VISIBLE);
             }
 			   
-			DhcpInfo mDhcpInfo = oobe_mEthernetManager.getDhcpInfo();
+		/*	DhcpInfo mDhcpInfo = oobe_mEthernetManager.getDhcpInfo();
 			if (mDhcpInfo != null) {
 				int ip = mDhcpInfo.ipAddress;
                 if(oobe_eth_connected_tip != null)
@@ -941,7 +941,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 				else {
 					Log.d(TAG,"=====  eth_IP_value is null !!!");
 				}	
-			}
+			}*/
 
 		} else {
 		    if(oobe_eth_connected_tip != null && oobe_eth_ip_layout != null){
@@ -1159,7 +1159,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
                         if (Utils.DEBUG) Log.e(TAG, "===== onReceive() 004");
                     }else if(!getWifiCheckBoxState() && ! getEthCheckBoxState()){
                          updateNetWorkUI(0);
-                         oobe_mEthernetManager.setEthEnabled(false); 
+                       //  oobe_mEthernetManager.setEthEnabled(false); 
                          updateEthCheckBoxUI();   
                          upDateWifiCheckBoxUI();;
                     }
@@ -1347,14 +1347,14 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
     private boolean getEthCheckBoxState(){
         //int state = Settings.Secure.getInt(getContentResolver(), Settings.Secure.ETH_ON, 0);
-        int state = oobe_mEthernetManager.getEthState();
-        if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
-        if(state == EthernetManager.ETH_STATE_ENABLED){
-            return true;
-        }
-        else{
+      //  int state = oobe_mEthernetManager.getEthState();
+     //   if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
+     //   if(state == EthernetManager.ETH_STATE_ENABLED){
+      //      return true;
+     //   }
+      //  else{
             return false;
-        }
+      //  }
     }
 
     private void setShowPasswordState(boolean enable ){

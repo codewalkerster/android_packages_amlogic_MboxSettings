@@ -19,8 +19,8 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.net.LinkProperties;
-import android.net.ethernet.EthernetDevInfo;
-import android.net.ethernet.EthernetManager;
+//import android.net.ethernet.EthernetDevInfo;
+//import android.net.ethernet.EthernetManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -133,7 +133,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private LinearLayout net_root_view;
 	private LinearLayout root_wifi_view;
 
-	private EthernetManager mEthernetManager;
+	//private EthernetManager mEthernetManager;
     private OutPutModeManager mOutPutModeManager;
 
 	private WifiManager mWifiManager;
@@ -268,7 +268,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		setContentView(R.layout.settings_main);
         mAm = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		sw = new SystemControlManager(this);
-        mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
+       // mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
 		mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         mOutPutModeManager = new OutPutModeManager(this);
         mHander = new MyHandle();
@@ -1091,12 +1091,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         if(getEthCheckBoxState()){ 
             if(isEthDeviceAdded()) {
                 if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
-                mEthernetManager.setEthEnabled(true);
+               // mEthernetManager.setEthEnabled(true);
                 updateNetWorkUI(2);
             }else{
                 if(getWifiCheckBoxState()){
                     if(!eth_wifi_coexist_enabled)
-                        mEthernetManager.setEthEnabled(false); 
+                   //     mEthernetManager.setEthEnabled(false); 
                     mWifiManager.setWifiEnabled(true);
                     wifiScan(); 
                     updateNetWorkUI(1);
@@ -1142,7 +1142,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                 enableEthernetView(true);
                 mEthConnectingFlag = true;
             }else{
-                mEthernetManager.setEthEnabled(false); 
+              //  mEthernetManager.setEthEnabled(false); 
                 Toast.makeText(mContext, mContext.getResources().getString(R.string.ethernet_inplug_notice), 4000).show(); 
                 if(!getWifiCheckBoxState())
                     updateNetWorkUI(0);
@@ -1156,19 +1156,19 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         if(able){ 
             updateNetWorkUI(2);
             eth_connected_tip.setText(R.string.ethernet_connectting);
-            mEthernetManager.setEthEnabled(true);   
+           // mEthernetManager.setEthEnabled(true);   
             boolean eth_wifi_coexist_enabled = sw.getPropertyBoolean("net.ethwifi.coexist", false);
             if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
         }else{
             updateNetWorkUI(0);
-            mEthernetManager.setEthEnabled(false);
+          //  mEthernetManager.setEthEnabled(false);
         }       
     }
     
     private void enableWifiView(boolean able){
         if(able){ 
             boolean eth_wifi_coexist_enabled = sw.getPropertyBoolean("net.ethwifi.coexist", false);
-            if(!eth_wifi_coexist_enabled) mEthernetManager.setEthEnabled(false);
+           // if(!eth_wifi_coexist_enabled) mEthernetManager.setEthEnabled(false);
 
             mHander.removeMessages(UPDATE_ETH_STATUS);
             
@@ -1852,7 +1852,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                          if (Utils.DEBUG) Log.e(TAG, "===== wifi connectd ");
                     }else if(!getWifiCheckBoxState() && ! getEthCheckBoxState()){
                          updateNetWorkUI(0);
-                         mEthernetManager.setEthEnabled(false); 
+                    //     mEthernetManager.setEthEnabled(false); 
                          updateEthCheckBoxUI();   
                          upDateWifiCheckBoxUI();
                          mEthConnectingFlag = false;
@@ -2924,14 +2924,14 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
     private boolean getEthCheckBoxState(){
         //int state = Settings.Secure.getInt(getContentResolver(), Settings.Secure.ETH_ON, 0);
-        int state = mEthernetManager.getEthState();
-        if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
-        if(state == EthernetManager.ETH_STATE_ENABLED){
-            return true;
-        }
-        else{
+        //int state = mEthernetManager.getEthState();
+        //if (Utils.DEBUG) Log.d(TAG,"===== getEthCheckBoxState() , state : " + state);
+      //  if(state == EthernetManager.ETH_STATE_ENABLED){
+      //      return true;
+      //  }
+      //  else{
             return false;
-        }
+      //  }
     }
 
     private void showDisplayDialog(){
