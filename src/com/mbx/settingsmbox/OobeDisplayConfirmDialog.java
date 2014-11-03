@@ -1,7 +1,6 @@
 package com.mbx.settingsmbox;
 
 import android.app.Dialog;
-import android.app.SystemWriteManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -21,7 +20,7 @@ public class OobeDisplayConfirmDialog extends Dialog {
 	String old_mode = null;
 	String new_mode = null;
     Context mContext = null;
-    SystemWriteManager sw = null;
+    SystemControlManager sw = null;
     private  OobeDisplayConfirmDialog instance = this;
     private final int DELAY_TIME = 15000 ;
     private static boolean running = false ; 
@@ -32,7 +31,7 @@ public class OobeDisplayConfirmDialog extends Dialog {
 	public OobeDisplayConfirmDialog(Context context) {
 		super(context, R.style.style_dialog);
         mContext = context;
-        sw = (SystemWriteManager) mContext.getSystemService("system_write");
+        sw = new SystemControlManager(mContext);
         
 	}
 

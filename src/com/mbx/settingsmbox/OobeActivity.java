@@ -11,7 +11,6 @@ import java.util.TimerTask;
 
 
 import android.app.Activity;
-import android.app.SystemWriteManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -164,7 +163,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     //============end 
 	
 
-    private SystemWriteManager sw = null;
+    private SystemControlManager sw = null;
 
 	RelativeLayout top_welcome_layout = null;
 
@@ -206,7 +205,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
         // Add a persistent setting to allow other apps to know the device has been provisioned.
         Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
         sharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING,Context.MODE_PRIVATE);
-        sw = (SystemWriteManager) mContext.getSystemService("system_write");
+        sw = new SystemControlManager(this);
         
         oobe_mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
         oobe_mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
@@ -284,7 +283,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     
     
     private boolean isEthDeviceAdded(){
-        String str = Utils.readSysFile(sw,eth_device_sysfs);
+        String str = sw.readSysFs(eth_device_sysfs);
         if(str == null)
             return false ;
         if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
@@ -1009,7 +1008,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
     private boolean isNeedShowDialog(){
         OutPutModeManager mOutPutModeManager = new OutPutModeManager(this);
         String defaultMode = mOutPutModeManager.getBestMatchResolution();
-        String currentMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
+        String currentMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
         if(defaultMode.equals(currentMode) || defaultMode.contains("cvbs") || !isFirstStartActivity){
             return false;
         }else{
@@ -1019,7 +1018,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 
     private void showConfirmDialog(){
         if (Utils.DEBUG) Log.d(TAG,"===== showConfirmDialog()");
-        String mode =  sw.readSysfs(DISPLAY_MODE_SYSFS);
+        String mode =  sw.readSysFs(DISPLAY_MODE_SYSFS);
         if(mode.contains("cvbs")){
             if (Utils.DEBUG) Log.d(TAG,"===== start with cvbs mode,don't show dialog");
             return ;
@@ -1306,7 +1305,6 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	}
 
 	void setOobeStartProp(String value) {
-		SystemWriteManager sw = (SystemWriteManager) mContext.getSystemService("system_write");
 		sw.setProperty("persist.sys.oobe.start", value);
 	}
 

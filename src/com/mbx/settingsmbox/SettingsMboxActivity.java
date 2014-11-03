@@ -3,8 +3,6 @@ package com.mbx.settingsmbox;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.SystemWriteManager;
-import android.app.MboxOutputModeManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,7 +29,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemProperties;
 import android.provider.Settings;
 import android.text.InputType;
 import android.text.format.Formatter;
@@ -63,7 +60,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ScrollView;
 import android.os.UserHandle ;
-import android.os.SystemProperties;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.net.Inet4Address;
@@ -89,7 +85,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     private static final String eth_device_sysfs = "/sys/class/ethernet/linkspeed";
     private final static String DISPLAY_MODE_SYSFS = "/sys/class/display/mode";
 	private final Context mContext = this;
-	private SystemWriteManager sw = null;
+	private SystemControlManager sw = null;
     private final static int UPDATE_AP_LIST = 100;
     private final static int UPDATE_OUTPUT_MODE_UI = 101;
     private final static int SHOW_CONFIRM_DIALOG = 102; 
@@ -245,7 +241,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private String string_hdmi =  null;
 
 	private WifiP2pDevice mThisDevice = null;
-	private MboxOutputModeManager mMboxOutputModeManager = null;
+	private MboxOutputMode mMboxOutputModeManager = null;
     private static RelativeLayout preView = null;
     private TextView miracast_name = null;
     private TextView remoteControlIp = null;
@@ -271,7 +267,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         Log.d(TAG, "===== onCreate()");
 		setContentView(R.layout.settings_main);
         mAm = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-		sw = (SystemWriteManager) mContext.getSystemService("system_write");
+		sw = new SystemControlManager(this);
         mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
 		mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         mOutPutModeManager = new OutPutModeManager(this);
@@ -532,7 +528,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
         getDtsTransInit();
         
-        mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
+        mMboxOutputModeManager = new MboxOutputMode(mContext);
         updateVoiceUi();
 
 		LinearLayout wifi_direct = (LinearLayout) findViewById(R.id.wifi_direct);
@@ -754,7 +750,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			Intent i = new Intent();
 			i.setAction("com.amlogic.remoteControl.RC_STOP");
 			//SettingsMboxActivity.this.sendBroadcast(i);
-            mContext.sendBroadcastAsUser(i, UserHandle.ALL ); 
+            mContext.sendBroadcast(i); 
 			Log.d(TAG,"===== send broadcast stop remote service");
 		} else {
 			editor.putString("open_remote_control", "true");
@@ -762,7 +758,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			Intent i = new Intent();
 			i.setAction("com.amlogic.remoteControl.RC_START");
 			//SettingsMboxActivity.this.sendBroadcast(i);
-			mContext.sendBroadcastAsUser(i, UserHandle.ALL); 
+			mContext.sendBroadcast(i); 
 			Log.d(TAG,"===== send broadcast start remote service");
 		}
 		upDateRemoteControlUi();
@@ -778,7 +774,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			Intent i = new Intent();
 			i.setAction("com.amlogic.miracast.MIRACAST_BKSTOP");
 			//mContext.sendBroadcast(i);
-			mContext.sendBroadcastAsUser(i, UserHandle.ALL ); 
+			mContext.sendBroadcast(i); 
             //com.amlogic.miracast   WiFiDirectMainActivity
 			Log.d(TAG,"===== send broadcast stop miracast");
 		} else {
@@ -787,7 +783,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			Intent i = new Intent();
 			i.setAction("com.amlogic.miracast.MIRACAST_BKSTART");
 			//mContext.sendBroadcast(i);
-            mContext.sendBroadcastAsUser(i, UserHandle.ALL ); 
+            mContext.sendBroadcast(i); 
 			Log.d(TAG,"===== send broadcast start miracast");
 		}
 		upDateMirrcastUi();
@@ -1091,7 +1087,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
     private void wifiResume(){
-        boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+        boolean eth_wifi_coexist_enabled = sw.getPropertyBoolean("net.ethwifi.coexist", false);
         if(getEthCheckBoxState()){ 
             if(isEthDeviceAdded()) {
                 if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
@@ -1123,7 +1119,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     }
     
     private boolean isEthDeviceAdded(){
-        String str = Utils.readSysFile(sw,eth_device_sysfs);
+        String str = sw.readSysFs(eth_device_sysfs);
         if(str == null)
             return false ;
         if (Utils.DEBUG) Log.d(TAG,"==== isEthDeviceAdded() , str="+str);
@@ -1161,7 +1157,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             updateNetWorkUI(2);
             eth_connected_tip.setText(R.string.ethernet_connectting);
             mEthernetManager.setEthEnabled(true);   
-            boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+            boolean eth_wifi_coexist_enabled = sw.getPropertyBoolean("net.ethwifi.coexist", false);
             if(!eth_wifi_coexist_enabled) mWifiManager.setWifiEnabled(false);
         }else{
             updateNetWorkUI(0);
@@ -1171,7 +1167,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     
     private void enableWifiView(boolean able){
         if(able){ 
-            boolean eth_wifi_coexist_enabled = SystemProperties.getBoolean("net.ethwifi.coexist", false);
+            boolean eth_wifi_coexist_enabled = sw.getPropertyBoolean("net.ethwifi.coexist", false);
             if(!eth_wifi_coexist_enabled) mEthernetManager.setEthEnabled(false);
 
             mHander.removeMessages(UPDATE_ETH_STATUS);
@@ -2048,7 +2044,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
         
 		RelativeLayout voice_sddif = (RelativeLayout) voicePopupView.findViewById(R.id.voice_sddif);
-        boolean displaySpdif = SystemProperties.getBoolean("ro.hdmi.spdif", false);
+        boolean displaySpdif = sw.getPropertyBoolean("ro.hdmi.spdif", false);
         voice_sddif.setVisibility(displaySpdif?View.VISIBLE:View.GONE);
 		voice_sddif.setOnClickListener(new OnClickListener() {
 			@Override
@@ -2605,7 +2601,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 				@Override
 				public void run() {
 					if (Utils.DEBUG) Log.d(TAG, "===== write file : " + file + "  value : "+ value);
-					sw.writeSysfs(file, value);
+					sw.writeSysFs(file, value);
 				}
 			}).start();
 
@@ -2886,7 +2882,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                         }
                     break;
                 case UPDATE_OUTPUT_MODE_UI :
-                    String mode = sw.readSysfs(DISPLAY_MODE_SYSFS);
+                    String mode = sw.readSysFs(DISPLAY_MODE_SYSFS);
                     if(mode.contains("cvbs")){
                         cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));
                     }

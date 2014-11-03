@@ -134,31 +134,6 @@ public class Utils {
 		return cecConfig;
 	}
 
-    /*!!!!!!if you want to change outpumode by display-size,pls set density first .
-                    Because density is a factor in parsing dimens in xml  !!!!!!!*/
-    public static void setDisplaySize(int w,int h){
-    	 IWindowManager wm = IWindowManager.Stub.asInterface(ServiceManager.checkService(
-                Context.WINDOW_SERVICE));
-        if (wm == null) {
-            Log.d(TAG, "Can't connect to window manager; is the system running?");
-            return;
-        }
-
-        try {
-            if (w >= 0 && h >= 0) {
-                // TODO(multidisplay): For now Configuration only applies to main screen.
-                wm.setForcedDisplaySize(Display.DEFAULT_DISPLAY, w, h);
-            } else {
-                wm.clearForcedDisplaySize(Display.DEFAULT_DISPLAY);
-            }
-        } catch (RemoteException e) {
-        }
-    }
-    public static void setDisplaySize(String width,String height){
-        int w =Integer.parseInt(width);
-        int h =Integer.parseInt(height);
-        setDisplaySize(w,h);
-    }
     public static String getDisplayAxisByMode(String mode){
         if(mode.indexOf("1080") >= 0)
             return mDisplayAxis1080;
@@ -170,31 +145,6 @@ public class Utils {
             return mDisplayAxis480;
     }
 
-    public static void setDensity(String mode){
-        int density = 240;
-
-        if(mode.equals("4k2knative"))
-            density = 480;
-        
-        IWindowManager wm = IWindowManager.Stub.asInterface(ServiceManager.checkService(
-                Context.WINDOW_SERVICE));
-        if (wm == null) {
-            Log.d(TAG, "Can't connect to window manager; is the system running?");
-            return;
-        }
-
-        try {
-            if (density > 0) {
-                // TODO(multidisplay): For now Configuration only applies to main screen.
-                wm.setForcedDisplayDensity(Display.DEFAULT_DISPLAY, density);
-            } else {
-                wm.clearForcedDisplayDensity(Display.DEFAULT_DISPLAY);
-            }
-        } catch (RemoteException e) {
-        }
-    }
-
-    
 
 	public static void shadowScreen(final SystemWriteManager sw, final int time){
 		sw.writeSysfs(blankFb0File, "1");

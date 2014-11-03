@@ -9,8 +9,6 @@ import java.util.TimerTask;
 import java.util.List;
 
 import android.app.ActivityManager;
-import android.app.SystemWriteManager;
-import android.app.MboxOutputModeManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,7 +25,6 @@ import android.util.Log;
 import android.view.WindowManagerPolicy;
 import android.os.Handler;
 import android.os.Message;
-import android.os.UEventObserver;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -78,7 +75,7 @@ public class BootReceiver extends BroadcastReceiver {
 	private final String ACTION_CVBSMODE_CHANGE = "android.intent.action.CVBSMODE_CHANGE";
     private final int MSG_ENABLE_OSD0_BLANK = 1;
 
-	private SystemWriteManager sw;
+	private SystemControlManager sw;
 
 	TimerTask weatherBroadcastServicesTask = null;
     WifiUtils mWifiUtils = null;
@@ -88,7 +85,7 @@ public class BootReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		//Log.d(TAG, "==== BootReceiver , action : " + intent.getAction());
 		mContext = context;
-        sw = (SystemWriteManager) mContext.getSystemService("system_write");
+        sw = new SystemControlManager(mContext);
         sharedPrefrences = context.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         OutPutModeManager mOutputManager = new OutPutModeManager(mContext);
@@ -112,7 +109,7 @@ public class BootReceiver extends BroadcastReceiver {
             }
 		
             //======== for hdmi and cvbs mode check
-            String currentMode = sw.readSysfs(mCurrentResolution);
+            String currentMode = sw.readSysFs(mCurrentResolution);
             if (Utils.DEBUG) Log.d(TAG,"===== currentMode : " + currentMode);
             if(mOutputManager.isHDMIPlugged()){
                 if (Utils.DEBUG) Log.d(TAG,"===== hdmi plug ");
@@ -325,7 +322,7 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
     private void initDolby(){
-        MboxOutputModeManager mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
+    	MboxOutputMode mMboxOutputModeManager = new MboxOutputMode(mContext);
         
         String isDrcEnable = sharedPrefrences.getString("dolby_drc_enable", "false");
         mMboxOutputModeManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
@@ -335,7 +332,7 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
     private void initDts(){
-        MboxOutputModeManager mMboxOutputModeManager = (MboxOutputModeManager)mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
+    	MboxOutputMode mMboxOutputModeManager = new MboxOutputMode(mContext);
         
         String mode = sharedPrefrences.getString("dts_downmix_mode", "0");
         mMboxOutputModeManager.setDTS_DownmixMode(mode);

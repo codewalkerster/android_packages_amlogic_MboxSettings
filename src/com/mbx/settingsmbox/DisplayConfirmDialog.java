@@ -1,7 +1,6 @@
 package com.mbx.settingsmbox;
 
 import android.app.Dialog;
-import android.app.SystemWriteManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -20,7 +19,7 @@ public class DisplayConfirmDialog extends Dialog {
 	String old_mode = null;
 	String new_mode = null;
     Context mContext = null;
-    SystemWriteManager sw = null;
+    SystemControlManager sw = null;
     private  DisplayConfirmDialog instance = this;
     private final int DELAY_TIME = 15000 ;
     private static boolean running = false ; 
@@ -31,7 +30,7 @@ public class DisplayConfirmDialog extends Dialog {
 	public DisplayConfirmDialog(Context context) {
 		super(context, R.style.style_dialog);
         mContext = context;
-        sw = (SystemWriteManager) mContext.getSystemService("system_write");
+        sw = new SystemControlManager(mContext);
         
 	}
 
@@ -108,7 +107,7 @@ public class DisplayConfirmDialog extends Dialog {
         }
 
         //judge if the HDMI has been plugged when dialog is showing.
-        String currentMode = sw.readSysfs("/sys/class/display/mode");
+        String currentMode = sw.readSysFs("/sys/class/display/mode");
         if ((currentMode.contains("cvbs") && !old_mode.contains("cvbs")) || (!currentMode.contains("cvbs") && old_mode.contains("cvbs"))){
             sw.setProperty("ubootenv.var.hdmimode", old_mode);
             return;

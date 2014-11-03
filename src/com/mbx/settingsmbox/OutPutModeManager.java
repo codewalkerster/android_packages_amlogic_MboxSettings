@@ -1,7 +1,5 @@
 package com.mbx.settingsmbox;
 
-import android.app.SystemWriteManager;
-import android.app.MboxOutputModeManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -60,8 +58,8 @@ public class OutPutModeManager {
     private ArrayList<String> mSupportList = null;
     
 	OutPutListAdapter adapter = null;
-	private static SystemWriteManager sw;
-    private static MboxOutputModeManager mom;
+	private static SystemControlManager sw;
+    private static MboxOutputMode mom;
 
     private static String mUiMode = "hdmi";
     private Runnable setBackRunnable = null;
@@ -75,8 +73,8 @@ public class OutPutModeManager {
     public OutPutModeManager(Context context){
         mContext = context;
         mUiMode = "hdmi";
-		sw = (SystemWriteManager) mContext.getSystemService("system_write");
-        mom = (MboxOutputModeManager) mContext.getSystemService(Context.MBOX_OUTPUTMODE_SERVICE);
+		sw = new SystemControlManager(mContext);
+        mom = new MboxOutputMode(mContext);;
         
         mTitleList = new ArrayList<String>();
         mValueList = new ArrayList<String>();
@@ -85,7 +83,7 @@ public class OutPutModeManager {
 	
 	public OutPutModeManager(Context context, ListView listview , String mode) {
 		mContext = context;
-		sw = (SystemWriteManager) mContext.getSystemService("system_write");
+		sw = new SystemControlManager(mContext);
     
         mUiMode = mode;
         initModeValues(mUiMode);
@@ -94,7 +92,7 @@ public class OutPutModeManager {
 	}
 
     public int getCurrentModeIndex(){
-         String currentHdmiMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
+         String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
          for(int i=0 ; i < mValueList.size();i++){
              if(currentHdmiMode.equals(mValueList.get(i))){
                 return i ;
@@ -136,7 +134,7 @@ public class OutPutModeManager {
 
 	public static String getCurrentOutPutModeTitle(int type) {
         if (Utils.DEBUG) Log.d(TAG,"==== getCurrentOutPutMode() " );
-        String currentHdmiMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
+        String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
         if(type==0){  // cvbs
         if(currentHdmiMode.contains("cvbs")){
             for(int i=0 ; i < CVBS_MODE_VALUE_LIST.length ; i++){
@@ -159,7 +157,7 @@ public class OutPutModeManager {
 	}
 
 	public void selectItem(int index) {
-        final String oldMode = sw.readSysfs(DISPLAY_MODE_SYSFS);
+        final String oldMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
         String mode = mValueList.get(index) ;
         if(mode.equals(oldMode)){
             if (Utils.DEBUG) Log.d(TAG,"===== the same mode with current !");
@@ -183,7 +181,7 @@ public class OutPutModeManager {
 	}
 
     public void change2NewMode(final String mode) {
-        SettingsMboxActivity.oldMode = Utils.readSysFile(sw, DISPLAY_MODE_SYSFS);
+        SettingsMboxActivity.oldMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
         
         mom.setOutputMode(mode);
         
@@ -197,13 +195,13 @@ public class OutPutModeManager {
             Intent i2 = new Intent(); 
             if(sw.getPropertyBoolean("ro.platform.has.realoutputmode", false)){
                  i2.setAction("action.show.dialog");
-                 mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
+                 mContext.sendBroadcast(i2);
                  if (Utils.DEBUG) Log.d(TAG,"===== send broadcast to start confirm dialog");
                  isNeedShowConfirmDialog = false;
             }else{
                 i2.setAction("action.show.dialog");
                 i2.putExtra("old_output_mode", SettingsMboxActivity.oldMode);
-                mContext.sendBroadcastAsUser(i2, UserHandle.ALL);
+                mContext.sendBroadcast(i2);
                 if (Utils.DEBUG) Log.d(TAG,"===== send broadcast to start confirm dialog");
                 isNeedShowConfirmDialog = false;
             }           
@@ -231,7 +229,7 @@ public class OutPutModeManager {
     }
 
 	public boolean isHdmiCvbsDual() {
-		return Utils.getPropertyBoolean(sw, "ro.platform.has.cvbsmode", false);
+		return sw.getPropertyBoolean("ro.platform.has.cvbsmode", false);
 	}
     
     public boolean ifModeIsSetting() {
