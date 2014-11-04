@@ -346,6 +346,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		upDateStatusBarUi();
 
 		LinearLayout screen_hide_bar = (LinearLayout) findViewById(R.id.screen_hide_bar);
+        screen_hide_bar.setEnabled(false);
+        screen_hide_bar.setFocusable(false);
 		screen_hide_bar.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -380,6 +382,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		img_progress_bg = (ImageView) findViewById(R.id.img_progress_bg);
 
 		screen_keep = (LinearLayout) findViewById(R.id.screen_keep);
+        screen_keep.setEnabled(false);
+        screen_keep.setFocusable(false);
 
 		screen_time_01 = (TextView) findViewById(R.id.screen_time_01);
         screen_time_01.setOnClickListener(this);
@@ -416,6 +420,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         slectKeepScreenIndex(mCurrentScreenKeepIndex);
 
 		Button system_update = (Button) findViewById(R.id.system_update);
+        system_update.setEnabled(false);
+        system_update.setFocusable(false);
 		system_update.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -445,6 +451,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
 
 		LinearLayout request_screen = (LinearLayout) findViewById(R.id.request_screen);
+        request_screen.setEnabled(false);
+        request_screen.setFocusable(false);
 		requestScreen = (TextView) findViewById(R.id.requestScreen);
 		upDateRequestScreen();
 		request_screen.setOnClickListener(new OnClickListener() {
@@ -456,6 +464,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
 
 		LinearLayout keep_screen_land = (LinearLayout) findViewById(R.id.keep_screen_land);
+        keep_screen_land.setEnabled(false);
+        keep_screen_land.setFocusable(false);
 		screen_land = (TextView) findViewById(R.id.screen_land);
 		upDateKeepScreenLandUi();
 		keep_screen_land.setOnClickListener(new OnClickListener() {
@@ -532,6 +542,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         updateVoiceUi();
 
 		LinearLayout wifi_direct = (LinearLayout) findViewById(R.id.wifi_direct);
+        wifi_direct.setEnabled(false);
+        wifi_direct.setFocusable(false);
 		
 		miracast = (TextView) findViewById(R.id.miracast);
 		upDateMirrcastUi();
@@ -549,6 +561,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
 
 		LinearLayout remote_control = (LinearLayout) findViewById(R.id.remote_control);
+        remote_control.setEnabled(false);
+        remote_control.setFocusable(false);
 		remoteControl = (TextView) findViewById(R.id.remoteControl);
         
 		upDateRemoteControlUi();
@@ -563,6 +577,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
 		
 		LinearLayout ipremote = (LinearLayout) findViewById(R.id.ipremote_control);
+        ipremote.setEnabled(false);
+        ipremote.setFocusable(false);
 		ipremoteTV = (TextView) findViewById(R.id.ipremote);
 
 		upDateIpremoteUi();
