@@ -22,7 +22,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.ScanResult;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.WindowManagerPolicy;
+//import android.view.WindowManagerPolicy;
 import android.os.Handler;
 import android.os.Message;
 

@@ -1,6 +1,5 @@
 package com.mbx.settingsmbox;
 
-import android.app.SystemWriteManager;
 import android.content.Context;
 import android.os.SystemProperties;
 import android.util.Log;
@@ -11,7 +10,7 @@ import android.widget.ImageView;
 public class ScreenPositionManager {
     private String TAG = "ScreenPositionManager";
 	private Context mContext = null;
-	private SystemWriteManager sw = null;
+	private SystemControlManager sw = null;
 
     private final int MAX_Height = 100;
     private final int MIN_Height = 80;
@@ -121,11 +120,11 @@ public class ScreenPositionManager {
     private int offsetStep = 2;  // because 20% is too large ,so we divide a value to smooth the view
     public ScreenPositionManager(Context context) {
 		mContext = context;
-		sw = (SystemWriteManager) mContext.getSystemService("system_write");
+		sw = new SystemControlManager(mContext);
 	}
 
 	public void initPostion() {
-		mCurrentMode = sw.readSysfs(mCurrentResolution);
+		mCurrentMode = sw.readSysFs(mCurrentResolution);
         if (Utils.DEBUG) Log.d(TAG,"==== initPostion(),mCurrentMode :"+mCurrentMode);
 		initStep(mCurrentMode);
         initCurrentPostion();
@@ -215,7 +214,7 @@ public class ScreenPositionManager {
     }
      
 	public int getRateValue() {
-        mCurrentMode = sw.readSysfs(mCurrentResolution);
+        mCurrentMode = sw.readSysFs(mCurrentResolution);
 		initStep(mCurrentMode);
         int m = (100*2*offsetStep)*mPreLeft ;
         if(m==0){
@@ -236,7 +235,7 @@ public class ScreenPositionManager {
 	}
 
 	private void writeFile(String file, String value) {
-		sw.writeSysfs(file, value);
+		sw.writeSysFs(file, value);
 	}
 
     private void setOriginWinForFreeScale(){
@@ -256,7 +255,7 @@ public class ScreenPositionManager {
 		int minFreq = scalingMinFreq;
 		String minFreqString = Integer.toString(minFreq);
 
-		sw.writeSysfs(CPU0ScalingMinFreqPath, minFreqString);
+		sw.writeSysFs(CPU0ScalingMinFreqPath, minFreqString);
 
 	}
     
@@ -397,7 +396,7 @@ public class ScreenPositionManager {
             return ;
         }
    
-        mCurrentMode = sw.readSysfs(mCurrentResolution);
+        mCurrentMode = sw.readSysFs(mCurrentResolution);
         initStep(mCurrentMode);
         
         mCurrentLeft = (100-percent)*(mMaxRight)/(100*2*offsetStep);

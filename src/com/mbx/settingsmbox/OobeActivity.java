@@ -46,7 +46,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.WindowManagerPolicy;
+//import android.view.WindowManagerPolicy;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -266,7 +266,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 		filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
+        //filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
       //  filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
 

@@ -43,7 +43,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.WindowManagerPolicy;
+//import android.view.WindowManagerPolicy;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -669,8 +669,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
-        filter.addAction(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED);
+        //filter.addAction(WindowManagerPolicy.ACTION_HDMI_HW_PLUGGED);
+       // filter.addAction(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
        // filter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
 
@@ -713,8 +713,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             mContext.sendBroadcast(intent);
 			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
 		} else {
-			mAm.forceStopPackage("com.google.tv.discovery");
-			mAm.forceStopPackage("com.google.tv.ipremote");
+			//mAm.forceStopPackage("com.google.tv.discovery");
+			//mAm.forceStopPackage("com.google.tv.ipremote");
 			editor.putString("ipremote_start_bootcomplete", "false");
 			editor.commit();
 			ipremoteTV.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.off, 0);
@@ -903,12 +903,12 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	}
 
     boolean getAutoHDMIMode() {
-        boolean isAutoHdmiMode = true;
-        try {
+        boolean isAutoHdmiMode = false;
+       /* try {
             isAutoHdmiMode = ((0 == Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO))?false:true) ;
         } catch (Settings.SettingNotFoundException se) {
             Log.d(TAG, "Error: "+se);
-        }
+        }*/
         return isAutoHdmiMode;
     }
     
@@ -963,9 +963,9 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
     void setAutoOutModeSwitch() {
         boolean isAutoHdmiMode = getAutoHDMIMode();
         if (isAutoHdmiMode) {
-            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 0);
+           // Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 0);
         } else {
-            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 1);
+           // Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.DISPLAY_OUTPUTMODE_AUTO, 1);
             mOutPutModeManager.hdmiPlugged();
         }
         upDateOutModeUi();
@@ -1878,7 +1878,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     }
                // }             
                  
-		    }else if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
+		    }/*else if(WindowManagerPolicy.ACTION_HDMI_MODE_CHANGED.equals(action)){
                 if (popupWindow != null)
                     popupWindow.dismiss();
                 upDateOutModeUi();
@@ -1920,7 +1920,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
                     cvbs_current_mode_value.setText(mOutPutModeManager.getCurrentOutPutModeTitle(0));     
                 }
                 
-            }else if("action.show.dialog".equals(action)){
+            }*/else if("action.show.dialog".equals(action)){
                 if (Utils.DEBUG) Log.d(TAG,"===== action.show.dialog");
                 MyHandle mHander = new MyHandle();
                 Message msg = mHander.obtainMessage();

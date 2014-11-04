@@ -11,9 +11,9 @@ import java.util.Set;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
-import android.net.ethernet.EthernetDevInfo;
-import android.net.ethernet.EthernetManager;
-import android.net.ethernet.EthernetStateTracker;
+//import android.net.ethernet.EthernetDevInfo;
+//import android.net.ethernet.EthernetManager;
+//import android.net.ethernet.EthernetStateTracker;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
@@ -287,12 +287,12 @@ public class WifiUtils {
 	public static boolean isEthConnected(Context context) {
 
 		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		State mEthState = connManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET).getState();
-		if (State.CONNECTED == mEthState){
-            return true;
-        }else{
+		//State mEthState = connManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET).getState();
+		//if (State.CONNECTED == mEthState){
+         //   return true;
+      //  }else{
             return false;
-        }
+      //  }
 	}
 
     static String removeDoubleQuotes(String string) {

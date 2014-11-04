@@ -1,6 +1,5 @@
 package com.mbx.settingsmbox;
 
-import android.app.SystemWriteManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -18,84 +17,7 @@ public class Utils {
     private static final String mDisplayAxis480 = " 720 480 ";
 	public static final String blankFb0File = "/sys/class/graphics/fb0/blank";
 
-	public static String readSysFile(SystemWriteManager sw, String path) {
-		if (sw == null) {
-			Log.d(TAG, "readSysFile(), sw is null !!");
-			return null;
-		}
 
-		if (path == null) {
-			Log.d(TAG, "readSysFile(), path is null !!");
-			return null;
-		}
-
-		return sw.readSysfs(path);
-
-	}
-
-	public static void writeSysFile(SystemWriteManager sw, String path,String value) {
-
-		if (sw == null) {
-			Log.d(TAG, "writeSysFile(), sw is null !!");
-			return;
-		}
-
-		if (path == null) {
-			Log.d(TAG, "writeSysFile(), path is null !!");
-			return;
-		}
-
-		if (value == null) {
-			Log.d(TAG, "writeSysFile(), value is null !!");
-			return;
-		}
-
-		sw.writeSysfs(path, value);
-	}
-
-	public static boolean getPropertyBoolean(SystemWriteManager sw,String prop, boolean defaultValue) {
-		if (sw == null) {
-			Log.d(TAG, "getPropertyBoolean(), sw is null !!");
-			return defaultValue;
-		}
-
-		if (prop == null) {
-			Log.d(TAG, "getPropertyBoolean(), path is null !!");
-			return defaultValue;
-		}
-
-		return sw.getPropertyBoolean(prop, defaultValue);
-
-	}
-
-	public static String getPropertyString(SystemWriteManager sw, String prop,String defaultValue) {
-		if (sw == null) {
-			Log.d(TAG, "getPropertyString(), sw is null !!");
-			return defaultValue;
-		}
-
-		if (prop == null) {
-			Log.d(TAG, "getPropertyString(), path is null !!");
-			return defaultValue;
-		}
-
-		return sw.getPropertyString(prop, defaultValue);
-
-	}
-
-	public static int getPropertyInt(SystemWriteManager sw, String prop,int defaultValue) {
-		if (sw == null) {
-			Log.d(TAG, "getPropertyInt(), sw is null !!");
-			return defaultValue;
-		}
-
-		if (prop == null) {
-			Log.d(TAG, "getPropertyInt(), path is null !!");
-			return defaultValue;
-		}
-		return sw.getPropertyInt(prop, defaultValue);
-
-	}
 
 	public static String getBinaryString(String config) {
 		String indexString = "0123456789abcdef";
@@ -146,8 +68,8 @@ public class Utils {
     }
 
 
-	public static void shadowScreen(final SystemWriteManager sw, final int time){
-		sw.writeSysfs(blankFb0File, "1");
+	public static void shadowScreen(final SystemControlManager sw, final int time){
+		sw.writeSysFs(blankFb0File, "1");
 		Log.d(TAG,"===== beging shadowScreen()");
 		Thread task = new Thread(new Runnable() {
 
@@ -157,7 +79,7 @@ public class Utils {
 			synchronized (this) {
 				Log.d(TAG,"===== close osd");
 				Thread.sleep(time);
-				sw.writeSysfs(blankFb0File, "0");
+				sw.writeSysFs(blankFb0File, "0");
 				Log.d(TAG,"===== open osd");
 			}
 		} catch (InterruptedException e) {

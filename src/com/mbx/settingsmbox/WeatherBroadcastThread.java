@@ -3,7 +3,6 @@ package com.mbx.settingsmbox;
 import java.util.TimerTask;
 
 import org.ksoap2.serialization.SoapObject;
-import android.app.SystemWriteManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,7 @@ public class WeatherBroadcastThread extends Thread {
 	private final String TAG = "WeatherBroadcastThread";
 	private static final String PREFERENCE_BOX_SETTING = "preference_box_settings";
 	private Context mContext = null;
-    SystemWriteManager sw = null;
+    SystemControlManager sw = null;
 
 	@Override
 	public synchronized void start() {
@@ -24,7 +23,7 @@ public class WeatherBroadcastThread extends Thread {
 
 	public WeatherBroadcastThread(Context context) {
 		mContext = context;
-        sw = (SystemWriteManager) mContext.getSystemService("system_write");		
+        sw = new SystemControlManager(mContext);		
 	}
 
 	@Override
