@@ -822,7 +822,7 @@ public class MboxOutputMode {
     
     public int autoSwitchHdmiPassthough (){    
 
-        String mAudioCapInfo = readSysfs(mAudoCapFile);
+        String mAudioCapInfo = readSysfsTotal(mAudoCapFile);
         if(mAudioCapInfo.contains("Dobly_Digital+")){
             writeSysfs(DigitalRawFile,"2");
             writeSysfs(SPDIF_AUIDO_SWITCH, "spdif_mute");
@@ -966,7 +966,10 @@ public class MboxOutputMode {
             Log.i(TAG, "setBootenv key:" + key + " value:" + value);
         mSystenControl.setBootenv(key, value);
     }
-     
+
+    private String readSysfsTotal(String path) {
+        return mSystenControl.readSysFs(path).replaceAll("\n", "");
+    }
     private String readSysfs(String path) {
 
         return mSystenControl.readSysFs(path).replaceAll("\n", "");

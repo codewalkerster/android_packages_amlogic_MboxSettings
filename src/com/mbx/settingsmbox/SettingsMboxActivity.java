@@ -2018,7 +2018,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			voice_setting.setClickable(true);
 			tx_voice_setting.setTextColor(Color.WHITE);
 
-            String []value = sw.getProperty("ubootenv.var.digitaudiooutput").split(":");
+            String []value = sw.getBootenv("ubootenv.var.digitaudiooutput", "PCM").split(":");
             if (value[0] != null && value[0].length() != 0){
                 mMboxOutputModeManager.setDigitalVoiceValue(value[0]);
                 tx_voice_mode.setText(value[0]);
@@ -2430,7 +2430,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		ImageView imageview_pcm = (ImageView) voicePopupView.findViewById(R.id.imageview_pcm);
 		ImageView imageview_sddif = (ImageView) voicePopupView.findViewById(R.id.imageview_sddif);
 		ImageView imageview_hdmi = (ImageView) voicePopupView.findViewById(R.id.imageview_hdmi);
-		String value = sw.getProperty("ubootenv.var.digitaudiooutput");
+		String value = sw.getBootenv("ubootenv.var.digitaudiooutput", "PCM");
 		if ("PCM".equals(value)) {
 			imageview_pcm.setBackgroundResource(R.drawable.current_select);
 			imageview_sddif.setBackgroundResource(R.drawable.current_unselect);
