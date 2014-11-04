@@ -72,18 +72,18 @@ public class ScreenPositionManager {
 	private final static String sel_4k2ksmpteoutput_width = "ubootenv.var.4k2ksmpte_width";
 	private final static String sel_4k2ksmpteoutput_height = "ubootenv.var.4k2ksmpte_height";
 
-	private static final int OUTPUT480_FULL_WIDTH = 720;
-	private static final int OUTPUT480_FULL_HEIGHT = 480;
-	private static final int OUTPUT576_FULL_WIDTH = 720;
-	private static final int OUTPUT576_FULL_HEIGHT = 576;
-	private static final int OUTPUT720_FULL_WIDTH = 1280;
-	private static final int OUTPUT720_FULL_HEIGHT = 720;
-	private static final int OUTPUT1080_FULL_WIDTH = 1920;
-	private static final int OUTPUT1080_FULL_HEIGHT = 1080;
-    private static final int OUTPUT4k2k_FULL_WIDTH = 3840;
-	private static final int OUTPUT4k2k_FULL_HEIGHT = 2160;
-    private static final int OUTPUT4k2ksmpte_FULL_WIDTH = 4096;
-	private static final int OUTPUT4k2ksmpte_FULL_HEIGHT = 2160;
+	private static final String OUTPUT480_FULL_WIDTH = "720";
+	private static final String OUTPUT480_FULL_HEIGHT = "480";
+	private static final String OUTPUT576_FULL_WIDTH = "720";
+	private static final String OUTPUT576_FULL_HEIGHT = "576";
+	private static final String OUTPUT720_FULL_WIDTH = "1280";
+	private static final String OUTPUT720_FULL_HEIGHT = "720";
+	private static final String OUTPUT1080_FULL_WIDTH = "1920";
+	private static final String OUTPUT1080_FULL_HEIGHT = "1080";
+    private static final String OUTPUT4k2k_FULL_WIDTH = "3840";
+	private static final String OUTPUT4k2k_FULL_HEIGHT = "2160";
+    private static final String OUTPUT4k2ksmpte_FULL_WIDTH = "4096";
+	private static final String OUTPUT4k2ksmpte_FULL_HEIGHT = "2160";
 
     private static final String freescale_mode = "/sys/class/graphics/fb0/freescale_mode";
     private static final String free_scale_axis = "/sys/class/graphics/fb0/free_scale_axis";
@@ -124,7 +124,7 @@ public class ScreenPositionManager {
 	}
 
 	public void initPostion() {
-		mCurrentMode = sw.readSysFs(mCurrentResolution);
+		mCurrentMode = sw.readSysFs(mCurrentResolution).replaceAll("\n","");
         if (Utils.DEBUG) Log.d(TAG,"==== initPostion(),mCurrentMode :"+mCurrentMode);
 		initStep(mCurrentMode);
         initCurrentPostion();
@@ -141,70 +141,70 @@ public class ScreenPositionManager {
 
      private void initCurrentPostion() {
         if (mCurrentMode.equals("480i")) {
-            mPreLeft = sw.getPropertyInt(sel_480ioutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_480ioutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_480ioutput_width,OUTPUT480_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_480ioutput_height,OUTPUT480_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_480ioutput_x,"0");
+            mPreTop = getBootenvInt(sel_480ioutput_y,"0");
+            mPreWidth = getBootenvInt(sel_480ioutput_width,OUTPUT480_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_480ioutput_height,OUTPUT480_FULL_HEIGHT);
         }  else if (mCurrentMode.equals("480p")) {
-            mPreLeft = sw.getPropertyInt(sel_480poutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_480poutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_480poutput_width,OUTPUT480_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_480poutput_height,OUTPUT480_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_480poutput_x,"0");
+            mPreTop = getBootenvInt(sel_480poutput_y,"0");
+            mPreWidth = getBootenvInt(sel_480poutput_width,OUTPUT480_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_480poutput_height,OUTPUT480_FULL_HEIGHT);
         } else if (mCurrentMode.equals("576i")) {
-            mPreLeft = sw.getPropertyInt(sel_576ioutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_576ioutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_576ioutput_width,OUTPUT576_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_576ioutput_height,OUTPUT576_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_576ioutput_x,"0");
+            mPreTop = getBootenvInt(sel_576ioutput_y,"0");
+            mPreWidth = getBootenvInt(sel_576ioutput_width,OUTPUT576_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_576ioutput_height,OUTPUT576_FULL_HEIGHT);
         } else if (mCurrentMode.equals("576p")) {
-            mPreLeft = sw.getPropertyInt(sel_576poutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_576poutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_576poutput_width,OUTPUT576_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_576poutput_height,OUTPUT576_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_576poutput_x,"0");
+            mPreTop = getBootenvInt(sel_576poutput_y,"0");
+            mPreWidth = getBootenvInt(sel_576poutput_width,OUTPUT576_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_576poutput_height,OUTPUT576_FULL_HEIGHT);
         } else if (mCurrentMode.equals("720p")||mCurrentMode.equals("720p50hz")){
-            mPreLeft = sw.getPropertyInt(sel_720poutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_720poutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_720poutput_width,OUTPUT720_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_720poutput_height,OUTPUT720_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_720poutput_x,"0");
+            mPreTop = getBootenvInt(sel_720poutput_y,"0");
+            mPreWidth = getBootenvInt(sel_720poutput_width,OUTPUT720_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_720poutput_height,OUTPUT720_FULL_HEIGHT);
         } else if (mCurrentMode.contains("1080i")) {
-            mPreLeft = sw.getPropertyInt(sel_1080ioutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_1080ioutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_1080ioutput_width,OUTPUT1080_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_1080ioutput_height,OUTPUT1080_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_1080ioutput_x,"0");
+            mPreTop = getBootenvInt(sel_1080ioutput_y,"0");
+            mPreWidth = getBootenvInt(sel_1080ioutput_width,OUTPUT1080_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_1080ioutput_height,OUTPUT1080_FULL_HEIGHT);
         } else if (mCurrentMode.contains("1080p")){
-            mPreLeft = sw.getPropertyInt(sel_1080poutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_1080poutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_1080poutput_width,OUTPUT1080_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_1080poutput_height,OUTPUT1080_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_1080poutput_x,"0");
+            mPreTop = getBootenvInt(sel_1080poutput_y,"0");
+            mPreWidth = getBootenvInt(sel_1080poutput_width,OUTPUT1080_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_1080poutput_height,OUTPUT1080_FULL_HEIGHT);
         } else if (mCurrentMode.equals("480cvbs")){
-            mPreLeft = sw.getPropertyInt(sel_480ioutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_480ioutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_480ioutput_width,OUTPUT480_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_480ioutput_height,OUTPUT480_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_480ioutput_x,"0");
+            mPreTop = getBootenvInt(sel_480ioutput_y,"0");
+            mPreWidth = getBootenvInt(sel_480ioutput_width,OUTPUT480_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_480ioutput_height,OUTPUT480_FULL_HEIGHT);
         } else if (mCurrentMode.equals("576cvbs")){
-            mPreLeft = sw.getPropertyInt(sel_576ioutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_576ioutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_576ioutput_width,OUTPUT576_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_576ioutput_height,OUTPUT576_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_576ioutput_x,"0");
+            mPreTop = getBootenvInt(sel_576ioutput_y,"0");
+            mPreWidth = getBootenvInt(sel_576ioutput_width,OUTPUT576_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_576ioutput_height,OUTPUT576_FULL_HEIGHT);
         }else if (mCurrentMode.equals("4k2k24hz")){
-            mPreLeft = sw.getPropertyInt(sel_4k2k24hzoutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_4k2k24hzoutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_4k2k24hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_4k2k24hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_4k2k24hzoutput_x,"0");
+            mPreTop = getBootenvInt(sel_4k2k24hzoutput_y,"0");
+            mPreWidth = getBootenvInt(sel_4k2k24hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_4k2k24hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
         }else if (mCurrentMode.equals("4k2k25hz")){
-            mPreLeft = sw.getPropertyInt(sel_4k2k25hzoutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_4k2k25hzoutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_4k2k25hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_4k2k25hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_4k2k25hzoutput_x,"0");
+            mPreTop = getBootenvInt(sel_4k2k25hzoutput_y,"0");
+            mPreWidth = getBootenvInt(sel_4k2k25hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_4k2k25hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
         }else if (mCurrentMode.equals("4k2k30hz")){
-            mPreLeft = sw.getPropertyInt(sel_4k2k30hzoutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_4k2k30hzoutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_4k2k30hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_4k2k30hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_4k2k30hzoutput_x,"0");
+            mPreTop = getBootenvInt(sel_4k2k30hzoutput_y,"0");
+            mPreWidth = getBootenvInt(sel_4k2k30hzoutput_width,OUTPUT4k2k_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_4k2k30hzoutput_height,OUTPUT4k2k_FULL_HEIGHT);
         }else if (mCurrentMode.equals("4k2ksmpte")){
-            mPreLeft = sw.getPropertyInt(sel_4k2ksmpteoutput_x,0);
-            mPreTop = sw.getPropertyInt(sel_4k2ksmpteoutput_y,0);
-            mPreWidth = sw.getPropertyInt(sel_4k2ksmpteoutput_width,OUTPUT4k2ksmpte_FULL_WIDTH);
-            mPreHeight = sw.getPropertyInt(sel_4k2ksmpteoutput_height,OUTPUT4k2ksmpte_FULL_HEIGHT);
+            mPreLeft = getBootenvInt(sel_4k2ksmpteoutput_x,"0");
+            mPreTop = getBootenvInt(sel_4k2ksmpteoutput_y,"0");
+            mPreWidth = getBootenvInt(sel_4k2ksmpteoutput_width,OUTPUT4k2ksmpte_FULL_WIDTH);
+            mPreHeight = getBootenvInt(sel_4k2ksmpteoutput_height,OUTPUT4k2ksmpte_FULL_HEIGHT);
         }
         mCurrentLeft = mPreLeft;
         mCurrentTop  = mPreTop;
@@ -214,7 +214,7 @@ public class ScreenPositionManager {
     }
      
 	public int getRateValue() {
-        mCurrentMode = sw.readSysFs(mCurrentResolution);
+        mCurrentMode = sw.readSysFs(mCurrentResolution).replaceAll("\n","");
 		initStep(mCurrentMode);
         int m = (100*2*offsetStep)*mPreLeft ;
         if(m==0){
@@ -276,11 +276,11 @@ public class ScreenPositionManager {
 	     mMaxBottom = 1079;
         }else  if(mode.contains("4k")){
             if(mode.contains("4k2ksmpte")){
-                mMaxRight = OUTPUT4k2ksmpte_FULL_WIDTH-1;
-                mMaxBottom = OUTPUT4k2ksmpte_FULL_HEIGHT-1;
+                mMaxRight = Integer.parseInt(OUTPUT4k2ksmpte_FULL_WIDTH)-1;
+                mMaxBottom = Integer.parseInt(OUTPUT4k2ksmpte_FULL_HEIGHT)-1;
             }else{
-                mMaxRight = OUTPUT4k2k_FULL_WIDTH-1;
-                mMaxBottom = OUTPUT4k2k_FULL_HEIGHT-1;
+                mMaxRight = Integer.parseInt(OUTPUT4k2k_FULL_WIDTH)-1;
+                mMaxBottom = Integer.parseInt(OUTPUT4k2k_FULL_HEIGHT)-1;
             } 
         }else{
             mMaxRight = 1919;
@@ -303,75 +303,75 @@ public class ScreenPositionManager {
 		switch (index) {
     		case 0: // 480i
     		case 10: //480cvbs
-    			sw.setProperty(sel_480ioutput_x, x);
-    			sw.setProperty(sel_480ioutput_y, y);
-    			sw.setProperty(sel_480ioutput_width, w);
-    			sw.setProperty(sel_480ioutput_height, h);
+    			setBootenv(sel_480ioutput_x, x);
+    			setBootenv(sel_480ioutput_y, y);
+    			setBootenv(sel_480ioutput_width, w);
+    			setBootenv(sel_480ioutput_height, h);
     			break;
     		case 1: // 480p
-    			sw.setProperty(sel_480poutput_x, x);
-    			sw.setProperty(sel_480poutput_y, y);
-    			sw.setProperty(sel_480poutput_width, w);
-    			sw.setProperty(sel_480poutput_height, h);
+    			setBootenv(sel_480poutput_x, x);
+    			setBootenv(sel_480poutput_y, y);
+    			setBootenv(sel_480poutput_width, w);
+    			setBootenv(sel_480poutput_height, h);
     			break;
     		case 2: // 576i
     		case 11:    //576cvbs
-    			sw.setProperty(sel_576ioutput_x, x);
-    			sw.setProperty(sel_576ioutput_y, y);
-    			sw.setProperty(sel_576ioutput_width, w);
-    			sw.setProperty(sel_576ioutput_height, h);
+    			setBootenv(sel_576ioutput_x, x);
+    			setBootenv(sel_576ioutput_y, y);
+    			setBootenv(sel_576ioutput_width, w);
+    			setBootenv(sel_576ioutput_height, h);
     			break;
     		case 3: // 576p
-    			sw.setProperty(sel_576poutput_x, x);
-    			sw.setProperty(sel_576poutput_y, y);
-    			sw.setProperty(sel_576poutput_width, w);
-    			sw.setProperty(sel_576poutput_height, h);
+    			setBootenv(sel_576poutput_x, x);
+    			setBootenv(sel_576poutput_y, y);
+    			setBootenv(sel_576poutput_width, w);
+    			setBootenv(sel_576poutput_height, h);
     			break;
     		case 4: // 720p
     		case 7: // 720p50hz
-    			sw.setProperty(sel_720poutput_x, x);
-    			sw.setProperty(sel_720poutput_y, y);
-    			sw.setProperty(sel_720poutput_width, w);
-    			sw.setProperty(sel_720poutput_height, h);
+    			setBootenv(sel_720poutput_x, x);
+    			setBootenv(sel_720poutput_y, y);
+    			setBootenv(sel_720poutput_width, w);
+    			setBootenv(sel_720poutput_height, h);
     			break;
     		case 5: // 1080i
     		case 8: // 1080i50hz
-    			sw.setProperty(sel_1080ioutput_x, x);
-    			sw.setProperty(sel_1080ioutput_y, y);
-    			sw.setProperty(sel_1080ioutput_width, w);
-    			sw.setProperty(sel_1080ioutput_height, h);
+    			setBootenv(sel_1080ioutput_x, x);
+    			setBootenv(sel_1080ioutput_y, y);
+    			setBootenv(sel_1080ioutput_width, w);
+    			setBootenv(sel_1080ioutput_height, h);
     			break;
     		case 6: // 1080p
     		case 9: // 1080p50hz
     		case 16: //1080p24hz
-    			sw.setProperty(sel_1080poutput_x, x);
-    			sw.setProperty(sel_1080poutput_y, y);
-    			sw.setProperty(sel_1080poutput_width, w);
-    			sw.setProperty(sel_1080poutput_height, h);
+    			setBootenv(sel_1080poutput_x, x);
+    			setBootenv(sel_1080poutput_y, y);
+    			setBootenv(sel_1080poutput_width, w);
+    			setBootenv(sel_1080poutput_height, h);
     			break;
             case 12:    //4k2k24hz
-			    sw.setProperty(sel_4k2k24hzoutput_x, x);
-    			sw.setProperty(sel_4k2k24hzoutput_y, y);
-    			sw.setProperty(sel_4k2k24hzoutput_width, w);
-    			sw.setProperty(sel_4k2k24hzoutput_height, h);
+			    setBootenv(sel_4k2k24hzoutput_x, x);
+    			setBootenv(sel_4k2k24hzoutput_y, y);
+    			setBootenv(sel_4k2k24hzoutput_width, w);
+    			setBootenv(sel_4k2k24hzoutput_height, h);
     			break;
             case 13:    //4k2k25hz
-			    sw.setProperty(sel_4k2k25hzoutput_x, x);
-    			sw.setProperty(sel_4k2k25hzoutput_y, y);
-    			sw.setProperty(sel_4k2k25hzoutput_width, w);
-    			sw.setProperty(sel_4k2k25hzoutput_height, h);
+			    setBootenv(sel_4k2k25hzoutput_x, x);
+    			setBootenv(sel_4k2k25hzoutput_y, y);
+    			setBootenv(sel_4k2k25hzoutput_width, w);
+    			setBootenv(sel_4k2k25hzoutput_height, h);
     			break;
             case 14:    //4k2k30hz
-			    sw.setProperty(sel_4k2k30hzoutput_x, x);
-    			sw.setProperty(sel_4k2k30hzoutput_y, y);
-    			sw.setProperty(sel_4k2k30hzoutput_width, w);
-    			sw.setProperty(sel_4k2k30hzoutput_height, h);
+			    setBootenv(sel_4k2k30hzoutput_x, x);
+    			setBootenv(sel_4k2k30hzoutput_y, y);
+    			setBootenv(sel_4k2k30hzoutput_width, w);
+    			setBootenv(sel_4k2k30hzoutput_height, h);
     			break;
              case 15:    //4k2ksmpte
-                sw.setProperty(sel_4k2ksmpteoutput_x, x);
-    			sw.setProperty(sel_4k2ksmpteoutput_y, y);
-    			sw.setProperty(sel_4k2ksmpteoutput_width, w);
-    			sw.setProperty(sel_4k2ksmpteoutput_height, h);
+                setBootenv(sel_4k2ksmpteoutput_x, x);
+    			setBootenv(sel_4k2ksmpteoutput_y, y);
+    			setBootenv(sel_4k2ksmpteoutput_width, w);
+    			setBootenv(sel_4k2ksmpteoutput_height, h);
     			break;
           
 		}
@@ -396,7 +396,7 @@ public class ScreenPositionManager {
             return ;
         }
    
-        mCurrentMode = sw.readSysFs(mCurrentResolution);
+        mCurrentMode = sw.readSysFs(mCurrentResolution).replaceAll("\n","");
         initStep(mCurrentMode);
         
         mCurrentLeft = (100-percent)*(mMaxRight)/(100*2*offsetStep);
@@ -455,5 +455,14 @@ public class ScreenPositionManager {
         else
             return true;
     }
+
+    private int getBootenvInt(String key, String value){
+        return Integer.parseInt(sw.getBootenv(key, value));
+    }
+    
+    private void setBootenv(String key, String value){
+        sw.setBootenv(key, value);
+    }
+     
 
 }

@@ -92,7 +92,7 @@ public class OutPutModeManager {
 	}
 
     public int getCurrentModeIndex(){
-         String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
+         String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS).replaceAll("\n","");
          for(int i=0 ; i < mValueList.size();i++){
              if(currentHdmiMode.equals(mValueList.get(i))){
                 return i ;
@@ -134,7 +134,7 @@ public class OutPutModeManager {
 
 	public static String getCurrentOutPutModeTitle(int type) {
         if (Utils.DEBUG) Log.d(TAG,"==== getCurrentOutPutMode() " );
-        String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
+        String currentHdmiMode = sw.readSysFs(DISPLAY_MODE_SYSFS).replaceAll("\n", "");
         if(type==0){  // cvbs
         if(currentHdmiMode.contains("cvbs")){
             for(int i=0 ; i < CVBS_MODE_VALUE_LIST.length ; i++){
@@ -157,7 +157,7 @@ public class OutPutModeManager {
 	}
 
 	public void selectItem(int index) {
-        final String oldMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
+        final String oldMode = sw.readSysFs(DISPLAY_MODE_SYSFS).replaceAll("\n","");
         String mode = mValueList.get(index) ;
         if(mode.equals(oldMode)){
             if (Utils.DEBUG) Log.d(TAG,"===== the same mode with current !");
