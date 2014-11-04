@@ -328,7 +328,8 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
         sharepreference.registerOnSharedPreferenceChangeListener(listener);
         
 		secreen_auto = (LinearLayout) findViewById(R.id.secreen_auto);
-
+        secreen_auto.setEnabled(false);
+        secreen_auto.setFocusable(false);
 		secreen_auto.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
