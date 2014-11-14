@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.util.Log;
 import android.view.Display;
@@ -8,6 +8,8 @@ import android.content.Context;
 import android.os.RemoteException;
 import android.util.AndroidException;
 import android.os.ServiceManager;
+import com.droidlogic.app.SystemControlManager;
+
 public class Utils {
 	private static final String TAG = "Utils";
     public static final boolean DEBUG = false;

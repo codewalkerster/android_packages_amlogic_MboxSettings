@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.app.Activity;
 import android.content.Context;

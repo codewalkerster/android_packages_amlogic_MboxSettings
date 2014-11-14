@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -61,6 +61,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.UserHandle ;
+import com.droidlogic.app.SystemControlManager;
 
 public class OobeActivity extends Activity implements OnItemClickListener,
 		OnClickListener, OnFocusChangeListener {
@@ -1006,7 +1007,7 @@ public class OobeActivity extends Activity implements OnItemClickListener,
 	}
 
     private boolean isNeedShowDialog(){
-        OutPutModeManager mOutPutModeManager = new OutPutModeManager(this);
+        MboxOutPutModeManager mOutPutModeManager = new MboxOutPutModeManager(this);
         String defaultMode = mOutPutModeManager.getBestMatchResolution();
         String currentMode = sw.readSysFs(DISPLAY_MODE_SYSFS);
         if(defaultMode.equals(currentMode) || defaultMode.contains("cvbs") || !isFirstStartActivity){

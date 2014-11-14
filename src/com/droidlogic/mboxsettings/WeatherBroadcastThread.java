@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import java.util.TimerTask;
 
@@ -6,8 +6,8 @@ import org.ksoap2.serialization.SoapObject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import android.util.Log;
+import com.droidlogic.app.SystemControlManager;
 
 public class WeatherBroadcastThread extends Thread {
 

@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import com.droidlogic.app.SystemControlManager;
 
 public class DisplayConfirmDialog extends Dialog {
 	private String TAG = "DisplayConfirmDialog";
@@ -112,7 +113,7 @@ public class DisplayConfirmDialog extends Dialog {
             sw.setProperty("ubootenv.var.hdmimode", old_mode);
             return;
         }
-        OutPutModeManager output = new OutPutModeManager(mContext);
+        MboxOutPutModeManager output = new MboxOutPutModeManager(mContext);
         output.setConfirmDialogState(false);
         output.change2NewMode(old_mode);
 	}

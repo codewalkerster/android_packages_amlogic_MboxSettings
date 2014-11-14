@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -60,6 +60,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ScrollView;
 import android.os.UserHandle ;
+
+import com.droidlogic.app.SystemControlManager;
+import com.droidlogic.app.OutputModeManager;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.net.Inet4Address;
@@ -134,7 +137,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private LinearLayout root_wifi_view;
 
 	//private EthernetManager mEthernetManager;
-    private OutPutModeManager mOutPutModeManager;
+    private MboxOutPutModeManager mOutPutModeManager;
 
 	private WifiManager mWifiManager;
     private TextView eth_IP_value = null;
@@ -241,7 +244,6 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 	private String string_hdmi =  null;
 
 	private WifiP2pDevice mThisDevice = null;
-	private MboxOutputMode mMboxOutputModeManager = null;
     private static RelativeLayout preView = null;
     private TextView miracast_name = null;
     private TextView remoteControlIp = null;
@@ -270,7 +272,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		sw = new SystemControlManager(this);
        // mEthernetManager = (EthernetManager) mContext.getSystemService("ethernet");
 		mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-        mOutPutModeManager = new OutPutModeManager(this);
+        mOutPutModeManager = new MboxOutPutModeManager(this);
         mHander = new MyHandle();
 
 		settingsContentLayout_01 = (LinearLayout) findViewById(R.id.settingsContent01);
@@ -539,7 +541,6 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		});
         getDtsTransInit();
         
-        mMboxOutputModeManager = new MboxOutputMode(mContext);
         updateVoiceUi();
 
 		LinearLayout wifi_direct = (LinearLayout) findViewById(R.id.wifi_direct);
@@ -1962,7 +1963,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		View outPutView = (View) mLayoutInflater.inflate(R.layout.out_mode_popup_window, null, true);
 
 		ListView listview = (ListView) outPutView.findViewById(R.id.output_list);
-		final OutPutModeManager output = new OutPutModeManager(mContext, listview, mode);
+		final MboxOutPutModeManager output = new MboxOutPutModeManager(mContext, listview, mode);
         output.setHandler(mHander);
 		listview.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -1996,7 +1997,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			voice_setting.setClickable(false);
 			tx_voice_setting.setTextColor(Color.GRAY);
 			tx_voice_auto.setCompoundDrawablesWithIntrinsicBounds(0, 0,R.drawable.on, 0);
-            int mode = mMboxOutputModeManager.autoSwitchHdmiPassthough();
+            int mode = mOutPutModeManager.autoSwitchHdmiPassthough();
             
             switch (mode){
                 case 0:
@@ -2020,10 +2021,10 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
             String []value = sw.getBootenv("ubootenv.var.digitaudiooutput", "PCM").split(":");
             if (value[0] != null && value[0].length() != 0){
-                mMboxOutputModeManager.setDigitalVoiceValue(value[0]);
+                mOutPutModeManager.setDigitalVoiceValue(value[0]);
                 tx_voice_mode.setText(value[0]);
             }else {
-                mMboxOutputModeManager.setDigitalVoiceValue("PCM");
+                mOutPutModeManager.setDigitalVoiceValue("PCM");
                 tx_voice_mode.setText("PCM");
             }
 		}
@@ -2054,7 +2055,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		pcm.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mMboxOutputModeManager.setDigitalVoiceValue(string_pcm);
+				mOutPutModeManager.setDigitalVoiceValue(string_pcm);
 				upDateDigitaVoiceUi(voicePopupView);
 
 			}
@@ -2066,7 +2067,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		voice_sddif.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
-				mMboxOutputModeManager.setDigitalVoiceValue(string_spdif);
+				mOutPutModeManager.setDigitalVoiceValue(string_spdif);
 				upDateDigitaVoiceUi(voicePopupView);
 			}
 		});
@@ -2075,7 +2076,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 		voice_hdmi.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mMboxOutputModeManager.setDigitalVoiceValue(string_hdmi);
+				mOutPutModeManager.setDigitalVoiceValue(string_hdmi);
 				upDateDigitaVoiceUi(voicePopupView);
 			}
 		});
@@ -2277,7 +2278,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 
         if (option == 0) {
             String isDrcEnable = sharepreference.getString("dolby_drc_enable", "false");
-    		mMboxOutputModeManager.enableDobly_DRC(!Boolean.parseBoolean(isDrcEnable));
+    		mOutPutModeManager.enableDobly_DRC(!Boolean.parseBoolean(isDrcEnable));
              if (Utils.DEBUG) Log.d(TAG, "@@@@@@@@@@@@@@@@@ isDrcEnable="+isDrcEnable);
             
             ImageView img_drc_enable = (ImageView)dolbyPopupView.findViewById(R.id.img_drc_enable);
@@ -2299,7 +2300,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             if(mode_int > 3)
                 mode_int = 0;
             
-    		mMboxOutputModeManager.setDoblyMode(String.valueOf(mode_int));
+    		mOutPutModeManager.setDoblyMode(String.valueOf(mode_int));
             
             TextView  tx_drc_enable = (TextView)dolbyPopupView.findViewById(R.id.tx_drc_mode);
              if (mode_int == 0) {
@@ -2335,7 +2336,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             if(mode_int > 1)
                 mode_int = 0;
             
-    		mMboxOutputModeManager.setDTS_DownmixMode(String.valueOf(mode_int));
+    		mOutPutModeManager.setDTS_DownmixMode(String.valueOf(mode_int));
             
             TextView  tx_drc_enable = (TextView)dtsPopupView.findViewById(R.id.tx_downmix_mode);
              if (mode_int == 1) {
@@ -2349,7 +2350,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             }    
         }else if (option == 1){
             String isDrcScaleEnable = sharepreference.getString("dts_drc_scale", "false");
-    		mMboxOutputModeManager.enableDTS_DRC_scale_control(!Boolean.parseBoolean(isDrcScaleEnable));
+    		mOutPutModeManager.enableDTS_DRC_scale_control(!Boolean.parseBoolean(isDrcScaleEnable));
             
             ImageView img_drc_scale = (ImageView)dtsPopupView.findViewById(R.id.img_drc_scale);
             if (isDrcScaleEnable.equals("true")){
@@ -2363,7 +2364,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
             }
         }else {
             String isDialNormEnable = sharepreference.getString("dts_dial_norm", "true");
-    		mMboxOutputModeManager.enableDTS_Dial_Norm_control(!Boolean.parseBoolean(isDialNormEnable));
+    		mOutPutModeManager.enableDTS_Dial_Norm_control(!Boolean.parseBoolean(isDialNormEnable));
             
             ImageView img_dial_norm = (ImageView)dtsPopupView.findViewById(R.id.img_dial_norm);
             if (isDialNormEnable.equals("true")){
@@ -2447,7 +2448,7 @@ public class SettingsMboxActivity extends Activity implements OnClickListener, V
 			imageview_pcm.setBackgroundResource(R.drawable.current_select);
 			imageview_sddif.setBackgroundResource(R.drawable.current_unselect);
 			imageview_hdmi.setBackgroundResource(R.drawable.current_unselect);
-			mMboxOutputModeManager.setDigitalVoiceValue("PCM");
+			mOutPutModeManager.setDigitalVoiceValue("PCM");
 		}
 
         updateVoiceUi();

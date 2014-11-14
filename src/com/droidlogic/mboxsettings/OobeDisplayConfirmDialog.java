@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.droidlogic.app.SystemControlManager;
 
 public class OobeDisplayConfirmDialog extends Dialog {
 	private String TAG = "OobeDisplayConfirmDialog";
@@ -94,7 +95,7 @@ public class OobeDisplayConfirmDialog extends Dialog {
 	}
 
 	private void setDefaultOutputMode() {
-        OutPutModeManager mOutPutModeManager = new OutPutModeManager(mContext);
+        MboxOutPutModeManager mOutPutModeManager = new MboxOutPutModeManager(mContext);
         mOutPutModeManager.hdmiPlugged();  
 	}
 }

@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -25,6 +25,8 @@ import android.util.Log;
 //import android.view.WindowManagerPolicy;
 import android.os.Handler;
 import android.os.Message;
+import com.droidlogic.app.SystemControlManager;
+import com.droidlogic.app.OutputModeManager;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -76,6 +78,7 @@ public class BootReceiver extends BroadcastReceiver {
     private final int MSG_ENABLE_OSD0_BLANK = 1;
 
 	private SystemControlManager sw;
+    private MboxOutPutModeManager mOutputManager;
 
 	TimerTask weatherBroadcastServicesTask = null;
     WifiUtils mWifiUtils = null;
@@ -88,7 +91,7 @@ public class BootReceiver extends BroadcastReceiver {
         sw = new SystemControlManager(mContext);
         sharedPrefrences = context.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-        OutPutModeManager mOutputManager = new OutPutModeManager(mContext);
+        mOutputManager = new MboxOutPutModeManager(mContext);
         String action = intent.getAction();
         
         //======================================start system boot process
@@ -321,26 +324,22 @@ public class BootReceiver extends BroadcastReceiver {
         }       
     }
 
-    private void initDolby(){
-    	MboxOutputMode mMboxOutputModeManager = new MboxOutputMode(mContext);
-        
+    private void initDolby(){ 
         String isDrcEnable = sharedPrefrences.getString("dolby_drc_enable", "false");
-        mMboxOutputModeManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
+        mOutputManager.enableDobly_DRC(Boolean.parseBoolean(isDrcEnable));
 
         String mode = sharedPrefrences.getString("dolby_drc_mode", "2");
-        mMboxOutputModeManager.setDoblyMode(mode);
+        mOutputManager.setDoblyMode(mode);
     }
 
-    private void initDts(){
-    	MboxOutputMode mMboxOutputModeManager = new MboxOutputMode(mContext);
-        
+    private void initDts(){    
         String mode = sharedPrefrences.getString("dts_downmix_mode", "0");
-        mMboxOutputModeManager.setDTS_DownmixMode(mode);
+        mOutputManager.setDTS_DownmixMode(mode);
 
         String isDrcScaleEnable = sharedPrefrences.getString("dts_drc_scale", "false");
-        mMboxOutputModeManager.enableDTS_DRC_scale_control(Boolean.parseBoolean(isDrcScaleEnable));
+        mOutputManager.enableDTS_DRC_scale_control(Boolean.parseBoolean(isDrcScaleEnable));
 
         String isDialNormEnable = sharedPrefrences.getString("dts_dial_norm", "true");
-        mMboxOutputModeManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
+        mOutputManager.enableDTS_Dial_Norm_control(Boolean.parseBoolean(isDialNormEnable));       
     }
 }

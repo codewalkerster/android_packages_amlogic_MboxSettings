@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.content.Context;
 import android.os.SystemProperties;
@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import com.droidlogic.app.SystemControlManager;
 
 public class ScreenPositionManager {
     private String TAG = "ScreenPositionManager";

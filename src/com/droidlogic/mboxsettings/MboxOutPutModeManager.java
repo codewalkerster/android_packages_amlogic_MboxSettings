@@ -1,4 +1,4 @@
-package com.mbx.settingsmbox;
+package com.droidlogic.mboxsettings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +17,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.droidlogic.app.SystemControlManager;
+import com.droidlogic.app.OutputModeManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +34,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.UserHandle ;
 
-public class OutPutModeManager {
+public class MboxOutPutModeManager {
     private static final String TAG = "OutPutModeManager";
 
 	private static Context mContext = null;
@@ -59,7 +62,7 @@ public class OutPutModeManager {
     
 	OutPutListAdapter adapter = null;
 	private static SystemControlManager sw;
-    private static MboxOutputMode mom;
+    private static OutputModeManager mom;
 
     private static String mUiMode = "hdmi";
     private Runnable setBackRunnable = null;
@@ -70,18 +73,18 @@ public class OutPutModeManager {
     private static final String PREFERENCE_BOX_SETTING = "preference_box_settings";
     private static final int hdmi4KmodeNum =  4 ;
     
-    public OutPutModeManager(Context context){
+    public MboxOutPutModeManager(Context context){
         mContext = context;
         mUiMode = "hdmi";
 		sw = new SystemControlManager(mContext);
-        mom = new MboxOutputMode(mContext);;
+        mom = new OutputModeManager(mContext);;
         
         mTitleList = new ArrayList<String>();
         mValueList = new ArrayList<String>();
         initModeValues(mUiMode);    
     }
 	
-	public OutPutModeManager(Context context, ListView listview , String mode) {
+	public MboxOutPutModeManager(Context context, ListView listview , String mode) {
 		mContext = context;
 		sw = new SystemControlManager(mContext);
     
@@ -320,4 +323,31 @@ public class OutPutModeManager {
         isNeedShowConfirmDialog = isNeed;
     }
 
+    public int autoSwitchHdmiPassthough (){
+        return mom.autoSwitchHdmiPassthough();
+    }
+
+    public void setDigitalVoiceValue(String value) {
+        mom.setDigitalVoiceValue(value);
+    }
+    
+    public void enableDobly_DRC (boolean enable){
+        mom.enableDobly_DRC(enable);
+    }
+
+    public void setDoblyMode (String mode){
+        mom.setDoblyMode(mode);
+    }
+
+    public void setDTS_DownmixMode(String mode){
+        mom.setDTS_DownmixMode(mode);
+    }
+
+    public void enableDTS_DRC_scale_control (boolean enable){
+        mom.enableDTS_DRC_scale_control(enable);
+    }
+
+    public void enableDTS_Dial_Norm_control (boolean enable){
+        mom.enableDTS_Dial_Norm_control(enable);
+    }
 }
